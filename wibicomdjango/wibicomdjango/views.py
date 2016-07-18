@@ -31,35 +31,12 @@ def auth_view(request):
         return HttpResponseRedirect('/accounts/invalid')
 
 @login_required()
-@csrf_exempt
 def loggedin(request):
     userid = request.user.profile.pk
     data = Device.objects.filter(user_id=userid)
 
-    if request.method == 'POST':
-        json_data = json.loads(request.body)  # request.raw_post_data w/ Django < 1.4
-        deviceentry = DeviceEntry()
-
-        deviceNb=json_data["deviceNb"] #i am receiving a device number and need to find the primary key for that number
-        devicepk = Device.objects.get(deviceNb = deviceNb)
-
-        deviceentry.device = devicepk #put the primary key of the device here
-        deviceentry.datetime = json_data["datetime"]
-        deviceentry.pressure = json_data["pressure"]
-        deviceentry.humidity = json_data["humidity"]
-        deviceentry.temperature = json_data["temperature"]
-        deviceentry.battery = json_data["battery"]
-        deviceentry.light = json_data["light"]
-        deviceentry.accx = json_data["accx"]
-        deviceentry.accy = json_data["accy"]
-        deviceentry.accz = json_data["accz"]
-        deviceentry.save()
-
     return render_to_response('loggedin.html', {'full_name': request.user.username, 'user_profile_id': userid,
                                                 'listOfDevices': data})
-
-
-
 
 def invalid_login(request):
     return render_to_response('invalid_login.html')
@@ -88,5 +65,26 @@ def register_success(request):
 
 
 
+def receive_android_data(request):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)  # request.raw_post_data w/ Django < 1.4
+        deviceentry = DeviceEntry()
 
+        deviceNb = json_data[
+            "deviceNb"]  # i am receiving a device number and need to find the primary key for that number
+        devicepk = Device.objects.get(deviceNb=deviceNb)
+
+        deviceentry.device = devicepk  # put the primary key of the device here
+        deviceentry.datetime = json_data["datetime"]
+        deviceentry.pressure = json_data["pressure"]
+        deviceentry.humidity = json_data["humidity"]
+        deviceentry.temperature = json_data["temperature"]
+        deviceentry.battery = json_data["battery"]
+        deviceentry.light = json_data["light"]
+        deviceentry.accx = json_data["accx"]
+        deviceentry.accy = json_data["accy"]
+        deviceentry.accz = json_data["accz"]
+        deviceentry.save()
+
+    return render(request, "userprofile/receive_android_data.html")
 

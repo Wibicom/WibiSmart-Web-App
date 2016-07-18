@@ -41,5 +41,5 @@ urlpatterns = [
     url(r'^home/', include('home.urls'), name='home'),
     url(r'^admin/', include(admin.site.urls)),
 
-    #url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data')
+    url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data')
 ]
