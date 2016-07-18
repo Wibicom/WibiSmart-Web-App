@@ -1,0 +1,25 @@
+{% extends 'layout/layout1.html' %}
+
+{% block content %}
+
+<div class="container">
+
+      <form action = "/accounts/auth/" method = "post" class="form-signin"> {% csrf_token %}
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+          <input type="text" name="username" value = "" id = "username" placeholder = "Username" class="form-control" required>
+
+           <input type = "password" name="password" value = "" id= "inputPassword" placeholder="Password" class = "form-control" required>
+
+            <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+            </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Sign in</button>
+      </form>
+
+</div> <!-- /container -->
+
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'layout/layout1.html' %}
+
+{% block content %}
+
+{% include "navbar_loggedin.html" %}
+    <h2>Hi {{full_name}} </h2>
+    <p> Please select the devices you would like to delete</p>
+
+    <div class="container">
+        <form action = "/accounts/deletedevice/" method = "post" class="form-signin"> {% csrf_token %}
+            {{deletedeviceform.as_ul}}
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="Delete">Delete</button>
+
+        </form>
+    </div>
+
+
+    {{devicelist}}
+
+{% endblock %}

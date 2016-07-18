@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href = "{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href = "{% static 'css/signin.css' %}" rel="stylesheet">
+    <link href = "{% static 'css/navbar.css' %}" rel="stylesheet">
+
+
+    {% block head %}{% endblock %}
+
+    <title> {% block title %}{% endblock %}</title>
+
+</head>
+<body>
+
+
+    {% block content %}{% endblock %}
+    <!--placed at the end of document for faster response -->
+
+     <!-- to load image : <img src="{% static 'img/iphone.png' %} class= 'img-responsive' /> allows it to be browser resp -->
+
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

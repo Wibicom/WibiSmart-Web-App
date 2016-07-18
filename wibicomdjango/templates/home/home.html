@@ -1,0 +1,18 @@
+{% extends 'layout/layout1.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link href = "{% static 'css/carousel.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block title %} Home page {% endblock %}
+
+{% block content %}
+   {% include "navbar_loggedout.html" %}
+   {% include "home/carousel.html" %}
+   {% include "home/container-marketing.html" %}
+   {% include "home/featurettes.html" %}
+    <h2>Hello, you are home</h2>
+
+{% endblock %}

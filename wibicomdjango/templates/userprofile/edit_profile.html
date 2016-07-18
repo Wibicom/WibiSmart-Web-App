@@ -1,0 +1,13 @@
+{% extends 'layout/layout1.html' %}
+
+{% block content %}
+
+    <h2>Hi {{full_name}} ! you are here to edit your profile</h2>
+
+    <p> Click here <a href = "/accounts/profile/edit"> to add a device </a></p>
+
+    <p> Click <a href = "/accounts/logout/"> to logout </a></p>
+
+    {{devicelist}}
+
+{% endblock %}

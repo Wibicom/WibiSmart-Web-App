@@ -1,0 +1,12 @@
+body {
+  padding-top: 0px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+#username_on_navbar{
+  font-weight: bold;
+}

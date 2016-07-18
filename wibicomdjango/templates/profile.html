@@ -1,0 +1,21 @@
+{% extends 'layout/layout1.html' %}
+
+{% block content %}
+    {% include "navbar_loggedin.html" %}
+
+    <h2>Profile</h2>
+
+    {% if alert %}
+        <div class='alert alert-danger' role='alert'>{{alert}}</div>
+    {% endif %}
+
+    <form action = "/accounts/profile/" method = "post"> {% csrf_token %}
+
+        {{form.as_ul}}
+        {{device_form}}
+
+    <input type="submit" value="Update" />
+
+    </form>
+
+{% endblock %}

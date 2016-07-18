@@ -1,0 +1,27 @@
+{% extends 'layout/layout1.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/oneDevice_dashboard.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+    {% include "navbar_loggedin.html" %}
+
+    {% include "userprofile/leftside_device_list.html" %}
+
+    <div id = "devicedata">
+        <h2>Hi {{full_name}} ! Here is your device data</h2>
+        <p> {{device_name}} </p>
+        {% for entry in device_entries %}
+            <li>{{entry}}</li>
+        {% endfor %}
+    </div>
+
+<!--Put the script at the end of the body for speed-->
+    <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+{% endblock %}
