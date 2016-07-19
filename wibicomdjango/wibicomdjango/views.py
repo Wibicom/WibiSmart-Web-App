@@ -64,27 +64,35 @@ def register_success(request):
     return render_to_response('register_success.html')
 
 
-
+@csrf_exempt
 def receive_android_data(request):
     if request.method == 'POST':
-        json_data = json.loads(request.body)  # request.raw_post_data w/ Django < 1.4
-        deviceentry = DeviceEntry()
+         user = request.user
+         if(request.user.is_authenticated()):
+            
+            
+            print "I am authenticated !!"
+            
+            json_data = json.loads(request.body)  # request.raw_post_data w/ Django < 1.4
+            deviceentry = DeviceEntry()
 
-        deviceNb = json_data[
-            "deviceNb"]  # i am receiving a device number and need to find the primary key for that number
-        devicepk = Device.objects.get(deviceNb=deviceNb)
+            deviceNb = json_data[
+                "deviceNb"]  # i am receiving a device number and need to find the primary key for that number
+            devicepk = Device.objects.get(deviceNb=deviceNb)
 
-        deviceentry.device = devicepk  # put the primary key of the device here
-        deviceentry.datetime = json_data["datetime"]
-        deviceentry.pressure = json_data["pressure"]
-        deviceentry.humidity = json_data["humidity"]
-        deviceentry.temperature = json_data["temperature"]
-        deviceentry.battery = json_data["battery"]
-        deviceentry.light = json_data["light"]
-        deviceentry.accx = json_data["accx"]
-        deviceentry.accy = json_data["accy"]
-        deviceentry.accz = json_data["accz"]
-        deviceentry.save()
+            deviceentry.device = devicepk  # put the primary key of the device here
+            deviceentry.datetime = json_data["datetime"]
+            deviceentry.pressure = json_data["pressure"]
+            deviceentry.humidity = json_data["humidity"]
+            deviceentry.temperature = json_data["temperature"]
+            deviceentry.battery = json_data["battery"]
+            deviceentry.light = json_data["light"]
+            deviceentry.accx = json_data["accx"]
+            deviceentry.accy = json_data["accy"]
+            deviceentry.accz = json_data["accz"]
+            deviceentry.save()
+         else:
+            print user
 
     return render(request, "userprofile/receive_android_data.html")
 

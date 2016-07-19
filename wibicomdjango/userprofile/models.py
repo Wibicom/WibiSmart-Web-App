@@ -27,15 +27,15 @@ class Device(models.Model):
 
 class DeviceEntry(models.Model):
     device = models.ForeignKey(Device, null=True)
-    datetime = models.DateTimeField(null=True)
-    pressure = models.IntegerField(null=True)
-    humidity = models.IntegerField(null=True)
+    datetime = models.CharField(max_length=50, null=True)
+    pressure = models.FloatField(null=True)
+    humidity = models.FloatField(null=True)
     temperature = models.FloatField(null=True)
     battery = models.IntegerField(null=True)
     light = models.IntegerField(null=True)
-    accx = models.IntegerField(null=True)
-    accy = models.IntegerField(null=True)
-    accz = models.IntegerField(null=True)
+    accx = models.FloatField(null=True)
+    accy = models.FloatField(null=True)
+    accz = models.FloatField(null=True)
 
     def __unicode__(self):
         return str(self.datetime) + " " + str(self.pressure) + " " + str(self.humidity)
