@@ -14,7 +14,7 @@ User.profile = property(lambda u : UserProfile.objects.get_or_create(user=u)[0])
 
 
 class Device(models.Model):
-    user = models.ForeignKey(UserProfile, null=True)
+    user = models.ForeignKey(User, null=True) #made a change here from UserProfile to User
     deviceNb = models.CharField(max_length=50, null=True)
     deviceType = models.CharField(max_length=50, null=True)
 

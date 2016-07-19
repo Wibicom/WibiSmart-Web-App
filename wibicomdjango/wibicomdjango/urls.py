@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from rest_framework.authtoken import views
+
 
 
 from registration.backends.simple.views import RegistrationView
@@ -41,5 +43,9 @@ urlpatterns = [
     url(r'^home/', include('home.urls'), name='home'),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data')
+    url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data'),
+
+    url(r'^api-token-auth/', views.obtain_auth_token)
+
+
 ]

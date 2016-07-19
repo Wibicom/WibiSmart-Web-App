@@ -14,14 +14,14 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Profile</a></li>
+        <li class="active"><a href="{% url 'loggedin' %}">Home <span class="sr-only">(current)</span></a></li>
+        <li><a href='{% url "profile" %}'>Profile</a></li>
 
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
         <li id = "username_on_navbar"><a href="#">{{full_name}}</a></li>
-        <a href="#" button type="submit" class="btn btn-default navbar-btn">Log out</a>
+        <a href='{% url "logout" %}' button type="submit" class="btn btn-default navbar-btn">Log out</a>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
