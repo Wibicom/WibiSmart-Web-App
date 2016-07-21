@@ -17,12 +17,13 @@ class Device(models.Model):
     user = models.ForeignKey(User, null=True) #made a change here from UserProfile to User
     deviceNb = models.CharField(max_length=50, null=True)
     deviceType = models.CharField(max_length=50, null=True)
+    deviceName = models.CharField(max_length= 100, null = True)
 
     def __str__(self):
-        return self.deviceNb
+        return self.deviceName
 
     def __unicode__(self):
-        return str(self.deviceNb)
+        return str(self.deviceName)
 
 
 class DeviceEntry(models.Model):

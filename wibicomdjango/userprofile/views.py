@@ -5,14 +5,20 @@ from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from forms import UserProfileForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.shortcuts import get_object_or_404
-from home.models import User
+
 from django.template.response import TemplateResponse
 
 from forms import UserProfileForm
 from forms import DeviceForm
 from forms import DeleteDeviceForm
+from forms import EditProfileForm
+from forms import EditDeviceForm
 
 import datetime
 from random import randint
@@ -59,7 +65,7 @@ def generate_device_journal(request,newdevice):
         entry.save()
 
 @login_required
-def user_profile(request):
+def user_profile_old_function(request): #this is a function that was done first, i keep for records but will have to delete
     user = request.user
     profile = user.profile
 
@@ -67,8 +73,9 @@ def user_profile(request):
         #we want to populate the form with the original instance of the profile model and insert POST info on top of it
         device_form = DeviceForm(request.POST)
         form = UserProfileForm(request.POST, instance=profile)
-
-        if device_form.is_valid() and form.is_valid:
+        edit_profile_form = EditProfileForm(request.POST, instance=user)
+        print "i am here"
+        if device_form.is_valid() and form.is_valid and edit_profile_form.is_valid():
             dev = device_form.save(commit=False)
             newdevice = Device()
             newdevice.deviceNb = dev.deviceNb
@@ -76,6 +83,16 @@ def user_profile(request):
             newdevice.user_id = profile.pk
             newdevice.save()
             form.save()
+
+            usermod = edit_profile_form.save(commit = False)
+            user.email = usermod.email
+            user.first_name= usermod.first_name
+            print "***********************"
+            print usermod.first_name
+            print "***********************"
+            user.last_name = usermod.last_name
+            user.save()
+
 
             #generating entries in device
             #generate_device_journal(request, newdevice)
@@ -90,18 +107,58 @@ def user_profile(request):
         #if we have a user that has already selected info, it will pass in this info
         form = UserProfileForm(instance=profile)
         device_form = DeviceForm()
+        edit_profile_form = EditProfileForm(instance = user)
+
+    userid = request.user.profile.pk
+    data = Device.objects.filter(user_id=userid)
 
     args = {}
     args['form'] = form
     args['device_form'] = device_form
+    args['edit_profile_form'] = edit_profile_form
+    args['listOfDevices']= data
+    args ['full_name'] = request.user.username
+
     return render(request, 'profile.html', args)
 
 
+@login_required
+def user_profile(request):
+    user = request.user
+    profile = user.profile
+    listOfDevices = Device.objects.filter(user_id=user.pk)
+
+    if request.method == 'POST':
+        edit_device_form = EditDeviceForm(request.POST, user=request.user.pk) #added
+        edit_profile_form = EditProfileForm(request.POST, instance=user)
+        if edit_profile_form.is_valid():
+            edit_profile_form.save()
+
+        if edit_device_form.is_valid(): #the following lines are added
+            devicetoedit = Device.objects.get(id=request.POST.get('devices'))
+            devicetoedit.deviceName = request.POST.get('new_device_name')
+            devicetoedit.save()
+            return redirect('profile')
+
+    else: # when this is a get request
+        form = UserProfileForm(instance=profile)
+        device_form = DeviceForm()
+        edit_profile_form = EditProfileForm(instance = user)
+        edit_device_form = EditDeviceForm(user=request.user.pk) #added
+        edit_device_form.fields['devices'].choices = [(x.id, str(x)) for x in Device.objects.filter(user=request.user.pk)] #added
+
+    args = {}
+    args['edit_profile_form'] = edit_profile_form
+    args['edit_device_form'] = edit_device_form
+    args['listOfDevices']= listOfDevices
+    args ['full_name'] = request.user.username
+
+    return render(request, 'profile.html', args)
 
 @login_required()
 def delete_device(request):
     if request.method == 'POST':
-        deletedeviceform = DeleteDeviceForm(request.POST, user=request.user.profile.pk)
+        deletedeviceform = DeleteDeviceForm(request.POST, user=request.user.pk)
         if deletedeviceform.is_valid():
             devicelist = request.POST.getlist('devices')
             firstitem = devicelist[0]
@@ -112,14 +169,27 @@ def delete_device(request):
 
 
     else: #if not a POST request (first time user gets there)
-        userid = request.user.profile.pk
+        userid = request.user.pk
         devices = Device.objects.filter(user_id=userid)
         deletedeviceform = DeleteDeviceForm()
         deletedeviceform.fields['devices'].choices = [(x.id, x) for x in devices]
 
     return render(request, 'userprofile/delete_device.html', {"full_name": request.user.username, "deletedeviceform": deletedeviceform,})
 
+@login_required()
+def edit_device(request):
+    if request.method == 'POST':
+        edit_device_form = EditDeviceForm(request.POST, user = request.user.pk)
+        if edit_device_form.is_valid():
+                devicetoedit= Device.objects.get(id = request.POST.get('devices'))
+                devicetoedit.deviceName = request.POST.get('new_device_name')
+                devicetoedit.save()
+                return redirect('profile')
+    else:
+        edit_device_form = EditDeviceForm(user=request.user.pk)
+        edit_device_form.fields['devices'].choices = [(x.id, str(x)) for x in Device.objects.filter(user= request.user.pk)]
 
+    return render(request, 'userprofile/edit_device.html', {"edit_device_form": edit_device_form,})
 
 @login_required()
 def onedevice_dashboard(request,id):
@@ -127,18 +197,41 @@ def onedevice_dashboard(request,id):
 
     full_name = request.user.username
     device = Device.objects.get(id = id)
-    device_name = device.deviceNb
     device_entries = DeviceEntry.objects.filter(device_id = device)
+    last_entry = device_entries[len(device_entries)-1]
+    live_battery = last_entry.battery
 
-    userid = request.user.profile.pk
+    userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
 
     return TemplateResponse(request, 'userprofile/oneDevice_dashboard.html', {"full_name": full_name,
-                                                                              "device_name": device_name,
+                                                                              "deviceNb": device.deviceNb,
+                                                                              "deviceName" : device.deviceName,
+                                                                              "deviceType" : device.deviceType,
                                                                               "device_entries": device_entries,
                                                                               "listOfDevices": listOfDevices,
+                                                                              "live_battery" : live_battery,
                                                                               })
+@login_required()
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect("profile")
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, "userprofile/change_password.html", {"form": form})
 
 
+@login_required()
+def delete_account(request):
+    if request.method == 'POST':
 
+        usertodelete= User.objects.get(pk=request.user.pk)
 
+        usertodelete.delete()
+
+    return redirect('home')

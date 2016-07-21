@@ -16,12 +16,35 @@
 
     <div id = "devicedata">
         <h2>Hi {{full_name}} ! Here is your device data</h2>
-        <p> {{device_name}} </p>
+        <p> {{live_battery}} </p>
+
+
+        <div id = "batterySection" class = "dataSection">
+		<p> Battery level </p>
+		<p id = "batteryValue" class = "values"></p>
+		<canvas id="pieBattery" width="250" height="250"></canvas>
+	    </div>
+
+
+        <p> {{deviceNb}} </p>
+        <p> {{deviceType}} </p>
+        <p> {{deviceName}} </p>
         {% for entry in device_entries %}
             <li>{{entry}}</li>
         {% endfor %}
     </div>
 
-<!--Put the script at the end of the body for speed-->
-    <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+
 {% endblock %}
+
+{% block content1 %}
+<!--Put the script at the end of the body for speed-->
+    <script>
+    var live_battery= "{{live_battery}}";
+    console.log("variable within the small script in html file");
+    console.log(live_battery);
+    </script>
+    <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+    <script src = "{% static 'js/oneDevice_dashboard.js' %}"></script>
+{% endblock content1 %}

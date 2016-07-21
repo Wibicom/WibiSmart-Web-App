@@ -1,5 +1,15 @@
 {% extends 'layout/layout1.html' %}
 
+{% load staticfiles %}
+
+
+{% block head %}
+     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/overview_dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/signin.css' %}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
 
 <div class="container">

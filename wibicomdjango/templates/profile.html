@@ -1,21 +1,39 @@
 {% extends 'layout/layout1.html' %}
+{% load staticfiles %}
+
+{% block head %}
+     <link href = "{% static 'css/profile_containers.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/overview_dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
 
 {% block content %}
     {% include "navbar_loggedin.html" %}
-
-    <h2>Profile</h2>
+    {% include "userprofile/leftside_device_list.html" %}
 
     {% if alert %}
         <div class='alert alert-danger' role='alert'>{{alert}}</div>
     {% endif %}
 
-    <form action = "/accounts/profile/" method = "post"> {% csrf_token %}
 
-        {{form.as_ul}}
-        {{device_form}}
-
-    <input type="submit" value="Update" />
-
+    <form class = "myforms" action = "/accounts/profile/" method = "post"> {% csrf_token %}
+        {% include "userprofile/profile_containers.html" %}
     </form>
+
+    <a href="/accounts/profile/editdevice/" class="btn btn-info pull-right" role="button">Edit a device</a>
+
+    <div class = "myforms" > {% csrf_token %}
+        {% include "userprofile/profile_container_mydevices.html" %}
+    </div>
+
+    <form class = "myforms" action = "/accounts/profile/deleteaccount" method = "post"> {% csrf_token %}
+        {% include "userprofile/profile_container_account.html" %}
+    </form>
+
+
+
+
+
 
 {% endblock %}

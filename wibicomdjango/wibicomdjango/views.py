@@ -41,7 +41,7 @@ def auth_view(request):
 
 @login_required()
 def loggedin(request):
-    userid = request.user.profile.pk
+    userid = request.user.pk
     data = Device.objects.filter(user_id=userid)
 
     return render_to_response('loggedin.html', {'full_name': request.user.username, 'user_profile_id': userid,

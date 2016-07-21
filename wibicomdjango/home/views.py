@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.template.response import TemplateResponse
 
 #this is for querrying the database
-from home.models import User
+
 from django.shortcuts import get_object_or_404
 
 #the curly braces are dictionnaries for passing data from server to client
