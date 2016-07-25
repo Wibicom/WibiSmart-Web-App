@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'userprofile',
+    'dashboard',
     'wibicomdjango',
     'rest_framework',
     'rest_framework.authtoken',

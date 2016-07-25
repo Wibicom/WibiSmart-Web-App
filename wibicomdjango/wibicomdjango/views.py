@@ -99,7 +99,7 @@ def receive_android_data(request):
         deviceType = json_data["deviceType"]
 
         Device.objects.get_or_create(deviceNb=deviceNb, deviceType=deviceType)
-        device = Device.objects.get(deviceNb = deviceNb, deviceType =  deviceType)
+        device = Device.objects.get(deviceNb = deviceNb, deviceType = deviceType)
         #check the user of the device to see if the device belongs to the user
         print device
         try:

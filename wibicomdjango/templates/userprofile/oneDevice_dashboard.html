@@ -18,6 +18,10 @@
         <h2>Hi {{full_name}} ! Here is your device data</h2>
         <p> {{live_battery}} </p>
 
+        <p> Real live battery </p>
+        <div id = "output">
+        </div>
+
 
         <div id = "batterySection" class = "dataSection">
 		<p> Battery level </p>
@@ -25,6 +29,12 @@
 		<canvas id="pieBattery" width="250" height="250"></canvas>
 	    </div>
 
+        <canvas id="foo" ></canvas>
+
+        <div id="graphdiv"></div>
+
+
+        <p> {{deviceId}} </p>
 
         <p> {{deviceNb}} </p>
         <p> {{deviceType}} </p>
@@ -39,12 +49,15 @@
 
 {% block content1 %}
 <!--Put the script at the end of the body for speed-->
-    <script>
-    var live_battery= "{{live_battery}}";
-    console.log("variable within the small script in html file");
-    console.log(live_battery);
+    <script> //need to secure these later on
+    var deviceId = "{{deviceId}}"
     </script>
     <script src = "{% static 'js/leftside_device_list.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+    <script src = "http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <script src = "http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined-dev.js"></script>
     <script src = "{% static 'js/oneDevice_dashboard.js' %}"></script>
+
+
 {% endblock content1 %}
