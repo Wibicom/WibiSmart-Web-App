@@ -1,3 +1,23 @@
+var counter = (function () {
+    var n = 10;
+
+    return function () {
+        n++;
+
+        return n;
+    }
+}());
+
+var counteracc = (function () {
+    var n = 10;
+
+    return function () {
+        n++;
+
+        return n;
+    }
+}());
+
 function renderPieBattery(live_battery){
 
     //console.log(live_battery);
@@ -229,6 +249,8 @@ function renderToggle(){
 
 
 function gauge_battery_ajax(){
+console.log("im in ajax")
+
     $.ajax({
 
         url: "/accounts/loggedin/" + deviceId + "/renderdata/",
@@ -243,6 +265,14 @@ function gauge_battery_ajax(){
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
 
+            //je dois initialement mettre counter a 10 et incrementer a chaque fois sans perdre la valeur
+            TemperatureChart.getInstance().addData([json.live_temperature], counter());
+            // Remove the first point so we dont just add values forever
+            TemperatureChart.getInstance().removeData();
+
+            AccelerometerChart.getInstance().addData([json.live_accx, json.live_accy, json.live_accz], counteracc());
+            // Remove the first point so we dont just add values forever
+            AccelerometerChart.getInstance().removeData();
 
         }
 
@@ -282,16 +312,108 @@ setInterval(function(){
 
 }
 
+var TemperatureChart = (function () {
+    var instance;
+
+    function createInstance() {
+        var canvas = document.getElementById('temperaturelinechart'),
+
+        ctx = canvas.getContext('2d'),
+            startingData = {
+              labels: [1, 2, 3, 4, 5, 6, 7,8,9,10],
+              datasets: [
+
+                  {
+                      fillColor: "rgba(151,187,205,0.2)",
+                      strokeColor: "rgba(151,187,205,1)",
+                      pointColor: "rgba(151,187,205,1)",
+                      pointStrokeColor: "#fff",
+                      data: JSON.parse(temperaturelist)
+                  }
+              ]
+            },
+            latestLabel = startingData.labels[9];
+
+        // Reduce the animation steps for demo clarity.
+        var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+        return myLiveChart;
+        }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+
+var AccelerometerChart = (function () {
+    var instance;
+
+    function createInstance() {
+        var canvas = document.getElementById('acccelerometerlinechart'),
+
+            ctx = canvas.getContext('2d'),
+            startingData = {
+              labels: [1, 2, 3, 4, 5, 6, 7,8,9,10],
+              datasets: [
+                  {
+                      fillColor: "rgba(220,220,220,0.2)",
+                      strokeColor: "rgba(220,220,220,1)",
+                      pointColor: "rgba(220,220,220,1)",
+                      pointStrokeColor: "#fff",
+                      data: JSON.parse(accxlist)
+                  },
+                  {
+                      fillColor: "rgba(151,187,205,0.2)",
+                      strokeColor: "rgba(151,187,205,1)",
+                      pointColor: "rgba(151,187,205,1)",
+                      pointStrokeColor: "#fff",
+                      data: JSON.parse(accylist)
+                  },
+                  {
+                      fillColor: "rgba(84, 249, 183, 0.2)",
+                      strokeColor: "rgba(151,187,205,1)",
+                      pointColor: "rgba(151,187,205,1)",
+                      pointStrokeColor: "#fff",
+                      data: JSON.parse(acczlist)
+                  }
+              ]
+            },
+            latestLabel = startingData.labels[9];
+
+    // Reduce the animation steps for demo clarity.
+        var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+        return myLiveChart;
+        }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+
 function renderLiveDashboard(){
     //render the charts for the first time
     BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
-
+    TemperatureChart.getInstance();
+    AccelerometerChart.getInstance();
+    setInterval(gauge_battery_ajax, 5000)
     //make an ajax request every x milliseconds to get new data
-    setInterval(gauge_battery_ajax(), 500)
 
-    renderLineChartTemperature();
+    //setInterval(gauge_battery_ajax(), 5000)
+
+    //renderLineChartTemperature();
 
 
 }
@@ -299,6 +421,7 @@ function renderLiveDashboard(){
 $(document).ready(function(){
     renderToggle();
     renderLiveDashboard();
+
 
     //setInterval(battery_live_ajaxcall, 500); //15 min * 60 sec * 1000 (for milliseconds)   for 15 minutes
 
@@ -308,7 +431,7 @@ $(document).ready(function(){
     //BatteryGauge.getInstance().set(100);
     //HumidityGauge.getInstance().set(40);
     //PressureGauge.getInstance().set(90);
-    renderLineChartAccelerometer();
+    //renderLineChartAccelerometer();
 
 
 

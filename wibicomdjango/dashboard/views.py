@@ -28,11 +28,22 @@ def onedevice_dashboard(request, id):
     #loop over ten entries, a chaque temperature last_ten_entries[i].temperature je append ca dans une liste [3,4,2]
 
     temperaturelist = []
+    accxlist = []
+    accylist = []
+    acczlist = []
     for entry in last_ten_entries:
-        temperaturelist.append(entry.temperature)
+        temperaturelist.append(entry.temperature) #this list starts with the latest data and ends with oldest data, we want contrary
+        accxlist.append(entry.accx)
+        accylist.append(entry.accy)
+        acczlist.append(entry.accz)
 
     print "****************temperaturelist**"
     print temperaturelist
+
+    temperaturelist= temperaturelist[::-1] #reverse the list so that starts with oldest data
+    accxlist = accxlist[::-1]
+    accylist = accylist[::-1]
+    acczlist = acczlist[::-1]
 
 
     last_entry = device_entries[len(device_entries)-1]
@@ -49,8 +60,10 @@ def onedevice_dashboard(request, id):
                                                                               "device_entries": device_entries,
                                                                               "listOfDevices": listOfDevices,
                                                                               "live_battery" : live_battery,
-                                                                              "temperaturelist": temperaturelist
-
+                                                                              "temperaturelist": temperaturelist,
+                                                                              "accxlist": accxlist,
+                                                                              "accylist": accylist,
+                                                                              "acczlist": acczlist,
                                                                               })
 @login_required()
 def onedevice_dashboard_ajax(request, id):
@@ -63,7 +76,15 @@ def onedevice_dashboard_ajax(request, id):
     live_battery = last_entry.battery
     live_humidity = last_entry.humidity
     live_pressure = last_entry.pressure
+    live_temperature = last_entry.temperature
+    live_accx = last_entry.accx
+    live_accy = last_entry.accy
+    live_accz = last_entry.accz
     print last_entry.datetime
+    print "***********************************"
+    print live_accx
+    print live_accy
+    print live_accz
 
     response_data = {}
     try:
@@ -72,6 +93,10 @@ def onedevice_dashboard_ajax(request, id):
         response_data['live_battery'] = live_battery
         response_data['live_humidity'] = live_humidity
         response_data['live_pressure'] = live_pressure
+        response_data['live_temperature'] = live_temperature
+        response_data['live_accx']= live_accx
+        response_data['live_accy']= live_accy
+        response_data['live_accz']= live_accz
     except:
         response_data['result'] = "Failure"
         response_data['message'] = "it did not work"

@@ -35,12 +35,12 @@
                     <div class="col-md-4">
                         <canvas id="humiditygauge" class = "gauge"></canvas>
                         <label class = "labels"> Humidity </label>
-                        <p id = "humidityvalue" class = "gaugevalue">50</p>
+                        <p id = "humidityvalue" class = "gaugevalue"></p>
                     </div>
                     <div class="col-md-4">
                         <canvas id="pressuregauge" class="gauge" ></canvas>
                         <label class = "labels"> Pressure </label>
-                        <p id = "pressurevalue" class = "gaugevalue">40</p>
+                        <p id = "pressurevalue" class = "gaugevalue"></p>
                     </div>
 
                 </div>
@@ -92,6 +92,10 @@
     <script> //need to secure these later on
     var deviceId = "{{deviceId}}";
     var temperaturelist = "{{temperaturelist}}";
+    var accxlist = "{{accxlist}}";
+    var accylist = "{{accylist}}";
+    var acczlist = "{{acczlist}}";
+
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
