@@ -1,0 +1,106 @@
+{% extends 'layout/layout1.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/oneDevice_dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+    {% include "navbar_loggedin.html" %}
+
+    {% include "userprofile/leftside_device_list.html" %}
+    <div class = "container">
+
+            <div class = "row">
+                <div class="col-md-12">
+                    <div class = "pull-right">
+                    <input id = "toggle-event" class = "pull-right" type="checkbox" checked data-toggle="toggle"
+                           data-on="Live<br>Dashboard" size = "large" data-off="Historical<br>Dashboard"
+                           data-onstyle="success" data-offstyle="info" data-width="130" >
+                    </div>
+                </div>
+            </div>
+            <div id = "gaugeblock">
+                <div class = "row">
+                    <div class="col-md-4">
+                           <canvas id="batterygauge" class = "gauge" ></canvas>
+                           <label class = "labels"> Battery Level </label>
+                           <p id = "batteryvalue" class = "gaugevalue"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas id="humiditygauge" class = "gauge"></canvas>
+                        <label class = "labels"> Humidity </label>
+                        <p id = "humidityvalue" class = "gaugevalue">50</p>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas id="pressuregauge" class="gauge" ></canvas>
+                        <label class = "labels"> Pressure </label>
+                        <p id = "pressurevalue" class = "gaugevalue">40</p>
+                    </div>
+
+                </div>
+            </div>
+            <div id = "linechartblock">
+                <canvas id="acccelerometerlinechart" width="600" height="400"></canvas>
+                <canvas id="temperaturelinechart" width="600" height="400"></canvas>
+            </div>
+    </div>
+
+    <div id="console-event"></div>
+
+    <div id = "devicedata">
+        <!--
+        <h2>Hi {{full_name}} ! Here is your device data</h2>
+        <p> {{live_battery}} </p>
+
+        <p> Real live battery </p>
+        <div id = "output">
+        </div>
+
+
+        <div id = "batterySection" class = "dataSection">
+		<p> Battery level </p>
+		<p id = "batteryValue" class = "values"></p>
+		<canvas id="pieBattery" width="250" height="250"></canvas>
+	    </div>-->
+
+
+
+        <div id="graphdiv"></div>
+
+
+        <p> {{deviceId}} </p>
+
+        <p> {{deviceNb}} </p>
+        <p> {{deviceType}} </p>
+        <p> {{deviceName}} </p>
+        {% for entry in device_entries %}
+            <li>{{entry}}</li>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
+
+{% block content1 %}
+<!--Put the script at the end of the body for speed-->
+    <script> //need to secure these later on
+    var deviceId = "{{deviceId}}";
+    var temperaturelist = "{{temperaturelist}}";
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+    <script src = "http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <script src = "http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined-dev.js"></script>
+    <script src = "{% static 'js/bootstrap-toggle.min.js' %}"></script>
+    <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+    <script src = "{% static 'js/oneDevice_dashboard.js' %}"></script>
+
+
+{% endblock content1 %}

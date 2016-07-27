@@ -1,5 +1,4 @@
 function renderPieBattery(live_battery){
-    console.log("hello")
 
     console.log(live_battery);
     console.log(typeof(live_battery));
@@ -24,35 +23,38 @@ function renderPieBattery(live_battery){
 	var context = document.getElementById('pieBattery').getContext('2d');
 	var skillsChart = new Chart(context).Doughnut(pieData, options );
 }
-function renderGaugeBattery(live_battery){
+function renderGaugeBattery(){
 var opts = {
   lines: 12, // The number of lines to draw
-  angle: 0.15, // The length of each line
-  lineWidth: 0.44, // The line thickness
- 
-  colorStart: '#6FADCF',   // Colors
-  colorStop: '#8FC0DA',    // just experiment with them
-  strokeColor: '#E0E0E0'   // to see which ones work best for you
+  angle: 0.3, // The length of each line
+  lineWidth: 0.1, // The line thickness
+
+  limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
+  colorStart: '#006EAB',   // Colors
+  colorStop: '#006EAB',    // just experiment with them
+  strokeColor: '#FFFFFF',   // to see which ones work best for you
+  generateGradient: true
 };
 var target = document.getElementById('foo'); // your canvas element
-var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-gauge.value = 1250; // set actual value
-gauge.maxValue = 3000; // set max gauge value
+var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
+gauge.maxValue = 100; // set max gauge value
+gauge.animationSpeed = 15; // set animation speed (32 is default value)
+gauge.set(41); // set actual value
 
 }
 
-
 function ajaxcall(){
-    console.log("hi");
     $.ajax({
-        url: "/accounts/loggedin/94/renderdata/",
+
+        url: "/accounts/loggedin/" + deviceId + "/renderdata/",
         type : "GET", // http method
         datatype: "json",
         success: function (json) {
             $('#output').html(json.message); //take the div output and put the json message in it
             var live_battery = json.message;
             renderPieBattery(live_battery);
-            renderGaugeBattery(live_battery);
+
+
         }
 
           // handle a successful response
@@ -71,10 +73,71 @@ function ajaxcall(){
     });
 }
 
+function ajaxcallforlineChart(){
+    $.ajax({
+        url: "/accounts/loggedin/" + deviceId + "/csvoutput/",
+        type : "GET", // http method
+        datatype : "text/csv",
+        success: function(response){
+            console.log(response);
+            g2 = new Dygraph(
+            document.getElementById("graphdiv"),
+            response)
+         }
+    });
+}
+
+var Gauge = (function () {
+    var instance;
+
+    function createInstance() {
+        var opts = {
+          lines: 12, // The number of lines to draw
+          angle: 0.3, // The length of each line
+          lineWidth: 0.1, // The line thickness
+
+          limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
+          colorStart: '#006EAB',   // Colors
+          colorStop: '#006EAB',    // just experiment with them
+          strokeColor: '#FFFFFF',   // to see which ones work best for you
+          generateGradient: true
+        };
+        var target = document.getElementById('foo'); // your canvas element
+        var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 100; // set max gauge value
+        gauge.animationSpeed = 15; // set animation speed (32 is default value)
+        gauge.set(0); // set actual value
+        return gauge;
+        }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+function renderToggle(){
+    $('#toggle-event').change(function() {
+      $('#console-event').html('Toggle: ' + $(this).prop('checked'))
+    })
+
+}
+
 $(document).ready(function(){
-    setInterval(ajaxcall, 500) //15 min * 60 sec * 1000 (for milliseconds)   for 15 minutes
-	//renderPieBattery();
+    renderToggle();
+    setInterval(ajaxcall, 500); //15 min * 60 sec * 1000 (for milliseconds)   for 15 minutes
+    ajaxcallforlineChart();
+    //renderGaugeBattery();
+
+    Gauge.getInstance().set(60);
+    Gauge.getInstance().set(100);
 
 
 
-})
+
+});
+

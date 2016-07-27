@@ -32,6 +32,9 @@ urlpatterns = [
     url(r'^accounts/auth/$', 'wibicomdjango.views.auth_view'),
     url(r'^accounts/logout/$', 'wibicomdjango.views.logout', name = 'logout'),
     url(r'^accounts/loggedin/$', 'wibicomdjango.views.loggedin', name = 'loggedin'),
+
+    url(r'^accounts/loggedin/', include('dashboard.urls')),
+
     url(r'^accounts/invalid/$', 'wibicomdjango.views.invalid_login'),
 
     #these are used for the registration
