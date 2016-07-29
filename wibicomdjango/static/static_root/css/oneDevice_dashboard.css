@@ -20,7 +20,13 @@ body {
 }
 
 #linechartblock{
-    margin-left: 60px;
+    margin-left: 80px;
+}
+
+.panel-title{
+    font-size: 24px;
+    font-family: 'Josefin Sans', serif;
+
 }
 
 .labels{
@@ -31,13 +37,7 @@ body {
 
 }
 
-.lineChartLabels{
-    text-align: left;
-    font-size: 24px;
-    font-family: 'Josefin Sans', serif;
-    vertical-align: top;
 
-}
 
 .gaugevalue{
     text-align: center;
@@ -56,6 +56,8 @@ body {
     width: 100%;
 
 }
+
+
 /*
 #acclc{
     border-style: solid;

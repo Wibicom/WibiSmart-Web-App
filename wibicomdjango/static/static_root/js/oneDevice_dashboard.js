@@ -18,6 +18,16 @@ var counteracc = (function () {
     }
 }());
 
+var counterLabels = (function () {
+    var n = 10;
+
+    return function () {
+        n++;
+
+        return n;
+    };
+}());
+
 function renderPieBattery(live_battery){
 
     //console.log(live_battery);
@@ -194,37 +204,6 @@ var PressureGauge = (function () {
 })();
 
 
-function renderLineChartAccelerometer(){
-   var barData = {
-    labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-    datasets: [
-			{
-				fillColor: "rgba(220,220,220,0)",
-				strokeColor: "rgba(63, 191, 70,1)",
-				data: [
-					11,
-					2,
-					3,
-					4,
-					6,
-					9,
-					3
-					]
-			}
-		]
-	};
-
-	var options = {
-		scaleBeginAtZero: false
-
-	};
-
-	var context = document.getElementById('acccelerometerlinechart').getContext('2d');
-	var pressureLineChart = new Chart(context).Line(barData, options);
-}
-
-
-
 
 
 function renderToggle(){
@@ -253,6 +232,8 @@ var TemperatureQueue = (function () {
 
     function createInstance() {
         var queue = [];
+        console.log("hey");
+        console.log(JSON.parse(temperaturelist));
         for(var i = 0; i < JSON.parse(temperaturelist).length; i++) {
             queue.push(JSON.parse(temperaturelist)[i]);
         }
@@ -269,6 +250,90 @@ var TemperatureQueue = (function () {
         }
     };
 })();
+
+var AccxQueue = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [];
+        console.log(JSON.parse(accxlist));
+        for(var i = 0; i < JSON.parse(accxlist).length; i++) {
+            queue.push(JSON.parse(accxlist)[i]);
+        }
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+var AccyQueue = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [];
+        for(var i = 0; i < JSON.parse(accylist).length; i++) {
+            queue.push(JSON.parse(accylist)[i]);
+        }
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+var AcczQueue = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [];
+        for(var i = 0; i < JSON.parse(acczlist).length; i++) {
+            queue.push(JSON.parse(acczlist)[i]);
+        }
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+
+var LabelQueue = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [1,2,3,4,5,6,7,8,9,10];
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
 
 function gauge_battery_ajax(){
     //console.log("im in ajax")
@@ -288,31 +353,36 @@ function gauge_battery_ajax(){
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
 
-            //je dois initialement mettre counter a 10 et incrementer a chaque fois sans perdre la valeur
-            TemperatureChart.getInstance().addData([json.live_temperature], counter());
-            // Remove the first point so we dont just add values forever
-            TemperatureChart.getInstance().removeData();
-
-
             TemperatureQueue.getInstance().push(json.live_temperature);
             TemperatureQueue.getInstance().shift();
-            //console.log(TemperatureQueue.getInstance().length);
 
-            var min = Math.min.apply(Math, TemperatureQueue.getInstance())
+            AccxQueue.getInstance().push(json.live_accx);
+            AccxQueue.getInstance().shift();
 
-            TemperatureChart.getInstance().options.scaleOverride = true;
-            TemperatureChart.getInstance().options.animation = true;
-            TemperatureChart.getInstance().options.scaleStartValue = Math.round(min-5);
-            //TemperatureChart.getInstance().render();
+            AccyQueue.getInstance().push(json.live_accy);
+            AccyQueue.getInstance().shift();
+
+            AcczQueue.getInstance().push(json.live_accz);
+            AcczQueue.getInstance().shift();
+
+            LabelQueue.getInstance().push(counterLabels());
+            LabelQueue.getInstance().shift();
+
+            //var maximum = Math.max.apply(Math, TemperatureQueue.getInstance());
+            //var minimum = Math.min.apply(Math, TemperatureQueue.getInstance());
+            //console.log(TemperatureQueue.getInstance());
+            //console.log(maximum);
+            //console.log(minimum);
+
+            TemperatureChart.getInstance().data.datasets[0].data = TemperatureQueue.getInstance();
+            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.min = -20;
+            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.max = 30;
             TemperatureChart.getInstance().update();
-            //console.log("ok");
-            //console.log(Math.round(min-5));
 
-            AccelerometerChart.getInstance().addData([json.live_accx, json.live_accy, json.live_accz], counteracc());
-            // Remove the first point so we dont just add values forever
-            AccelerometerChart.getInstance().removeData();
-
-
+            AccelerometerChart.getInstance().data.datasets[0].data = AccxQueue.getInstance();
+            AccelerometerChart.getInstance().data.datasets[1].data =  AccyQueue.getInstance();
+            AccelerometerChart.getInstance().data.datasets[2].data =  AcczQueue.getInstance();
+            AccelerometerChart.getInstance().update();
 
         }
 
@@ -357,38 +427,41 @@ var TemperatureChart = (function () {
     var instance;
     var max = Math.max.apply(Math, TemperatureQueue.getInstance());
     var min = Math.min.apply(Math, TemperatureQueue.getInstance());
+    //console.log(LabelQueue.getInstance());
 
     function createInstance() {
-        var canvas = document.getElementById('temperaturelinechart'),
+        //separator
+        var config = {
+                type: 'line',
+                data: {
+                    labels: LabelQueue.getInstance(),
+                    datasets: [{
+                        label: "Temperature Evolution",
+                        backgroundColor: "rgba(84, 249, 183, 0.2)",
+                        borderColor: "rgba(151,187,205,1)",
+                        pointBorderColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        data: JSON.parse(temperaturelist),
 
-        ctx = canvas.getContext('2d'),
-            startingData = {
-              labels: [1, 2, 3, 4, 5, 6, 7,8,9,10],
-              datasets: [
+                    }]
+                },
+                options: {
+                  animation: false,
+                  scales: {
+                        yAxes: [{
+                          ticks: {
+                            min: -30,
+                            max: 30
+                          }
+                        }]
+                    }
+                }
+            };
 
-                  {
-                      fillColor: "rgba(151,187,205,0.2)",
-                      strokeColor: "rgba(151,187,205,1)",
-                      pointColor: "rgba(151,187,205,1)",
-                      pointStrokeColor: "#fff",
-                      data: JSON.parse(temperaturelist)
-                  }
-              ]
-            },
+        var ctx = document.getElementById("temperaturelinechart").getContext("2d");
+        var myChart = new Chart(ctx, config);
 
-            options = {
-                animation :false,
-                scaleOverride: true,
-                scaleSteps: 15,
-                scaleStepWidth: 5,
-                scaleStartValue : Math.round((min-5))
-
-            },
-            latestLabel = startingData.labels[9];
-
-        // Reduce the animation steps for demo clarity.
-        var myLiveChart = new Chart(ctx).Line(startingData, options);
-        return myLiveChart;
+        return myChart;
         }
 
     return {
@@ -423,45 +496,68 @@ var AccelerometerChart = (function () {
     var instance;
 
     function createInstance() {
-        var canvas = document.getElementById('acccelerometerlinechart'),
 
-            ctx = canvas.getContext('2d'),
-            startingData = {
-              labels: [1, 2, 3, 4, 5, 6, 7,8,9,10],
-              datasets: [
-                  {
-                      fillColor: "rgba(220,220,220,0.2)",
-                      strokeColor: "rgba(220,220,220,1)",
-                      pointColor: "rgba(220,220,220,1)",
-                      pointStrokeColor: "#fff",
-                      data: JSON.parse(accxlist)
-                  },
-                  {
-                      fillColor: "rgba(151,187,205,0.2)",
-                      strokeColor: "rgba(151,187,205,1)",
-                      pointColor: "rgba(151,187,205,1)",
-                      pointStrokeColor: "#fff",
-                      data: JSON.parse(accylist)
-                  },
-                  {
-                      fillColor: "rgba(84, 249, 183, 0.2)",
-                      strokeColor: "rgba(151,187,205,1)",
-                      pointColor: "rgba(151,187,205,1)",
-                      pointStrokeColor: "#fff",
-                      data: JSON.parse(acczlist)
-                  }
-              ]
+    //space alloc
+        var config = {
+            type: 'line',
+            data: {
+                labels: LabelQueue.getInstance(),
+                datasets: [{
+                    label: "X axis",
+                    backgroundColor: "rgba(220,220,220,0.2)",
+                    borderColor: "rgba(220,220,220,1)",
+                    pointBorderColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    data: JSON.parse(accxlist)
+
+                },
+                {
+                    label: "Y axis",
+                    backgroundColor: "rgba(151,187,205,0.2)",
+                    borderColor: "rgba(151,187,205,1)",
+                    pointBorderColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: JSON.parse(accylist)
+
+                },
+                {
+                    label : "Z axis",
+                    backgroundColor: "rgba(84, 249, 183, 0.2)",
+                    borderColor: "rgba(151,187,205,1)",
+                    pointBorderColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: JSON.parse(acczlist)
+
+                }
+
+                ]
             },
-            options = {
-                animation :false,
+            options: {
+              title: {
+                display: true,
+                text: "Accelerometer data",
+                fontSize: 24,
+                fontFamily: 'Josefin Sans',
+                padding: 20
+              },
+              legend: {
+                position: 'bottom'
+              },
+              animation: false,
+              scales: {
+                    yAxes: [{
+                      ticks: {
+                        min: -2000,
+                        max: 2000
+                      }
+                    }]
+                }
+            }
+        };
 
-            },
-
-            latestLabel = startingData.labels[9];
-
-    // Reduce the animation steps for demo clarity.
-        var myLiveChart = new Chart(ctx).Line(startingData, options);
-        return myLiveChart;
+        var ctx = document.getElementById("acccelerometerlinechart").getContext("2d");
+        var myChart = new Chart(ctx, config);
+        return myChart;
         }
 
     return {
@@ -476,24 +572,17 @@ var AccelerometerChart = (function () {
 
 
 function renderLiveDashboard(){
-    //render the charts for the first time
-
-
 
     BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
     TemperatureQueue.getInstance();
+    LabelQueue.getInstance();
 
     TemperatureChart.getInstance();
     AccelerometerChart.getInstance();
     setInterval(gauge_battery_ajax, 2000);
 
-    //make an ajax request every x milliseconds to get new data
-
-    //setInterval(gauge_battery_ajax(), 5000)
-
-    //renderLineChartTemperature();
 
 
 }
@@ -540,7 +629,7 @@ function postRequestSensorDataSender(){
 $(document).ready(function(){
     renderToggle();
 
-    //renderLiveDashboard();
+    renderLiveDashboard();
 
 
 
