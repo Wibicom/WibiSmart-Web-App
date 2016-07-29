@@ -46,8 +46,30 @@
                 </div>
             </div>
             <div id = "linechartblock">
-                <canvas id="acccelerometerlinechart" width="600" height="400"></canvas>
-                <canvas id="temperaturelinechart" width="600" height="400"></canvas>
+
+            <div class = "row">
+                <div class="col-md-8">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Accelerometer data</h3>
+                      </div>
+                      <div class="panel-body">
+                        <canvas id="acccelerometerlinechart" width="650" height="350"></canvas>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class = "row">
+                     <label class="lineChartLabels"> Temperature data </label>
+                </div>
+                <div class = "row">
+                    <canvas id="temperaturelinechart" width="600" height="400"></canvas>
+                </div>
+            </div>
+
+
             </div>
     </div>
 
@@ -73,15 +95,16 @@
 
         <div id="graphdiv"></div>
 
-
+        <!--
         <p> {{deviceId}} </p>
 
         <p> {{deviceNb}} </p>
         <p> {{deviceType}} </p>
         <p> {{deviceName}} </p>
+
         {% for entry in device_entries %}
             <li>{{entry}}</li>
-        {% endfor %}
+        {% endfor %}-->
     </div>
 
 

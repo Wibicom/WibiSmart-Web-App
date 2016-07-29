@@ -80,11 +80,11 @@ def onedevice_dashboard_ajax(request, id):
     live_accx = last_entry.accx
     live_accy = last_entry.accy
     live_accz = last_entry.accz
-    print last_entry.datetime
-    print "***********************************"
-    print live_accx
-    print live_accy
-    print live_accz
+    #print last_entry.datetime
+    #print "***********************************"
+    #print live_accx
+    #print live_accy
+    #print live_accz
 
     response_data = {}
     try:
@@ -110,13 +110,13 @@ def csv_output(request, id): # this is the device id that is passed here
 
     device = Device.objects.get(id=id) # get the device that is passed in
     device_entries = DeviceEntry.objects.filter(device_id=device)[:15] # get the entries of this device
-    print len(device_entries)
+    #print len(device_entries)
     datetimes = device_entries.values('datetime')
-    print len(datetimes)
+    #print len(datetimes)
 
     battery_values = device_entries.values('battery')
-    print len(battery_values)
-    print battery_values
+    #print len(battery_values)
+    #print battery_values
 
     writer = csv.writer(response)
 

@@ -177,7 +177,7 @@ var PressureGauge = (function () {
         };
         var target = document.getElementById('pressuregauge'); // your canvas element
         var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 100; // set max gauge value
+        gauge.maxValue = 1500; // set max gauge value
         gauge.animationSpeed = 15; // set animation speed (32 is default value)
         gauge.set(0); // set actual value
         return gauge;
@@ -248,8 +248,30 @@ function renderToggle(){
 }
 
 
+var TemperatureQueue = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [];
+        for(var i = 0; i < JSON.parse(temperaturelist).length; i++) {
+            queue.push(JSON.parse(temperaturelist)[i]);
+        }
+        console.log(queue);
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
 function gauge_battery_ajax(){
-console.log("im in ajax")
+    //console.log("im in ajax")
 
     $.ajax({
 
@@ -262,6 +284,7 @@ console.log("im in ajax")
             $('#pressurevalue').html(json.live_pressure);
 
             BatteryGauge.getInstance().set(json.live_battery);
+            console.log(json.live_battery);
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
 
@@ -270,9 +293,26 @@ console.log("im in ajax")
             // Remove the first point so we dont just add values forever
             TemperatureChart.getInstance().removeData();
 
+
+            TemperatureQueue.getInstance().push(json.live_temperature);
+            TemperatureQueue.getInstance().shift();
+            //console.log(TemperatureQueue.getInstance().length);
+
+            var min = Math.min.apply(Math, TemperatureQueue.getInstance())
+
+
+
+
+            //TemperatureChart.getInstance().render();
+
+            //console.log("ok");
+            //console.log(Math.round(min-5));
+
             AccelerometerChart.getInstance().addData([json.live_accx, json.live_accy, json.live_accz], counteracc());
             // Remove the first point so we dont just add values forever
             AccelerometerChart.getInstance().removeData();
+
+
 
         }
 
@@ -296,10 +336,11 @@ ctx = canvas.getContext('2d'),
           }
       ]
     },
+
     latestLabel = startingData.labels[9];
 
 // Reduce the animation steps for demo clarity.
-var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+var myLiveChart = new Chart(ctx).Line(startingData, {animation:false});
 
 
 setInterval(function(){
@@ -314,6 +355,8 @@ setInterval(function(){
 
 var TemperatureChart = (function () {
     var instance;
+    var max = Math.max.apply(Math, TemperatureQueue.getInstance());
+    var min = Math.min.apply(Math, TemperatureQueue.getInstance());
 
     function createInstance() {
         var canvas = document.getElementById('temperaturelinechart'),
@@ -332,10 +375,19 @@ var TemperatureChart = (function () {
                   }
               ]
             },
+
+            options = {
+                animation :false,
+                scaleOverride: true,
+                scaleSteps: 15,
+                scaleStepWidth: 5,
+                scaleStartValue : Math.round((min-5))
+
+            },
             latestLabel = startingData.labels[9];
 
         // Reduce the animation steps for demo clarity.
-        var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+        var myLiveChart = new Chart(ctx).Line(startingData, options);
         return myLiveChart;
         }
 
@@ -349,6 +401,23 @@ var TemperatureChart = (function () {
     };
 })();
 
+function startValueAccelerometerChart(){
+    var minx = Math.min.apply(Math,JSON.parse(accxlist));
+    var miny = Math.min.apply(Math,JSON.parse(accylist));
+    var minz = Math.min.apply(Math,JSON.parse(acczlist));
+    var min = Math.min(minx,miny,minz);
+    return min;
+
+}
+
+function endValueAccelerometerChart(){
+    var maxx = Math.max.apply(Math,JSON.parse(accxlist));
+    var maxy = Math.max.apply(Math,JSON.parse(accylist));
+    var maxz = Math.max.apply(Math,JSON.parse(acczlist));
+    var max = Math.max(maxx,maxy,maxz);
+    return max;
+
+}
 
 var AccelerometerChart = (function () {
     var instance;
@@ -383,10 +452,15 @@ var AccelerometerChart = (function () {
                   }
               ]
             },
+            options = {
+                animation :false,
+
+            },
+
             latestLabel = startingData.labels[9];
 
     // Reduce the animation steps for demo clarity.
-        var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+        var myLiveChart = new Chart(ctx).Line(startingData, options);
         return myLiveChart;
         }
 
@@ -403,12 +477,18 @@ var AccelerometerChart = (function () {
 
 function renderLiveDashboard(){
     //render the charts for the first time
+
+
+
     BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
+    TemperatureQueue.getInstance();
+
     TemperatureChart.getInstance();
     AccelerometerChart.getInstance();
-    setInterval(gauge_battery_ajax, 5000)
+    setInterval(gauge_battery_ajax, 2000);
+
     //make an ajax request every x milliseconds to get new data
 
     //setInterval(gauge_battery_ajax(), 5000)
@@ -418,21 +498,49 @@ function renderLiveDashboard(){
 
 }
 
+function dateGenerator(){
+    var date = new Date();
+    var milli = (date.getMilliseconds()*60/999).toFixed(0);
+    myDate = "Jul " + date.getDate() + ", " + date.getFullYear() + " 9:" + date.getMinutes()+ ":" + milli + " AM";
+    //console.log(myDate);
+    //console.log(myDate.toString());
+    return myDate.toString();
+}
+
+/*
+function postRequestSensorDataSender(){
+    var formData = {
+        "token" : "c69fa188bfd67ff4ba491623dd7b4263e9957397",
+        "deviceNb" : "B0:B4:48:E4:BC:01",
+        "deviceType": "ENVIRO",
+        "datetime": dateGenerator()  ,
+        "pressure": ((Math.random() * (1500 - 1000) + 1000).toFixed(1)).toString(),
+        "humidity": ((Math.random() * (100)).toFixed(0)).toString(),
+        "temperature": ((Math.random() * (30 - (-30)) + (-30)).toFixed(1)).toString(),
+        "battery": ((Math.random() * (100)).toFixed(0)).toString(),
+        "light": "0",
+        "accx": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString(),
+        "accy": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString(),
+        "accz": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString()
+        }
+
+    formData= JSON.stringify(formData);
+    console.log(formData),
+
+    $.ajax({
+        url: "/receiveandroiddata/",
+        type : "POST", // http method
+        data: formData,
+
+    });
+
+}*/
+
+
 $(document).ready(function(){
     renderToggle();
+
     renderLiveDashboard();
-
-
-    //setInterval(battery_live_ajaxcall, 500); //15 min * 60 sec * 1000 (for milliseconds)   for 15 minutes
-
-    //renderGaugeBattery();
-
-    //BatteryGauge.getInstance().set(60);
-    //BatteryGauge.getInstance().set(100);
-    //HumidityGauge.getInstance().set(40);
-    //PressureGauge.getInstance().set(90);
-    //renderLineChartAccelerometer();
-
 
 
 

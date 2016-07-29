@@ -1,6 +1,6 @@
 body {
     margin-top : 70px;
-    margin-left : 400px
+    margin-left : 170px
 }
 
 #devicedata{
@@ -8,5 +8,58 @@ body {
 }
 
 .toggle btn btn-success{
-    float:right; 
+    float:right;
 }
+
+#gaugeblock{
+
+    margin-top : 30px;
+    margin-left: 50px;
+    height: 230px;
+
+}
+
+#linechartblock{
+    margin-left: 60px;
+}
+
+.labels{
+    text-align: center;
+    width: 100%;
+    font-size: 24px;
+    font-family: 'Josefin Sans', serif;
+
+}
+
+.lineChartLabels{
+    text-align: left;
+    font-size: 24px;
+    font-family: 'Josefin Sans', serif;
+    vertical-align: top;
+
+}
+
+.gaugevalue{
+    text-align: center;
+    font-family: 'Josefin Sans', serif;
+    margin-top: -150px;
+    font-size: 26px;
+
+}
+
+.gauge{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 100%;
+
+}
+/*
+#acclc{
+    border-style: solid;
+
+}*/
+
+
