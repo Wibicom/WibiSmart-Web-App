@@ -19,6 +19,7 @@ from userprofile.models import DeviceEntry
 @login_required()
 def onedevice_dashboard(request, id):
     #this generates the dashboard
+    print "im in here"
 
     full_name = request.user.username
     device = Device.objects.get(id = id)
@@ -26,27 +27,35 @@ def onedevice_dashboard(request, id):
     #find the last 10 entries
     last_ten_entries = device_entries.reverse()[:10] #i would have liked a function such as latest() that returns last 10 objects but doesn't seem to exist
     #loop over ten entries, a chaque temperature last_ten_entries[i].temperature je append ca dans une liste [3,4,2]
+    last_thirty_entries = device_entries.reverse()[:30]
 
     temperaturelist = []
     accxlist = []
     accylist = []
     acczlist = []
+
+    print last_ten_entries
     for entry in last_ten_entries:
-        temperaturelist.append(entry.temperature) #this list starts with the latest data and ends with oldest data, we want contrary
+        temperaturelist.append(entry.temperature)
+
+    for entry in last_thirty_entries:
+        #this list starts with the latest data and ends with oldest data, we want contrary
         accxlist.append(entry.accx)
         accylist.append(entry.accy)
         acczlist.append(entry.accz)
 
-    print "****************temperaturelist**"
-    print temperaturelist
+
 
     temperaturelist= temperaturelist[::-1] #reverse the list so that starts with oldest data
     accxlist = accxlist[::-1]
     accylist = accylist[::-1]
     acczlist = acczlist[::-1]
 
+    print (len(device_entries)-1)
+    last_entry = device_entries.latest('datetime')
+    print " #&@&@&@&@&@&"
+    print last_entry
 
-    last_entry = device_entries[len(device_entries)-1]
     live_battery = last_entry.battery
 
     userid = request.user.pk
@@ -67,6 +76,7 @@ def onedevice_dashboard(request, id):
                                                                               })
 @login_required()
 def onedevice_dashboard_ajax(request, id):
+    print "im in ajax"
     #rendering data ajax call
     device = Device.objects.get(id = id)
     device_entries = DeviceEntry.objects.filter(device_id=device)
@@ -110,9 +120,9 @@ def csv_output(request, id): # this is the device id that is passed here
 
     device = Device.objects.get(id=id) # get the device that is passed in
     device_entries = DeviceEntry.objects.filter(device_id=device)[:15] # get the entries of this device
-    #print len(device_entries)
+
     datetimes = device_entries.values('datetime')
-    #print len(datetimes)
+
 
     battery_values = device_entries.values('battery')
     #print len(battery_values)

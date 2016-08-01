@@ -148,7 +148,7 @@ def user_profile(request):
         device_form = DeviceForm()
         edit_profile_form = EditProfileForm(instance = user)
         edit_device_form = EditDeviceForm(user=request.user.pk) #added
-        edit_device_form.fields['devices'].choices = [(x.id, str(x)) for x in Device.objects.filter(user=request.user.pk)] #added
+        edit_device_form.fields['devices'].choices = [(x.id, x) for x in Device.objects.filter(user=request.user.pk)] #added
 
     args = {}
     args['edit_profile_form'] = edit_profile_form

@@ -58,6 +58,10 @@ class EditDeviceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(EditDeviceForm, self).__init__(*args, **kwargs)
-        self.fields['devices'] = forms.ChoiceField(choices=[(x.id, str(x)) for x in Device.objects.filter(user=user)])
+        self.fields['devices'] = forms.ChoiceField(choices=[(x.id, x) for x in Device.objects.filter(user=user)])
+
+
+
+
 
 

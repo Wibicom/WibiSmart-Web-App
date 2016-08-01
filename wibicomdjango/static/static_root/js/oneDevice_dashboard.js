@@ -28,6 +28,18 @@ var counterLabels = (function () {
     };
 }());
 
+var counterLabelsAccelerometer = (function () {
+    var n = 10;
+
+    return function () {
+        n++;
+
+        return n;
+    };
+}());
+
+
+
 function renderPieBattery(live_battery){
 
     //console.log(live_battery);
@@ -178,7 +190,11 @@ var PressureGauge = (function () {
           lines: 12, // The number of lines to draw
           angle: 0.3, // The length of each line
           lineWidth: 0.1, // The line thickness
-
+          pointer: {
+            length: 1, // The radius of the inner circle
+            strokeWidth: 0.055, // The rotation offset
+            color: '#000000' // Fill color
+            },
           limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
           colorStart: '#006EAB',   // Colors
           colorStop: '#006EAB',    // just experiment with them
@@ -256,7 +272,7 @@ var AccxQueue = (function () {
 
     function createInstance() {
         var queue = [];
-        console.log(JSON.parse(accxlist));
+        //console.log(JSON.parse(accxlist));
         for(var i = 0; i < JSON.parse(accxlist).length; i++) {
             queue.push(JSON.parse(accxlist)[i]);
         }
@@ -315,7 +331,6 @@ var AcczQueue = (function () {
     };
 })();
 
-
 var LabelQueue = (function () {
     var instance;
 
@@ -334,6 +349,74 @@ var LabelQueue = (function () {
     };
 })();
 
+var LabelQueueAccelerometer = (function () {
+    var instance;
+
+    function createInstance() {
+        var queue = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+        return queue;
+    }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+function render_progressbar_accelerometer(live_acc, axis){
+    var firstSegment_progress;
+    var secondSegment_progress;
+    var thirdSegment_progress;
+    if (live_acc>0) {
+        firstSegment_progress = "50%";
+        secondSegment_progress = ((live_acc/4000) * 100).toString() + "%";
+        thirdSegment_progress = (50 - ((live_acc/4000)*100)).toString + "%";
+
+
+    } else if (live_acc<0) {
+
+        firstSegment_progress = (50 - ((Math.abs(live_acc)/4000)*100)).toString() + "%";
+        secondSegment_progress = ((Math.abs(live_acc)/4000)*100).toString() + "%";
+        thirdSegment_progress = "50%";
+
+    } else {
+        firstSegment_progress = "100%";
+        secondSegment_progress = "0%";
+        thirdSegment_progress = "0%";
+    }
+    console.log("**************");
+    console.log(firstSegment_progress);
+    console.log(secondSegment_progress);
+    console.log(thirdSegment_progress);
+    switch(axis){
+        case 'x':
+            document.getElementById("firstSegment_progress_x").setAttribute("style", "width: " + firstSegment_progress);
+            document.getElementById("secondSegment_progress_x").setAttribute("style", "width: " + secondSegment_progress);
+            document.getElementById("thirdSegment_progress_x").setAttribute("style", "width: " + thirdSegment_progress);
+            break;
+        case 'y':
+            document.getElementById("firstSegment_progress_y").setAttribute("style", "width: " + firstSegment_progress);
+            document.getElementById("secondSegment_progress_y").setAttribute("style", "width: " + secondSegment_progress);
+            document.getElementById("thirdSegment_progress_y").setAttribute("style", "width: " + thirdSegment_progress);
+            break;
+        case 'z':
+            document.getElementById("firstSegment_progress_z").setAttribute("style", "width: " + firstSegment_progress);
+            document.getElementById("secondSegment_progress_z").setAttribute("style", "width: " + secondSegment_progress);
+            document.getElementById("thirdSegment_progress_z").setAttribute("style", "width: " + thirdSegment_progress);
+            break;
+    }
+
+}
+
+function render_total_acceleration (accx, accy, accz){
+    var total_acceleration = (Math.sqrt(Math.pow(accx,2)+ Math.pow(accy,2)+ Math.pow(accz,2))).toFixed(2);
+    $('#totalaccelerationvalue').html(total_acceleration + " mg");
+
+}
 
 function gauge_battery_ajax(){
     //console.log("im in ajax")
@@ -344,12 +427,20 @@ function gauge_battery_ajax(){
         type : "GET", // http method
         datatype: "json",
         success: function (json) {
-            $('#batteryvalue').html(json.live_battery); //take the div output and put the json message in it
-            $('#humidityvalue').html(json.live_humidity);
-            $('#pressurevalue').html(json.live_pressure);
+            $('#batteryvalue').html(json.live_battery + " %"); //take the div output and put the json message in it
+            $('#humidityvalue').html(json.live_humidity + "%");
+            $('#pressurevalue').html(json.live_pressure + "mb");
+            $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
+            $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
+            $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");
+
+            render_progressbar_accelerometer(parseInt(json.live_accy), 'y');
+            render_progressbar_accelerometer(parseInt(json.live_accx), 'x');
+            render_progressbar_accelerometer(parseInt(json.live_accz), 'z');
+
+            render_total_acceleration(parseInt(json.live_accx), parseInt(json.live_accy), parseInt(json.live_accz));
 
             BatteryGauge.getInstance().set(json.live_battery);
-            console.log(json.live_battery);
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
 
@@ -368,6 +459,9 @@ function gauge_battery_ajax(){
             LabelQueue.getInstance().push(counterLabels());
             LabelQueue.getInstance().shift();
 
+            LabelQueueAccelerometer.getInstance().push(counterLabelsAccelerometer());
+            LabelQueueAccelerometer.getInstance().shift();
+
             //var maximum = Math.max.apply(Math, TemperatureQueue.getInstance());
             //var minimum = Math.min.apply(Math, TemperatureQueue.getInstance());
             //console.log(TemperatureQueue.getInstance());
@@ -375,8 +469,8 @@ function gauge_battery_ajax(){
             //console.log(minimum);
 
             TemperatureChart.getInstance().data.datasets[0].data = TemperatureQueue.getInstance();
-            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.min = -20;
-            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.max = 30;
+            //TemperatureChart.getInstance().options.scales.yAxes[0].ticks.min = 20;
+            //TemperatureChart.getInstance().options.scales.yAxes[0].ticks.max = 40;
             TemperatureChart.getInstance().update();
 
             AccelerometerChart.getInstance().data.datasets[0].data = AccxQueue.getInstance();
@@ -450,8 +544,8 @@ var TemperatureChart = (function () {
                   scales: {
                         yAxes: [{
                           ticks: {
-                            min: -30,
-                            max: 30
+                            min: 20,
+                            max: 40
                           }
                         }]
                     }
@@ -501,7 +595,7 @@ var AccelerometerChart = (function () {
         var config = {
             type: 'line',
             data: {
-                labels: LabelQueue.getInstance(),
+                labels: LabelQueueAccelerometer.getInstance(),
                 datasets: [{
                     label: "X axis",
                     backgroundColor: "rgba(220,220,220,0.2)",
@@ -535,20 +629,28 @@ var AccelerometerChart = (function () {
             options: {
               title: {
                 display: true,
-                text: "Accelerometer data",
+                text: "Accelerometer data (mg)",
                 fontSize: 24,
                 fontFamily: 'Josefin Sans',
                 padding: 20
               },
               legend: {
-                position: 'bottom'
+                position: 'top'
               },
               animation: false,
               scales: {
-                    yAxes: [{
+              xAxes: [{
+                    gridLines: {
+                        display:false
+                    }
+                }],
+                yAxes: [{
+                      gridLines: {
+                        display: true
+                      },
                       ticks: {
-                        min: -2000,
-                        max: 2000
+                        min: -4000,
+                        max: 4000
                       }
                     }]
                 }

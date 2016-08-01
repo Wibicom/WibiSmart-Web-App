@@ -14,70 +14,132 @@
     {% include "navbar_loggedin.html" %}
 
     {% include "userprofile/leftside_device_list.html" %}
-    <div class = "container">
 
-            <div class = "row">
-                <div class="col-md-12">
-                    <div class = "pull-right">
-                    <input id = "toggle-event" class = "pull-right" type="checkbox" checked data-toggle="toggle"
-                           data-on="Live<br>Dashboard" size = "large" data-off="Historical<br>Dashboard"
-                           data-onstyle="success" data-offstyle="info" data-width="130" >
-                    </div>
-                </div>
-            </div>
-            <div id = "gaugeblock">
+    <div class = "container-fluid" id = "dashboard-content">
+
+            <div class = "container-fluid">
                 <div class = "row">
-                    <div class="col-md-4">
-                           <canvas id="batterygauge" class = "gauge" ></canvas>
-                           <label class = "labels"> Battery Level </label>
-                           <p id = "batteryvalue" class = "gaugevalue"></p>
+                    <div class="col-md-12">
+                        <div class = "pull-right">
+                        <input id = "toggle-event" class = "pull-right" type="checkbox" checked data-toggle="toggle"
+                               data-on="Live<br>Dashboard" size = "large" data-off="Historical<br>Dashboard"
+                               data-onstyle="success" data-offstyle="info" data-width="130" >
+                        </div>
+
                     </div>
-                    <div class="col-md-4">
-                        <canvas id="humiditygauge" class = "gauge"></canvas>
-                        <label class = "labels"> Humidity </label>
-                        <p id = "humidityvalue" class = "gaugevalue"></p>
+                </div>
+            </div>
+
+
+            <div class = "container-fluid">
+                <div class = "row">
+                    <div class="col-md-9">
+                        <div class="panel panel-info">
+                          <div class="panel-body">
+                            <canvas id="acccelerometerlinechart" height = "135"></canvas>
+                          </div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <canvas id="pressuregauge" class="gauge" ></canvas>
-                        <label class = "labels"> Pressure </label>
-                        <p id = "pressurevalue" class = "gaugevalue"></p>
+                    <div class="col-md-3">
+                        <div class = "panel panel-info">
+                            <div class="panel-body">
+                                <p class = "title">Live Acceleration</p> <!--when time comes, add a span under div id (segments) for screen reader enabling-->
+                                <div>
+                                  <p class = "data-info" id="accxvalue"></p>
+                                  <div class="progress">
+                                      <div id = "firstSegment_progress_x" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
+                                      <div id = "secondSegment_progress_x" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
+                                      <div id = "thirdSegment_progress_x" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p class = "data-info" id="accyvalue"></p>
+                                  <div class = "data_progress_y"></div>
+                                  <div class="progress">
+                                      <div id = "firstSegment_progress_y" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
+                                      <div id = "secondSegment_progress_y" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
+                                      <div id = "thirdSegment_progress_y" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p class = "data-info" id="acczvalue"></p>
+                                  <div class="progress">
+                                      <div id = "firstSegment_progress_z" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
+                                      <div id = "secondSegment_progress_z" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
+                                      <div id = "thirdSegment_progress_z" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                    <p class = "data-info">Total Acceleration: </p>
+                                    <p class="data-info" id="totalaccelerationvalue"></p>
+
+
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <div class = "row">
+                        <div class="col-md-4">
+                            <div class = "panel panel-info">
+                                <div class="panel-body">
+                                    <p id = "batteryvalue" class = "gaugevalue"></p>
+                                    <canvas id="batterygauge" class = "gauge" ></canvas>
+                                    <label class = "labels"> Battery Level </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class = "panel panel-info">
+                                <div class="panel-body">
+                                    <p id = "humidityvalue" class = "gaugevalue"></p>
+                                    <canvas id="humiditygauge" class = "gauge"></canvas>
+                                    <label class = "labels"> Humidity </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class = "panel panel-info">
+                                <div class="panel-body">
+                                    <p id = "pressurevalue" class="gaugevalue-pressure"></p>
+                                    <canvas id="pressuregauge" class="gauge" ></canvas>
+                                    <label class = "labels"> Pressure </label>
+                                </div>
+                            </div>
+                        </div>
 
                 </div>
             </div>
-            <div id = "linechartblock">
 
-            <div class = "container">
+
+
+            <div class = "container-fluid">
                 <div class = "row">
                     <div class="col-md-8">
                         <div class="panel panel-info">
                           <div class="panel-body">
-                            <canvas id="acccelerometerlinechart" height = "200"></canvas>
+                              <canvas id="temperaturelinechart" width="250" height="150"></canvas>
                           </div>
                         </div>
                     </div>
-            </div>
-
-
-
-
-
-
-            </div>
-
-            <div>
-                <div class = "row" >
-                     <label class="lineChartLabels"> Temperature data </label>
-                </div>
-                <div class = "row">
-                    <div class = "col-md-8">
-                        <canvas id="temperaturelinechart" width="250" height="150"></canvas>
-                    </div>
                 </div>
             </div>
 
 
-            </div>
+
+
+
     </div>
 
     <div id="console-event"></div>
