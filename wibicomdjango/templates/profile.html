@@ -21,8 +21,6 @@
         {% include "userprofile/profile_containers.html" %}
     </form>
 
-    <a href="/accounts/profile/editdevice/" class="btn btn-info pull-right" role="button">Edit a device</a>
-
     <div class = "myforms" > {% csrf_token %}
         {% include "userprofile/profile_container_mydevices.html" %}
     </div>
