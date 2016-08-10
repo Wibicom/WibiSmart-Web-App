@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^profile/deleteaccount$', 'userprofile.views.delete_account', name='delete_account'),
     url(r'^profile/editdevice/$', 'userprofile.views.edit_device', name='edit_device'),
 
-
+    url(r'^profile/adddevice/$', 'userprofile.views.add_device', name='add_device')
 
 
 

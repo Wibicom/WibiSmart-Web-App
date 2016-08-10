@@ -25,6 +25,7 @@ from registration.backends.simple.views import RegistrationView
 
 
 urlpatterns = [
+    url(r'^gateway/', include('gateway.urls')),
     url(r'^accounts/', include('userprofile.urls')),
 
     #these are the logins that have to do with loggging in and logging out
@@ -33,7 +34,9 @@ urlpatterns = [
     url(r'^accounts/logout/$', 'wibicomdjango.views.logout', name = 'logout'),
     url(r'^accounts/loggedin/$', 'wibicomdjango.views.loggedin', name = 'loggedin'),
 
+
     url(r'^accounts/loggedin/', include('dashboard.urls')),
+    url(r'^accounts/loggedin/', include('devicemanager.urls'), name= 'devicemanager'),
 
     url(r'^accounts/invalid/$', 'wibicomdjango.views.invalid_login'),
 
@@ -48,7 +51,7 @@ urlpatterns = [
 
     url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data'),
 
-    url(r'^api-token-auth/', views.obtain_auth_token)
+    url(r'^api-token-auth/', views.obtain_auth_token),
 
 
 ]

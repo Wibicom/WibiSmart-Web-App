@@ -218,7 +218,41 @@ var PressureGauge = (function () {
     };
 })();
 
+var TemperatureGauge = (function () {
+    var instance;
 
+    function createInstance() {
+        var opts = {
+          lines: 12, // The number of lines to draw
+          angle: 0.005, // The length of each line
+          lineWidth: 0.20, // The line thickness
+          pointer: {
+            length: 1, // The radius of the inner circle
+            strokeWidth: 0.030, // The rotation offset
+            color: '#000000' // Fill color
+          },
+           colorStart: '#ffffff',   // Colors
+           colorStop: '#94fd77',
+          strokeColor: '#E0E0E0',   // to see which ones work best for you
+          generateGradient: true
+        };
+        var target = document.getElementById('temperaturegauge'); // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 40; // set max gauge value
+        gauge.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge.set(0); // set actual value
+        return gauge;
+        }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
 
 
 function renderToggle(){
@@ -415,7 +449,7 @@ function render_total_acceleration (accx, accy, accz){
 }
 
 function gauge_battery_ajax(){
-    console.log("im in ajax")
+    //console.log("im in ajax")
 
     $.ajax({
 
@@ -423,12 +457,11 @@ function gauge_battery_ajax(){
         type : "GET", // http method
         datatype: "json",
         success: function (json) {
-            console.log(json.live_battery);
-            console.log(json.live_humidity);
-            console.log(json.live_pressure);
+
             $('#batteryvalue').html(json.live_battery + "%"); //take the div output and put the json message in it
             $('#humidityvalue').html(json.live_humidity + "%");
             $('#pressurevalue').html(json.live_pressure + " mb");
+            $('#temperaturevalue').html(json.live_temperature + " °Celsius");
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
             $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");
@@ -442,6 +475,7 @@ function gauge_battery_ajax(){
             BatteryGauge.getInstance().set(json.live_battery);
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
+            TemperatureGauge.getInstance().set(json.live_temperature);
 
             TemperatureQueue.getInstance().push(json.live_temperature);
             TemperatureQueue.getInstance().shift();
@@ -688,6 +722,7 @@ function renderLiveDashboard(){
     BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
+    TemperatureGauge.getInstance();
     TemperatureQueue.getInstance();
     LabelQueue.getInstance();
 
@@ -739,8 +774,9 @@ function postRequestSensorDataSender(){
 
 
 $(document).ready(function(){
-    renderToggle();
-
+    //renderToggle();
+    var d = new Date()
+    document.getElementById("currentDate").innerHTML = d.toDateString();
     renderLiveDashboard();
 
 

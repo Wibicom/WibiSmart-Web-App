@@ -19,14 +19,40 @@
 
             <div class = "container-fluid">
                 <div class = "row">
-                    <div class="col-md-12">
-                        <div class = "pull-right">
-                        <input id = "toggle-event" class = "pull-right" type="checkbox" checked data-toggle="toggle"
-                               data-on="Live<br>Dashboard" size = "large" data-off="Historical<br>Dashboard"
-                               data-onstyle="success" data-offstyle="info" data-width="130" >
+                    <div class = "col-md-3">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                            <span class = "top-labels" id = "currentDate"></span>
+                          </div>
                         </div>
-
                     </div>
+                    <div class = "col-md-3">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+                            <span class = "top-labels"> 2453.4 entries/min</span>
+
+                          </div>
+                        </div>
+                    </div>
+                    <div class = "col-md-3">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+                            <span class = "top-labels"> Distance: Far</span>
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="btn-group btn-group-lg" role="group" aria-label="...">
+                             <a href = "#" type="button" role = "button" class="btn btn-default btn-dashboard active">Live</a>
+                            <a href = "/accounts/loggedin/{{deviceId}}/historicalDashboard" type="button" role = "button" class="btn btn-default btn-dashboard">Historical</a>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
 
@@ -112,7 +138,7 @@
                         <div class="col-md-4">
                             <div class = "panel panel-info">
                                 <div class="panel-body">
-                                    <p id = "pressurevalue" class="gaugevalue-pressure"></p>
+                                    <p id = "pressurevalue" class="gaugevalue-withpointer"></p>
                                     <canvas id="pressuregauge" class="gauge" height="105"></canvas>
                                     <label class = "labels"> Pressure </label>
                                 </div>
@@ -126,13 +152,32 @@
 
             <div class = "container-fluid">
                 <div class = "row">
+                    <div class = "col-md-4">
+                        <div class="panel panel-info">
+                          <div class="panel-body">
+                              <p id = "temperaturevalue" class="gaugevalue-withpointer"></p>
+                              <canvas id="temperaturegauge" class="gauge" height="105"></canvas>
+                              <label class = "labels"> Temperature </label>
+                          </div>
+                        </div>
+                        <div class="panel panel-info">
+                          <div class="panel-body">
+                              <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span>
+                              <span class = "top-labels"> Ambiant light </span>
+                              <p class = "data-info">Light level : High </p>
+                              <p class="data-info">345.66 Lux</p>
+
+                          </div>
+                        </div>
+                    </div>
 
                     <div class="col-md-8">
                         <div class="panel panel-info">
                           <div class="panel-body">
-                              <canvas id="temperaturelinechart" width="250" height="150"></canvas>
+                              <canvas id="temperaturelinechart" width="250" height="135"></canvas>
                           </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

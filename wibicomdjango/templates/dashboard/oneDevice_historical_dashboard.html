@@ -1,0 +1,163 @@
+{% extends 'layout/layout1.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/oneDevice_dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/oneDevice_historical_dashboard.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+   {% include "navbar_loggedin.html" %}
+   {% include "userprofile/leftside_device_list.html" %}
+
+    <div class = "container-fluid my-cont" id = "dashboard-content">
+
+
+                <div class = "row">
+                    <div class="col-md-12">
+                        <div class = "pull-right">
+                            <div class="btn-group btn-group-lg" role="group" aria-label="...">
+                                <a href = "/accounts/loggedin/{{deviceId}}" type="button" role = "button" class="btn btn-default btn-dashboard">Live</a>
+                                <a href = "/accounts/loggedin/{{deviceId}}/historicalDashboard" type="button" role = "button" class="btn btn-default btn-dashboard active">Historical</a>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class = "panel panel-default">
+                    <div class="panel-body">
+                        <div class = "row">
+                            <div class = "col-md-6">
+                                <p class = "graph-label">Energy Consumption</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class = "pull-right">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                       <button id ="day-energy" type="button" class="btn btn-default energy-button day">1D</button>
+                                       <button id = "week-energy" type="button" class="btn btn-default energy-button week">1W</button>
+                                       <button id = "month-energy" type="button" class="btn btn-default energy-button month">1M</button>
+                                       <button id = "year-energy" type="button" class="btn btn-default energy-button year">1Y</button>
+                                       <button id = "max-energy" type="button" class="btn btn-default energy-button max">Max</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "row">
+                            <div class = "col-md-10">
+                                <div class = "dy-chart" id="battery_historical_linechart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class = "panel panel-default">
+                    <div class="panel-body">
+                        <div class = "row">
+                            <div class = "col-md-6">
+                                <p class = "graph-label">Meteo Evolution</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class = "pull-right">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                       <button id ="day-meteo" type="button" class="btn btn-default meteo-button day">1D</button>
+                                       <button id = "week-meteo" type="button" class="btn btn-default meteo-button week">1W</button>
+                                       <button id = "month-meteo" type="button" class="btn btn-default meteo-button month">1M</button>
+                                       <button id = "year-meteo" type="button" class="btn btn-default meteo-button year">1Y</button>
+                                       <button id = "max-meteo" type="button" class="btn btn-default meteo-button max">Max</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "row">
+                            <div class = "col-md-10">
+                                <div class = "dy-chart" id="meteo_historical_linechart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class = "panel panel-default">
+                    <div class="panel-body">
+                        <div class = "row">
+                            <div class = "col-md-6">
+                                <p class = "graph-label">Pressure Evolution</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class = "pull-right">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                       <button id ="day-pressure" type="button" class="btn btn-default pressure-button day">1D</button>
+                                       <button id = "week-pressure" type="button" class="btn btn-default pressure-button week">1W</button>
+                                       <button id = "month-pressure" type="button" class="btn btn-default pressure-button month">1M</button>
+                                       <button id = "year-pressure" type="button" class="btn btn-default pressure-button year">1Y</button>
+                                       <button id = "max-pressure" type="button" class="btn btn-default pressure-button max">Max</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "row">
+                            <div class = "col-md-10">
+                                <div class = "dy-chart" id="pressure_historical_linechart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class = "panel panel-default">
+                    <div class="panel-body">
+                        <div class = "row">
+                            <div class = "col-md-6">
+                                <p class = "graph-label">Accelerometer Evolution</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class = "pull-right">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                       <button id ="day-accelerometer" type="button" class="btn btn-default accelerometer-button day">1D</button>
+                                       <button id = "week-accelerometer" type="button" class="btn btn-default accelerometer-button week">1W</button>
+                                       <button id = "month-accelerometer" type="button" class="btn btn-default accelerometer-button month">1M</button>
+                                       <button id = "year-accelerometer" type="button" class="btn btn-default accelerometer-button year">1Y</button>
+                                       <button id = "max-accelerometer" type="button" class="btn btn-default accelerometer-button max">Max</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "row">
+                            <div class = "col-md-10">
+                                <div class = "dy-chart" id="accelerometer_historical_linechart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    </div>
+
+
+
+
+
+{% endblock %}
+
+{% block content1 %}
+<!--Put the script at the end of the body for speed-->
+    <script> //need to secure these later on
+
+    var deviceId = "{{deviceId}}";
+
+    </script>
+
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <script src = "http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined-dev.js"></script>
+    <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+    <script src = "{% static 'js/oneDevice_historical_dashboard.js' %}"></script>
+
+
+{% endblock content1 %}

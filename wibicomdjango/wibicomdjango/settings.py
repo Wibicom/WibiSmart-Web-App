@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'wibicomdjango',
     'rest_framework',
     'rest_framework.authtoken',
+    'gateway',
+    'devicemanager'
 ]
 
 REST_FRAMEWORK = {

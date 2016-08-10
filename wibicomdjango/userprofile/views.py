@@ -24,12 +24,13 @@ from forms import EditDeviceForm
 import csv
 import datetime
 from random import randint
-import json
+import json, ast
 from datetime import datetime as dt
 
 from models import Device
 from models import DeviceEntry
 
+import requests
 
 #this verifies that user is logged in and redirects user to login page if not logged in
 @login_required
@@ -219,3 +220,32 @@ def delete_account(request):
         usertodelete.delete()
 
     return redirect('home')
+
+
+
+
+@login_required()
+def add_device(request):
+    print "im in "
+    r = requests.get("http://raspberrypi:8000/gap/nodes")
+
+    r = json.loads(r.content)
+
+    print r.values()[0]
+    mylist = (r.values()[0])
+
+    list_names = []
+    list_adresses = []
+
+    for i in range(len(mylist)):
+        print mylist[i]
+        print type(mylist[i])
+        print mylist[i]['name']
+        list_names.append(mylist[i]['name'].encode("utf-8"))
+
+        print mylist[i]['address']
+        list_adresses.append(mylist[i]['address'].encode("utf-8"))
+
+        devices_found = zip(list_names, list_adresses)
+
+    return HttpResponse(devices_found)

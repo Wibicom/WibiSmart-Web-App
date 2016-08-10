@@ -1,5 +1,23 @@
-body{
+.btn-dashboard{
+    width: 120px;
+    height: 60px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family:  'Josefin Sans', serif;
+}
 
+.top-labels{
+    font-size: 20px;
+    font-weight: bold;
+    font-family:  'Josefin Sans', serif;
+    float: right;
+
+}
+
+
+
+.glyphicon {
+    font-size: 20px;
 }
 
 #dashboard-content {
@@ -70,13 +88,11 @@ body{
 
 }
 
-.gaugevalue-pressure{
+.gaugevalue-withpointer{
     text-align: center;
     font-size: 24px;
     font-family: 'Josefin Sans', serif;
     font-weight: bold;
 
 }
-
-
 

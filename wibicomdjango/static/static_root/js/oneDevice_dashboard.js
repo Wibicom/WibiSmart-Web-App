@@ -188,23 +188,22 @@ var PressureGauge = (function () {
     function createInstance() {
         var opts = {
           lines: 12, // The number of lines to draw
-          angle: 0.3, // The length of each line
-          lineWidth: 0.1, // The line thickness
+          angle: 0.1, // The length of each line
+          lineWidth: 0.10, // The line thickness
           pointer: {
             length: 1, // The radius of the inner circle
-            strokeWidth: 0.055, // The rotation offset
+            strokeWidth: 0.030, // The rotation offset
             color: '#000000' // Fill color
-            },
-          limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
-          colorStart: '#006EAB',   // Colors
-          colorStop: '#006EAB',    // just experiment with them
-          strokeColor: '#FFFFFF',   // to see which ones work best for you
+          },
+          colorStart: '#6FADCF',   // Colors
+          colorStop: '#8FC0DA',    // just experiment with them
+          strokeColor: '#E0E0E0',   // to see which ones work best for you
           generateGradient: true
         };
         var target = document.getElementById('pressuregauge'); // your canvas element
-        var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
         gauge.maxValue = 1500; // set max gauge value
-        gauge.animationSpeed = 15; // set animation speed (32 is default value)
+        gauge.animationSpeed = 1; // set animation speed (32 is default value)
         gauge.set(0); // set actual value
         return gauge;
         }
@@ -219,7 +218,41 @@ var PressureGauge = (function () {
     };
 })();
 
+var TemperatureGauge = (function () {
+    var instance;
 
+    function createInstance() {
+        var opts = {
+          lines: 12, // The number of lines to draw
+          angle: 0.005, // The length of each line
+          lineWidth: 0.20, // The line thickness
+          pointer: {
+            length: 1, // The radius of the inner circle
+            strokeWidth: 0.030, // The rotation offset
+            color: '#000000' // Fill color
+          },
+           colorStart: '#ffffff',   // Colors
+           colorStop: '#94fd77',
+          strokeColor: '#E0E0E0',   // to see which ones work best for you
+          generateGradient: true
+        };
+        var target = document.getElementById('temperaturegauge'); // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 40; // set max gauge value
+        gauge.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge.set(0); // set actual value
+        return gauge;
+        }
+
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
 
 
 function renderToggle(){
@@ -388,10 +421,7 @@ function render_progressbar_accelerometer(live_acc, axis){
         secondSegment_progress = "0%";
         thirdSegment_progress = "0%";
     }
-    console.log("**************");
-    console.log(firstSegment_progress);
-    console.log(secondSegment_progress);
-    console.log(thirdSegment_progress);
+
     switch(axis){
         case 'x':
             document.getElementById("firstSegment_progress_x").setAttribute("style", "width: " + firstSegment_progress);
@@ -427,9 +457,11 @@ function gauge_battery_ajax(){
         type : "GET", // http method
         datatype: "json",
         success: function (json) {
-            $('#batteryvalue').html(json.live_battery + " %"); //take the div output and put the json message in it
+
+            $('#batteryvalue').html(json.live_battery + "%"); //take the div output and put the json message in it
             $('#humidityvalue').html(json.live_humidity + "%");
-            $('#pressurevalue').html(json.live_pressure + "mb");
+            $('#pressurevalue').html(json.live_pressure + " mb");
+            $('#temperaturevalue').html(json.live_temperature + " °Celsius");
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
             $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");
@@ -443,10 +475,12 @@ function gauge_battery_ajax(){
             BatteryGauge.getInstance().set(json.live_battery);
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
+            TemperatureGauge.getInstance().set(json.live_temperature);
 
             TemperatureQueue.getInstance().push(json.live_temperature);
             TemperatureQueue.getInstance().shift();
 
+            //console.log(TemperatureQueue.getInstance);
             AccxQueue.getInstance().push(json.live_accx);
             AccxQueue.getInstance().shift();
 
@@ -541,6 +575,16 @@ var TemperatureChart = (function () {
                 },
                 options: {
                   animation: false,
+                  title: {
+                    display: true,
+                    text: "Temperature data (Celsius)",
+                    fontSize: 24,
+                    fontFamily: 'Josefin Sans',
+                    padding: 20
+                  },
+                  legend: {
+                    display: false,
+                  },
                   scales: {
                         yAxes: [{
                           ticks: {
@@ -678,6 +722,7 @@ function renderLiveDashboard(){
     BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
+    TemperatureGauge.getInstance();
     TemperatureQueue.getInstance();
     LabelQueue.getInstance();
 
@@ -729,8 +774,9 @@ function postRequestSensorDataSender(){
 
 
 $(document).ready(function(){
-    renderToggle();
-
+    //renderToggle();
+    var d = new Date()
+    document.getElementById("currentDate").innerHTML = d.toDateString();
     renderLiveDashboard();
 
 
