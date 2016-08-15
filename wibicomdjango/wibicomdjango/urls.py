@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^accounts/loggedin/', include('dashboard.urls')),
     url(r'^accounts/loggedin/', include('devicemanager.urls'), name= 'devicemanager'),
 
+
     url(r'^accounts/invalid/$', 'wibicomdjango.views.invalid_login'),
 
     #these are used for the registration

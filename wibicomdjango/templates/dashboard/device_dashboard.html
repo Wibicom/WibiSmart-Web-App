@@ -1,21 +1,35 @@
-{% extends 'layout/layout1.html' %}
+{% extends 'layout/layout_platform.html' %}
 
 {% load staticfiles %}
 
 {% block head %}
-     <link href = "{% static 'css/dashboard.css' %}" rel="stylesheet">
-     <link href = "{% static 'css/oneDevice_dashboard.css' %}" rel="stylesheet">
-     <link href = "{% static 'css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
+     <link href = "{% static 'css/oneDevice_dashboard.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-    {% include "navbar_loggedin.html" %}
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Live Dashboard
+        <small>{{ deviceName }}</small>
+      </h1>
 
-    {% include "userprofile/leftside_device_list.html" %}
 
-    <div class = "container-fluid" id = "dashboard-content">
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <div class = "container-fluid" id = "dashboard-content">
 
             <div class = "container-fluid">
                 <div class = "row">
@@ -44,14 +58,6 @@
                           </div>
                         </div>
                     </div>
-
-                    <div class="col-md-3">
-                        <div class="btn-group btn-group-lg" role="group" aria-label="...">
-                             <a href = "#" type="button" role = "button" class="btn btn-default btn-dashboard active">Live</a>
-                            <a href = "/accounts/loggedin/{{deviceId}}/historicalDashboard" type="button" role = "button" class="btn btn-default btn-dashboard">Historical</a>
-                        </div>
-                    </div>
-
 
                 </div>
             </div>
@@ -183,50 +189,17 @@
             </div>
 
 
-
-
-
-    </div>
-
     <div id="console-event"></div>
 
-    <div id = "devicedata">
-        <!--
-        <h2>Hi {{full_name}} ! Here is your device data</h2>
-        <p> {{live_battery}} </p>
-
-        <p> Real live battery </p>
-        <div id = "output">
-        </div>
-
-
-        <div id = "batterySection" class = "dataSection">
-		<p> Battery level </p>
-		<p id = "batteryValue" class = "values"></p>
-		<canvas id="pieBattery" width="250" height="250"></canvas>
-	    </div>-->
-
-
-
-        <div id="graphdiv"></div>
-
-        <!--
-        <p> {{deviceId}} </p>
-
-        <p> {{deviceNb}} </p>
-        <p> {{deviceType}} </p>
-        <p> {{deviceName}} </p>
-
-        {% for entry in device_entries %}
-            <li>{{entry}}</li>
-        {% endfor %}-->
-    </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
 
 
 {% endblock %}
 
 {% block content1 %}
-<!--Put the script at the end of the body for speed-->
     <script> //need to secure these later on
     var deviceId = "{{deviceId}}";
     var temperaturelist = "{{temperaturelist}}";

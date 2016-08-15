@@ -1,4 +1,19 @@
 .box-title{
     font-weight: bold;
 
+
+}
+
+.bold{
+   font-weight: bold;
+   font-size: 18px;
+}
+
+.btn-space {
+    margin-right: 5px;
+}
+
+#scanbox
+{
+    cursor: pointer;
 }

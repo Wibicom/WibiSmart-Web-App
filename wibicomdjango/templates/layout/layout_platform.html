@@ -259,9 +259,9 @@
               </a>
 
               <ul class="treeview-menu">
-                <li><a href="#"><i class="fa fa-circle-o"></i> Live Dashboard</a></li>
+                <li><a href="/accounts/loggedin/{{device.id}}/"><i class="fa fa-circle-o"></i> Live Dashboard</a></li>
                 <li>
-                  <a href="#"><i class="fa fa-circle-o"></i> Historical Dashboard </a>
+                  <a href="/accounts/loggedin/{{device.id}}/historicalDashboard/"><i class="fa fa-circle-o"></i> Historical Dashboard </a>
                 </li>
               </ul>
 
@@ -271,7 +271,7 @@
         </li>
 
       <li><a href='{% url "devicemanager" %}'><i class="fa fa-th"></i> <span>Device Manager</span></a></li>
-      <li><a href="#"><i class="fa fa-user"></i> <span>Profile</span></a></li>
+      <li><a href='{% url "profile" %}'><i class="fa fa-user"></i> <span>Profile</span></a></li>
 
       </ul>
       <!-- /.sidebar-menu -->
@@ -375,6 +375,7 @@
 
     <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src = "{% static 'js/bootstrap.min.js' %}"></script>
     <script src = "{% static 'js/app.min.js' %}"></script>
     {% block content1 %}{% endblock content1 %}

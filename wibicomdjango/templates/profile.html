@@ -11,6 +11,25 @@
 {% block content %}
     {% include "navbar_loggedin.html" %}
     {% include "userprofile/leftside_device_list.html" %}
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Device Manager
+        <small>Add, edit, or delete devices!</small>
+      </h1>
+
+
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
 
     {% if alert %}
         <div class='alert alert-danger' role='alert'>{{alert}}</div>
@@ -29,12 +48,13 @@
     </form>
 
 
-
     <form class = "myforms" action = "/accounts/profile/deleteaccount" method = "post"> {% csrf_token %}
         {% include "userprofile/profile_container_account.html" %}
     </form>
 
-
+    </section>
+    <!-- /.content -->
+  </div>
 
 
 

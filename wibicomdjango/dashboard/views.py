@@ -62,7 +62,7 @@ def onedevice_dashboard(request, id):
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
 
-    return TemplateResponse(request, 'dashboard/oneDevice_dashboard.html', {"full_name": full_name,
+    return TemplateResponse(request, 'dashboard/device_dashboard.html', {"full_name": full_name,
                                                                               "deviceNb": device.deviceNb,
                                                                               "deviceName" : device.deviceName,
                                                                               "deviceType" : device.deviceType,
@@ -313,7 +313,7 @@ def onedevice_dashboard_historical(request, id):
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
 
-    return render(request, 'dashboard/oneDevice_historical_dashboard.html', {"full_name": full_name,
+    return render(request, 'dashboard/device_historical_dashboard.html', {"full_name": full_name,
                                                                              "deviceNb": device.deviceNb,
                                                                              "deviceName": device.deviceName,
                                                                              "deviceType": device.deviceType,

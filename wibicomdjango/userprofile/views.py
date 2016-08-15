@@ -157,7 +157,7 @@ def user_profile(request):
     args['listOfDevices']= listOfDevices
     args ['full_name'] = request.user.username
 
-    return render(request, 'profile.html', args)
+    return render(request, 'userprofile/profile.html', args)
 
 @login_required()
 def delete_device(request):
@@ -231,21 +231,29 @@ def add_device(request):
 
     r = json.loads(r.content)
 
-    print r.values()[0]
+    #print r
     mylist = (r.values()[0])
-
+    print mylist
     list_names = []
     list_adresses = []
+    print len(mylist);
 
-    for i in range(len(mylist)):
-        print mylist[i]
-        print type(mylist[i])
-        print mylist[i]['name']
-        list_names.append(mylist[i]['name'].encode("utf-8"))
+    if "name" in mylist[0]:
+        print "true"
+    else:
+        print "false"
 
-        print mylist[i]['address']
-        list_adresses.append(mylist[i]['address'].encode("utf-8"))
+    for i in range(len(mylist)):  #chaque mylist[i] est un python dictionnary
+        key = 'name'
 
-        devices_found = zip(list_names, list_adresses)
+        if key in mylist[i]: #just checking name, because a bluetooth device will always have an address
+            list_names.append(mylist[i]['name'].encode("utf-8"))
+            #print mylist[i]['address']
+            list_adresses.append(mylist[i]['address'].encode("utf-8"))
+        else:
+            pass
+
+    devices_found = zip(list_names, list_adresses)
+    print devices_found
 
     return HttpResponse(devices_found)

@@ -1,0 +1,169 @@
+{% extends 'layout/layout_platform.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+     <link href = "{% static 'css/rangeslider/ion.rangeSlider.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/rangeslider/ion.rangeSlider.skinFlat.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/checkbox/awesome-bootstrap-checkbox.css' %}" rel="stylesheet">
+     <link href = "{% static 'css/device_manager/device_settings.css' %}" rel="stylesheet">
+
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Device Settings
+        <small>Configure your device!</small>
+      </h1>
+
+
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <h4>{{ device.deviceName }} </h4>
+
+        <div class = "row">
+          <div class="col-md-10">
+              <div class="box box-info device-box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-line-chart" aria-hidden="true"></i> Accelerometer Settings </h3>
+                </div>
+                <div class="box-body">
+
+                    <div class="checkbox checkbox-circle checkbox-primary">
+                        <input type="checkbox" id="checkbox1">
+                        <label for="checkbox1">
+                            On/Off
+                        </label>
+                    </div>
+
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <p> Period (in seconds) : </p>
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <div class="range-slider slider-section">
+                                <input type="text" class="js-range-slider" value="" />
+                            </div>
+                        </div>
+                        <div class = "col-md-2">
+                            <div class="extra-controls slider-section">
+                                <button class="js-btn-minus btn btn-space"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                                <button class="js-btn-plus btn btn-space"><i class="fa fa-plus-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-default pull-right">Submit</button>
+                </div>
+
+              </div>
+          </div>
+        </div>
+
+
+        <div class = "row">
+          <div class="col-md-10">
+              <div class="box box-success device-box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-sun-o" aria-hidden="true"></i> Weather Settings </h3>
+                </div>
+                <div class="box-body">
+                    <div class="checkbox checkbox-circle checkbox-primary">
+                        <input type="checkbox" id="checkbox2">
+                        <label for="checkbox2">
+                            On/Off
+                        </label>
+                    </div>
+
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <p> Period (in seconds) : </p>
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <div class="range-slider slider-section">
+                                <input type="text" class="js-range-slider" value="" />
+                            </div>
+                        </div>
+                        <div class = "col-md-2">
+                            <div class="extra-controls slider-section">
+                                <button class="js-btn-minus btn btn-space"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                                <button class="js-btn-plus btn btn-space"><i class="fa fa-plus-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-default pull-right">Submit</button>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class="col-md-10">
+              <div class="box box-primary device-box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Light Settings </h3>
+                </div>
+                <div class="box-body">
+                    <div class="checkbox checkbox-circle checkbox-primary">
+                        <input type="checkbox" id="checkbox3">
+                        <label for="checkbox3">
+                            On/Off
+                        </label>
+                    </div>
+
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <p> Period (in seconds) : </p>
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class = "col-md-8">
+                            <div class="range-slider slider-section">
+                                <input type="text" class="js-range-slider" value="" />
+                            </div>
+                        </div>
+                        <div class = "col-md-2">
+                            <div class="extra-controls slider-section">
+                                <button class="js-btn-minus btn btn-space"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                                <button class="js-btn-plus btn btn-space"><i class="fa fa-plus-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-default pull-right">Submit</button>
+
+                </div>
+              </div>
+          </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block content1 %}
+    <script src = "{% static 'js/rangeslider/ion.rangeSlider.min.js' %}"></script>
+    <script src = "{% static 'js/device_manager/device_settings.js' %}"></script>
+
+
+{% endblock content1 %}

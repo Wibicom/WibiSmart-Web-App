@@ -1,0 +1,62 @@
+{% extends 'layout/layout_platform.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Profile
+        <small>{{full_name}}</small>
+      </h1>
+
+
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <p> hello this is the profile</p>
+
+
+        <div class="container-fluid">
+          <div class="row">
+            {% if alert %}
+            <div class='alert alert-danger' role='alert'>{{alert}}</div>
+            {% endif %}
+          </div>
+          <div class = "row">
+            <form class = "myforms" action = "/accounts/profile/" method = "post"> {% csrf_token %}
+            {% include "userprofile/profile_containers.html" %}
+            </form>
+          </div>
+          <div class = "row">
+              <form class = "myforms" action = "/accounts/profile/deleteaccount" method = "post"> {% csrf_token %}
+              {% include "userprofile/profile_container_account.html" %}
+              </form>
+          </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block content1 %}
+
+
+{% endblock content1 %}

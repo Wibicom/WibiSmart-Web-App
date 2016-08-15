@@ -1,55 +1,35 @@
-<div class = field-containers>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-        <h3 class="panel-title">Account</h3>
-        </div>
-        <div class="panel-body">
-          <div class="form-group">
-              <div class = "container">
+ <div class = "modal fade" id= "#modal-1">
+      <div class = "modal-dialog ">
+          <div class ="modal-content">
+              <div class="modal-header">
+                  <button type = "button" class="close" data-dismiss="modal">&times;</button>
+                  <h3 class="modal-title">Edit your devices</h3>
+              </div>
+                  <div>
+                      <form action = "/accounts/profile/editdevice/" method = "post" > {% csrf_token %}
+                          <div class="modal-body">
 
-              <form action = "/accounts/profile/adddevice/" method = "get">
-                  <input role= "button" type = "submit" value = "Addo a device " class = "btn btn-info">  </input>
-              </form>
+                              <p>Are you sure you want to edit stuff? </p>
 
+                              {{ edit_device_form.non_field_errors }}
 
-              <button type = "button" class = "btn btn-info" data-toggle = "modal" data-target="#modal-1"> Edit your devices </button>
+                              {{ edit_device_form.devices.errors }}
+                              <label> Device : </label>
+                              {{ device }}
 
-              <div class = "modal fade" id= "modal-1">
-                  <div class = "modal-dialog ">
-                      <div class ="modal-content">
-                          <div class="modal-header">
-                              <button type = "button" class="close" data-dismiss="modal">&times;</button>
-                              <h3 class="modal-title">Device Settings</h3>
+                              {{edit_device_form.new_device_name.errors}}
+                              <label> Chose a new name : </label>
+                              {{ edit_device_form.new_device_name}}
+
                           </div>
-                              <div>
-                                  <form action = "/accounts/profile/editdevice/" method = "post" > {% csrf_token %}
-                                      <div class="modal-body">
+                          <div class="modal-footer">
+                              <a href = "" class ="btn btn-default" data-dismiss="modal">Cancel</a>
+                              <button class="btn btn-info" type="submit" value="Delete">EditDevice</button>
+                          </div>
 
-                                          <p>Are you sure you want to edit stuff? </p>
-
-                                          {{ edit_device_form.non_field_errors }}
-
-                                          {{ edit_device_form.devices.errors }}
-                                          <label> Choose a device : </label>
-                                          {{ edit_device_form.devices }}
-
-                                          {{edit_device_form.new_device_name.errors}}
-                                          <label> Chose a new name : </label>
-                                          {{ edit_device_form.new_device_name}}
-
-                                      </div>
-                                      <div class="modal-footer">
-                                          <a href = "" class ="btn btn-default" data-dismiss="modal">Cancel</a>
-                                          <button class="btn btn-info" type="submit" value="Delete">EditDevice</button>
-                                      </div>
-
-                                  </form>
-                              </div>
-                      </div>
+                      </form>
                   </div>
-              </div>
-              </div>
           </div>
-        </div>
-    </div>
-</div>
+      </div>
+  </div>
+ </div>
