@@ -281,12 +281,12 @@ var TemperatureQueue = (function () {
 
     function createInstance() {
         var queue = [];
-        console.log("hey");
-        console.log(JSON.parse(temperaturelist));
+        //console.log("hey");
+        //console.log(JSON.parse(temperaturelist));
         for(var i = 0; i < JSON.parse(temperaturelist).length; i++) {
             queue.push(JSON.parse(temperaturelist)[i]);
         }
-        console.log(queue);
+        //console.log(queue);
         return queue;
     }
 
@@ -775,9 +775,16 @@ function postRequestSensorDataSender(){
 
 $(document).ready(function(){
     //renderToggle();
+    $('.side-label').removeClass("active");
+    $('#dashboards').addClass( "active" );
+
     var d = new Date()
     document.getElementById("currentDate").innerHTML = d.toDateString();
+
     renderLiveDashboard();
+
+
+
 
 
 

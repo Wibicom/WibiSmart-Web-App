@@ -165,7 +165,7 @@
                 <img src="{% static 'img/mina-user.jpg' %}" class="img-circle" alt="User Image">
 
                 <p>
-                  Alexander Pierce - Web Developer
+                  Mina Danesh - Electrical Engineer
                   <small>Member since Nov. 2012</small>
                 </p>
               </li>
@@ -235,11 +235,11 @@
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu">
-        <li class="header">HEADER</li>
+        <li class="header">NAVIGATION</li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active"><a href='{% url "loggedin" %}'><i class="fa fa-home"></i> <span>Home</span></a></li>
+        <li id = "home" class="side-label"><a href='{% url "loggedin" %}'><i class="fa fa-home"></i> <span>Home</span></a></li>
 
-        <li class="treeview">
+        <li id = "dashboards" class="treeview side-label">
           <a href="#">
             <i class="fa fa-pie-chart"></i> <span>Dashboards</span>
             <span class="pull-right-container">
@@ -270,8 +270,8 @@
           </ul>
         </li>
 
-      <li><a href='{% url "devicemanager" %}'><i class="fa fa-th"></i> <span>Device Manager</span></a></li>
-      <li><a href='{% url "profile" %}'><i class="fa fa-user"></i> <span>Profile</span></a></li>
+      <li id = "devicemanager" class = "side-label"><a href='{% url "devicemanager" %}'><i class="fa fa-th"></i> <span>Device Manager</span></a></li>
+      <li id = "profile" class = "side-label"><a href='{% url "profile" %}'><i class="fa fa-user"></i> <span>Profile</span></a></li>
 
       </ul>
       <!-- /.sidebar-menu -->

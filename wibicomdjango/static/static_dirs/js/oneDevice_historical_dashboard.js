@@ -243,6 +243,10 @@ function initialize_accelerometer_chart(){
 }
 
 $(document).ready(function(){
+
+    $('.side-label').removeClass("active");
+    $('#dashboards').addClass( "active" );
+
     initialize_energy_chart();
     initialize_meteo_chart();
     initialize_accelerometer_chart();
@@ -252,6 +256,8 @@ $(document).ready(function(){
     meteo_chart_controller();
     pressure_chart_controller();
     accelerometer_chart_controller();
+
+
 
 
 });

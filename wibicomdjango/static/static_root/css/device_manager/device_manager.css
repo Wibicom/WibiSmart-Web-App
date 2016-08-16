@@ -17,3 +17,8 @@
 {
     cursor: pointer;
 }
+
+.btn-settings{
+    padding: 20px;
+    float: right;
+}

@@ -40,7 +40,7 @@ def render_devicemanager_page(request):
 
 @login_required()
 def scan(request):
-    r = requests.get("http://raspberrypi:8001/gap/nodes")
+    r = requests.get("http://raspberrypi:8010/gap/nodes")
     r = json.loads(r.content)
 
     mylist = (r.values()[0])
@@ -60,6 +60,8 @@ def scan(request):
             pass
 
     devices_found = json.dumps(devices_found)
+    print "****************devices_found_in_scan_view***************"
+    print devices_found
 
     return HttpResponse(devices_found)
 
@@ -84,20 +86,25 @@ def deletedevice(request):
 def adddevice(request): #this is not working
     userid = request.user.pk
     if request.method == 'POST' :
-        deviceaddress = request.POST['deviceAddress']
-        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-        print deviceaddress
-
+        myString = request.POST['device']
+        myArray = myString.split(',')
+        name = myArray[0]
+        address = myArray[1]
 
     try:
-        device = Device.objects.get(deviceNb='deviceaddress')
+        device = Device.objects.get(deviceNb=address)
     except Device.DoesNotExist:
-        device = Device.objects.create(deviceNb = deviceaddress, deviceType = "ENVIRO", user_id = userid, deviceName = "")
-        print "great! that device belongs to you"
+        device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name)
+        print "great! The device has been created and belongs to you now"
         return redirect('devicemanager')
+    else: # if the device exists in database
+        print device.user_id
+        if (device.user_id == userid) :
+            print "You already own that device"
+        else:
+            print "That device belongs to someone else"
 
 
-    print "that device already belongs to someone"
     return redirect('devicemanager')
 
 

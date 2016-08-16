@@ -27,8 +27,6 @@
 
     <!-- Main content -->
     <section class="content">
-        <p> hello this is the profile</p>
-
 
         <div class="container-fluid">
           <div class="row">
@@ -42,7 +40,7 @@
             </form>
           </div>
           <div class = "row">
-              <form class = "myforms" action = "/accounts/profile/deleteaccount" method = "post"> {% csrf_token %}
+              <form action = "/accounts/profile/deleteaccount" method = "post"> {% csrf_token %}
               {% include "userprofile/profile_container_account.html" %}
               </form>
           </div>
@@ -57,6 +55,6 @@
 {% endblock %}
 
 {% block content1 %}
-
+    <script src = "{% static 'js/userprofile/profile.js' %}"></script>
 
 {% endblock content1 %}
