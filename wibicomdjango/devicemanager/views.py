@@ -40,7 +40,7 @@ def render_devicemanager_page(request):
 
 @login_required()
 def scan(request):
-    r = requests.get("http://raspberrypi:8010/gap/nodes")
+    r = requests.get("http://raspberrypi:8001/gap/nodes")
     r = json.loads(r.content)
 
     mylist = (r.values()[0])
@@ -84,6 +84,7 @@ def deletedevice(request):
 @login_required()
 @csrf_exempt #will have to change this in the future for security reasons
 def adddevice(request): #this is not working
+    
     userid = request.user.pk
     if request.method == 'POST' :
         myString = request.POST['device']
@@ -96,6 +97,8 @@ def adddevice(request): #this is not working
     except Device.DoesNotExist:
         device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name)
         print "great! The device has been created and belongs to you now"
+        requests.get('http://raspberrypi:8001/gatt/nodes/' + address) # request connection to that device
+        print "Sending HTTP GET to " + "http://raspberrypi:8001/gatt/nodes/" + address
         return redirect('devicemanager')
     else: # if the device exists in database
         print device.user_id
@@ -114,6 +117,19 @@ def devicesettings(request, id):
     device = Device.objects.get(id = id)
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
+
+    # Get current device settings 
+
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa42/value')
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa44/value')
+
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa82/value')
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa83/value')
+
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa22/value')
+    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa23/value')
+
+
     return render(request, 'device_manager/device_settings.html', {"device": device,  "listOfDevices": listOfDevices})
 
 

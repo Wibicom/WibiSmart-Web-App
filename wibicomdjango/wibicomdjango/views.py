@@ -125,15 +125,32 @@ def receive_android_data(request):
 
         deviceentry = DeviceEntry()
         deviceentry.device = device  # put the primary key of the device here
-        deviceentry.datetime = json_data["datetime"]
-        deviceentry.pressure = json_data["pressure"]
-        deviceentry.humidity = json_data["humidity"]
-        deviceentry.temperature = json_data["temperature"]
-        deviceentry.battery = json_data["battery"]
-        deviceentry.light = json_data["light"]
-        deviceentry.accx = json_data["accx"]
-        deviceentry.accy = json_data["accy"]
-        deviceentry.accz = json_data["accz"]
+        
+        # Get general data
+        if "datetime" in json_data :
+            deviceentry.datetime = json_data["datetime"]
+        if "battery" in json_data :
+            deviceentry.battery = json_data["battery"]
+        if "light" in json_data :    
+            deviceentry.light = json_data["light"]
+
+        # Get weather data
+        if "pressure" in json_data :
+            deviceentry.pressure = json_data["pressure"]
+        if "humidity" in json_data :
+            deviceentry.humidity = json_data["humidity"]
+        if "temperature" in json_data :
+            deviceentry.temperature = json_data["temperature"]
+
+        # Get accelerometer data
+        if "accx" in json_data :
+            deviceentry.accx = json_data["accx"]
+        if "accy" in json_data :
+            deviceentry.accy = json_data["accy"]
+        if "accz" in json_data :
+            deviceentry.accz = json_data["accz"]
+        
+        # Save to database
         deviceentry.save()
 
     return render(request, "userprofile/receive_android_data.html")
