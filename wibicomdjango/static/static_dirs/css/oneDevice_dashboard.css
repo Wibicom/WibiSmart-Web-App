@@ -1,7 +1,15 @@
 
 .box-body{
-     height: 470px;
+     height: 420px;
 
+}
+
+#box-accelerometer{
+    margin-left: 15px;
+}
+
+#live-acceleration{
+    border-left: 3px solid #3498db;
 }
 
 #accelerometer-chart{
