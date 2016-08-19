@@ -1,4 +1,7 @@
+
+
 $(document).ready(function(){
+    console.log("sanity check");
 
     $("#accelerometer-range-slider").ionRangeSlider({
     min: 0.1,
@@ -20,6 +23,8 @@ $(document).ready(function(){
     from: 0.1,
     step: 0.1
     });
+
+
 
 
 });

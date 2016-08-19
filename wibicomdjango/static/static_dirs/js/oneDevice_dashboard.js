@@ -449,7 +449,6 @@ function render_total_acceleration (accx, accy, accz){
 }
 
 function gauge_battery_ajax(){
-    //console.log("im in ajax")
 
     $.ajax({
 
@@ -457,7 +456,6 @@ function gauge_battery_ajax(){
         type : "GET", // http method
         datatype: "json",
         success: function (json) {
-
             $('#batteryvalue').html(json.live_battery + "%"); //take the div output and put the json message in it
             $('#humidityvalue').html(json.live_humidity + "%");
             $('#pressurevalue').html(json.live_pressure + " mb");
@@ -671,13 +669,6 @@ var AccelerometerChart = (function () {
                 ]
             },
             options: {
-              title: {
-                display: true,
-                text: "Accelerometer data (mg)",
-                fontSize: 24,
-                fontFamily: 'Josefin Sans',
-                padding: 20
-              },
               legend: {
                 position: 'top'
               },
@@ -777,6 +768,10 @@ $(document).ready(function(){
     //renderToggle();
     $('.side-label').removeClass("active");
     $('#dashboards').addClass( "active" );
+
+
+    $('.item').matchHeight();
+
 
     var d = new Date()
     document.getElementById("currentDate").innerHTML = d.toDateString();

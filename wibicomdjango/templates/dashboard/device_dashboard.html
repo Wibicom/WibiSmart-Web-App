@@ -65,16 +65,41 @@
 
             <div class = "container-fluid">
                 <div class = "row">
-                    <div class="col-md-9">
-                        <div class="panel panel-info">
-                          <div class="panel-body">
-                            <canvas id="acccelerometerlinechart" height = "135"></canvas>
-                          </div>
+                    <div id = "column-wrap">
+                    <div class="col-md-8 item">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Accelerometer data</h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="box-body no-padding">
+
+                                <div id = "accelerometer-chart">
+                                    <canvas id="acccelerometerlinechart" height="110" ></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class = "panel panel-info">
-                            <div class="panel-body">
+
+                    <div class="col-md-3 item">
+                        <div class = "box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Live Acceleration</h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="box-body no-padding">
                                 <p class = "title">Live Acceleration</p> <!--when time comes, add a span under div id (segments) for screen reader enabling-->
                                 <div>
                                   <p class = "data-info" id="accxvalue"></p>
@@ -113,9 +138,12 @@
 
                             </div>
                         </div>
-                    </div>
+                     </div>
                 </div>
+                </div>
+
             </div>
+
 
 
             <div class="container-fluid">
@@ -214,7 +242,9 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
     <script src = "http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined-dev.js"></script>
     <script src = "{% static 'js/bootstrap-toggle.min.js' %}"></script>
+    <script src = "{% static 'js/jquery.matchHeight-min.js' %}"></script>
     <script src = "{% static 'js/leftside_device_list.js' %}"></script>
+
     <script src = "{% static 'js/oneDevice_dashboard.js' %}"></script>
 
 

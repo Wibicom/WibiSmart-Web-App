@@ -5,6 +5,7 @@ from userprofile.models import Device
 from userprofile.models import DeviceEntry
 import json
 import requests
+import datetime
 from django.http import HttpResponse
 from devicemanager.forms import EditDeviceForm
 from django.views.decorators.csrf import csrf_exempt
@@ -40,7 +41,8 @@ def render_devicemanager_page(request):
 
 @login_required()
 def scan(request):
-    r = requests.get("http://raspberrypi:8001/gap/nodes")
+
+    r = requests.get("http://raspberrypi:8010/gap/nodes")
     r = json.loads(r.content)
 
     mylist = (r.values()[0])
@@ -63,7 +65,9 @@ def scan(request):
     print "****************devices_found_in_scan_view***************"
     print devices_found
 
+
     return HttpResponse(devices_found)
+
 
 
 
@@ -96,8 +100,13 @@ def adddevice(request): #this is not working
         device = Device.objects.get(deviceNb=address)
     except Device.DoesNotExist:
         device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name)
+        now = datetime.datetime.now()
+        d = DeviceEntry(datetime=now, pressure=0, humidity=0, device_id=device.id ,accx=0, accy=0, accz=0, battery=0, light=0, temperature=0)
+        d.save()
+
+
         print "great! The device has been created and belongs to you now"
-        requests.get('http://raspberrypi:8001/gatt/nodes/' + address) # request connection to that device
+        requests.get('http://raspberrypi:8010/gatt/nodes/' + address) # request connection to that device
         print "Sending HTTP GET to " + "http://raspberrypi:8001/gatt/nodes/" + address
         return redirect('devicemanager')
     else: # if the device exists in database
@@ -117,20 +126,72 @@ def devicesettings(request, id):
     device = Device.objects.get(id = id)
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
-
-    # Get current device settings 
-
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa42/value')
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa44/value')
-
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa82/value')
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa83/value')
-
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa22/value')
-    # accelerometerOn = requests.get('http://raspberrypi:8001/gatt/nodes/' + address + '/characteristics/aa23/value')
+    address = device.deviceNb
 
 
-    return render(request, 'device_manager/device_settings.html', {"device": device,  "listOfDevices": listOfDevices})
+    if request.method == 'POST': #if the user changes the settings
+        requestdict = request.POST.dict()
+        if (str(requestdict['formdata']) == "accelerometer"):
+            if 'checkbox-accelerometer' in requestdict:
+                print requestdict['accelerometer-rangeslider']
+                slider_value = int(float(requestdict['accelerometer-rangeslider'])*10)
+                slider_value = str(slider_value)
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa82/value/1'
+                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa83/value/' + slider_value
+                print "url checkbox"
+                print url_checkbox
+
+                print "url slider"
+                print url_slider
+
+                r = requests.put(url_checkbox)
+                b = requests.put(url_slider)
+            else:
+                print "The box is checked off"
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa82/value/0'
+                r = requests.put(url_checkbox)
+
+        elif (str(request.POST['formdata']) == "weather"):
+            if 'checkbox-weather' in requestdict:
+                slider_value = int(float(requestdict['weather-rangeslider']) * 10)
+                slider_value = str(slider_value)
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa42/value/1'
+                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa44/value/' + slider_value
+                r = requests.put(url_checkbox)
+                b = requests.put(url_slider)
+            else:
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa42/value/0'
+                r = requests.put(url_checkbox)
+
+        elif (str(request.POST['formdata']) == "light"):
+            if 'checkbox-light' in requestdict :
+                slider_value = int(float(requestdict['light-rangeslider']) * 10)
+                slider_value = str(slider_value)
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/1'
+                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa23/value/' + slider_value
+                r = requests.put(url_checkbox)
+                b = requests.put(url_slider)
+        else:
+            url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/0'
+            r = requests.put(url_checkbox)
+
+
+    response = requests.get('http://raspberrypi:8010/gatt/nodes/' + address + '/settings')
+    weatherOn = json.loads(response.content)['weatherConf']
+    weatherPeriod = json.loads(response.content)['weatherPeriod']
+    accelerometerOn = json.loads(response.content)['accelerometerConf']  # 0 off 1 on
+    accelerometerPeriod = json.loads(response.content)['accelerometerPeriod']  # 0 off 1 on
+    lightOn = json.loads(response.content)['lightConf']  # 0 off 1 on
+    lightPeriod = json.loads(response.content)['lightPeriod']  # 0 off 1 on
+
+    settings_dict = {'weatherOn': (int(weatherOn) == 1), 'weatherPeriod': float(weatherPeriod) / 10 , 'accelerometerOn': (int(accelerometerOn) ==1),
+                     'accelerometerPeriod': float(accelerometerPeriod) / 10, 'lightOn': (int(lightOn) == 1), 'lightPeriod': float(lightPeriod) / 10}
+
+    settings = json.dumps(settings_dict)
+
+    return render(request, 'device_manager/device_settings.html', {"device": device,
+                                                                   "listOfDevices": listOfDevices,
+                                                                   "settings": settings})
 
 
 

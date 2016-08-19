@@ -1,4 +1,17 @@
 
+.box-body{
+     height: 470px;
+
+}
+
+#accelerometer-chart{
+    padding-top: 30px;
+    padding-right: 50px;
+    padding-bottom: 30px;
+    padding-left: 20px;
+}
+
+
 
 .btn-dashboard{
     width: 120px;
@@ -37,9 +50,7 @@
 
 }
 
-.progress {
-    height: 10px;
-}
+
 
 .gray-zone{
      background-color: #f5f5f5;

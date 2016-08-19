@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.contrib import auth
 from django.core.context_processors import csrf
 from forms import MyRegistrationForm
@@ -18,6 +19,7 @@ from django.dispatch import receiver
 
 
 import json
+import datetime
 
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
@@ -123,35 +125,45 @@ def receive_android_data(request):
             print(err)
             return render(request, "userprofile/receive_android_data.html")
 
-        deviceentry = DeviceEntry()
-        deviceentry.device = device  # put the primary key of the device here
-        
+        device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
+        lastentry = device_entries.latest('datetime')
+
+
+        #deviceentry = DeviceEntry()
+        #deviceentry.device = device  # put the primary key of the device here
+
+
+
         # Get general data
         if "datetime" in json_data :
-            deviceentry.datetime = json_data["datetime"]
-        if "battery" in json_data :
-            deviceentry.battery = json_data["battery"]
-        if "light" in json_data :    
-            deviceentry.light = json_data["light"]
+            date = json_data["datetime"]
+
+
+        if "battery" in json_data and "light" in json_data :
+            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
+                            accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = json_data["battery"],
+                            light = json_data["light"], temperature = lastentry.temperature)
+            d.save()
+
 
         # Get weather data
-        if "pressure" in json_data :
-            deviceentry.pressure = json_data["pressure"]
-        if "humidity" in json_data :
-            deviceentry.humidity = json_data["humidity"]
-        if "temperature" in json_data :
-            deviceentry.temperature = json_data["temperature"]
+        if "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
+            d = DeviceEntry(datetime=date, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
+                            accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
+                            light=lastentry.light, temperature=json_data["temperature"])
+            d.save()
+
+
 
         # Get accelerometer data
-        if "accx" in json_data :
-            deviceentry.accx = json_data["accx"]
-        if "accy" in json_data :
-            deviceentry.accy = json_data["accy"]
-        if "accz" in json_data :
-            deviceentry.accz = json_data["accz"]
-        
-        # Save to database
-        deviceentry.save()
+        if "accx" in json_data and "accy" in json_data and "accz" in json_data:
+            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
+                            accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"], battery=lastentry.battery,
+                            light=lastentry.light, temperature=lastentry.temperature)
+            d.save()
 
-    return render(request, "userprofile/receive_android_data.html")
+        
+
+    now = datetime.datetime.now()
+    return HttpResponse(now)
 

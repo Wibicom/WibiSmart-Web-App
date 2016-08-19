@@ -326,15 +326,16 @@ def onedevice_dashboard_historical(request, id):
 
 @login_required()
 def onedevice_dashboard_ajax(request, id):
-    print "im in ajax"
+    #print "im in ajax"
     #rendering data ajax call
     device = Device.objects.get(id = id)
-    device_entries = DeviceEntry.objects.filter(device_id=device)
+    device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
 
 
     #last_entry = device_entries[len(device_entries) - 1]
     last_entry = device_entries.latest('datetime')
-
+    print " ^^^^^^^^^^ THE LAST ENTRY IS ^^^^^^^^^^ "
+    print last_entry
 
     live_battery = last_entry.battery
     live_humidity = last_entry.humidity
