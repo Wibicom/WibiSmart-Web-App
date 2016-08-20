@@ -159,8 +159,8 @@ var HumidityGauge = (function () {
           lineWidth: 0.1, // The line thickness
 
           limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
-          colorStart: '#006EAB',   // Colors
-          colorStop: '#006EAB',    // just experiment with them
+          colorStart: '#5bc0de',   // Colors
+          colorStop: '#5bc0de',    // just experiment with them
           strokeColor: '#FFFFFF',   // to see which ones work best for you
           generateGradient: true
         };
@@ -195,8 +195,8 @@ var PressureGauge = (function () {
             strokeWidth: 0.030, // The rotation offset
             color: '#000000' // Fill color
           },
-          colorStart: '#6FADCF',   // Colors
-          colorStop: '#8FC0DA',    // just experiment with them
+          colorStart: '#5bc0de',   // Colors
+          colorStop: '#5bc0de',    // just experiment with them
           strokeColor: '#E0E0E0',   // to see which ones work best for you
           generateGradient: true
         };
@@ -231,9 +231,9 @@ var TemperatureGauge = (function () {
             strokeWidth: 0.030, // The rotation offset
             color: '#000000' // Fill color
           },
-           colorStart: '#ffffff',   // Colors
-           colorStop: '#94fd77',
-          strokeColor: '#E0E0E0',   // to see which ones work best for you
+           colorStart: '#f39c12',   // Colors
+           colorStop: '#f39c12',
+          strokeColor: '#E0E0E0',   //grey part to see which ones work best for you
           generateGradient: true
         };
         var target = document.getElementById('temperaturegauge'); // your canvas element
@@ -470,7 +470,7 @@ function gauge_battery_ajax(){
 
             render_total_acceleration(parseInt(json.live_accx), parseInt(json.live_accy), parseInt(json.live_accz));
 
-            BatteryGauge.getInstance().set(json.live_battery);
+            //BatteryGauge.getInstance().set(json.live_battery);
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
             TemperatureGauge.getInstance().set(json.live_temperature);
@@ -563,9 +563,9 @@ var TemperatureChart = (function () {
                     labels: LabelQueue.getInstance(),
                     datasets: [{
                         label: "Temperature Evolution",
-                        backgroundColor: "rgba(84, 249, 183, 0.2)",
-                        borderColor: "rgba(151,187,205,1)",
-                        pointBorderColor: "rgba(151,187,205,1)",
+                        backgroundColor: "rgba(46, 204, 113, 0.2)",
+                        borderColor: "rgba(46, 204, 113, 1)",
+                        pointBorderColor: "rgba(46, 204, 113, 1)",
                         pointStrokeColor: "#fff",
                         data: JSON.parse(temperaturelist),
 
@@ -640,27 +640,27 @@ var AccelerometerChart = (function () {
                 labels: LabelQueueAccelerometer.getInstance(),
                 datasets: [{
                     label: "X axis",
-                    backgroundColor: "rgba(220,220,220,0.2)",
-                    borderColor: "rgba(220,220,220,1)",
-                    pointBorderColor: "rgba(220,220,220,1)",
+                    backgroundColor: "rgba(14, 75, 154, 0.2)",
+                    borderColor: "rgba(14, 75, 154, 1)",
+                    pointBorderColor: "rgba(14, 75, 154, 1)",
                     pointStrokeColor: "#fff",
                     data: JSON.parse(accxlist)
 
                 },
                 {
                     label: "Y axis",
-                    backgroundColor: "rgba(151,187,205,0.2)",
-                    borderColor: "rgba(151,187,205,1)",
-                    pointBorderColor: "rgba(151,187,205,1)",
+                    backgroundColor: "rgba(46, 204, 113, 0.2)",
+                    borderColor: "rgba(46, 204, 113, 1)",
+                    pointBorderColor: "rgba(46, 204, 113, 1)",
                     pointStrokeColor: "#fff",
                     data: JSON.parse(accylist)
 
                 },
                 {
                     label : "Z axis",
-                    backgroundColor: "rgba(84, 249, 183, 0.2)",
-                    borderColor: "rgba(151,187,205,1)",
-                    pointBorderColor: "rgba(151,187,205,1)",
+                    backgroundColor: "rgba(91, 192, 222, 0.2)",
+                    borderColor: "rgba(91, 192, 222, 1)",
+                    pointBorderColor: "rgba(91, 192, 222, 1)",
                     pointStrokeColor: "#fff",
                     data: JSON.parse(acczlist)
 
@@ -669,13 +669,6 @@ var AccelerometerChart = (function () {
                 ]
             },
             options: {
-              title: {
-                display: true,
-                text: "Accelerometer data (mg)",
-                fontSize: 24,
-                fontFamily: 'Josefin Sans',
-                padding: 20
-              },
               legend: {
                 position: 'top'
               },
@@ -717,7 +710,7 @@ var AccelerometerChart = (function () {
 
 function renderLiveDashboard(){
 
-    BatteryGauge.getInstance();
+    //BatteryGauge.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
     TemperatureGauge.getInstance();
@@ -776,8 +769,13 @@ $(document).ready(function(){
     $('.side-label').removeClass("active");
     $('#dashboards').addClass( "active" );
 
-    var d = new Date()
-    document.getElementById("currentDate").innerHTML = d.toDateString();
+
+    $('.item').matchHeight();
+
+
+    var m = new Date()
+    var date = m.getUTCDate() +"/"+ (m.getUTCMonth()+1) +"/"+ m.getUTCFullYear();
+    document.getElementById("currentDate").innerHTML = date;
 
     renderLiveDashboard();
 

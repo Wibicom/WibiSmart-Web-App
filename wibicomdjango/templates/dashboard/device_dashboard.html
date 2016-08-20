@@ -12,19 +12,6 @@
 <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Live Dashboard
-        <small>{{ deviceName }}</small>
-      </h1>
-
-
-
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-        <li class="active">Here</li>
-      </ol>
-    </section>
 
     <!-- Main content -->
     <section class="content">
@@ -32,77 +19,46 @@
         <div class = "container-fluid" id = "dashboard-content">
 
 
+          <!-- top tiles -->
+          <div class="container-fluid">
+          <div class="row tile_count">
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-calendar-o" aria-hidden="true"></i> Date</span>
+              <div class="count" id = "currentDate"></div>
 
-            <div class = "container-fluid">
-                <div class = "row">
-                   <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-calendar-o" aria-hidden="true"></i></span>
-
-                        <div class="info-box-content">
-                          <span class="info-box-text">DATE</span>
-                          <span class="info-box-number" id = "currentDate"></span>
-                        </div>
-                        <!-- /.info-box-content -->
-                      </div>
-                      <!-- /.info-box -->
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-exchange" aria-hidden="true"></i></span>
-
-                        <div class="info-box-content">
-                          <span class="info-box-text">DATA TRANSFER</span>
-                          <span class="info-box-number"> 2453.4 entries/min </span>
-                        </div>
-                        <!-- /.info-box-content -->
-                      </div>
-                      <!-- /.info-box -->
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                      <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-compass" aria-hidden="true"></i></span>
-
-                        <div class="info-box-content">
-                          <span class="info-box-text">LOCATION</span>
-                          <span class="info-box-number"> Far </span>
-                        </div>
-                        <!-- /.info-box-content -->
-                      </div>
-                      <!-- /.info-box -->
-                    </div>
-
-
-
-                    <div class="col-md-3 col-sm-6 col xs-12">
-                      <!-- small box -->
-                      <div class="small-box bg-aqua">
-                        <div class="inner">
-                          <h3>45%</h3>
-
-                          <p>Battery Level</p>
-                        </div>
-                        <div class="icon">
-                          <i class="fa fa-battery-full" aria-hidden="true"></i>
-                        </div>
-                        <!--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>-->
-                      </div>
-                    </div>
-                    <!-- ./col -->
-
-
-
-
-                </div>
             </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Device Type </span>
+              <div class="count green">Enviro</div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>Environmental monitoring </i> </i> </span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-compass" aria-hidden="true"></i> Location </span>
+              <div class="count">Near</div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>0-5m </i> Approximation </span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-exchange" aria-hidden="true"></i> Data Transfer </span>
+              <div class="count green">High</div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>3453 </i> entries/min </span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-pencil" aria-hidden="true"></i> Weekly Entries</span>
+              <div class="count">4,567</div>
+              <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> From last Week</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-battery-half" aria-hidden="true"></i> Battery Level</span>
+              <div class="count" id = "batteryvalue"></div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>High </i> Light Exposure</span>
+            </div>
+          </div>
 
 
             <div class = "container-fluid">
                 <div class = "row">
                     <div class="col-md-12">
-                    <div class="box box-info box-accelerometer">
+                    <div class="box box-gray">
                             <div class="box-header with-border">
                                 <h3 class="box-title title">Accelerometer data</h3>
 
@@ -114,19 +70,19 @@
                             </div>
                             <div class="box-body no-padding">
                                  <div id = "column-wrap">
-                                    <div class="col-md-8 item">
+                                    <div class="col-md-9 item">
                                         <div id = "accelerometer-chart">
-                                            <canvas id="acccelerometerlinechart" height="110" ></canvas>
+                                            <canvas id="acccelerometerlinechart" height="120" ></canvas>
                                         </div>
                                     </div>
-                                    <div class="col-md-4" id="live-acceleration">
+                                    <div class="col-md-3" id="live-acceleration">
                                         <p class = "title">Live Acceleration</p> <!--when time comes, add a span under div id (segments) for screen reader enabling-->
                                         <div>
                                           <p class = "data-info" id="accxvalue"></p>
                                           <div class="progress">
-                                              <div id = "firstSegment_progress_x" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_x" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_x" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                              <div id = "firstSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_x" class="progress-bar progress-bar-orange" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar"  style="width: 100%"></div>
                                           </div>
                                         </div>
 
@@ -134,18 +90,18 @@
                                           <p class = "data-info" id="accyvalue"></p>
                                           <div class = "data_progress_y"></div>
                                           <div class="progress">
-                                              <div id = "firstSegment_progress_y" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_y" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_y" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                              <div id = "firstSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_y" class="progress-bar progress-bar-green" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar"  style="width: 100%"></div>
                                           </div>
                                         </div>
 
                                         <div>
                                           <p class = "data-info" id="acczvalue"></p>
                                           <div class="progress">
-                                              <div id = "firstSegment_progress_z" class="progress-bar progress-bar-success gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_z" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_z" class="progress-bar progress-bar-success gray-zone" role="progressbar"  style="width: 100%"></div>
+                                              <div id = "firstSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_z" class="progress-bar progress-bar-blue" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar"  style="width: 100%"></div>
                                           </div>
                                         </div>
 
@@ -164,38 +120,73 @@
             </div>
 
 
+
+
+
+
             <div class="container-fluid">
                 <div class = "row">
                         <div class="col-md-4">
-                            <div class = "panel panel-info">
-                                <div class="panel-body">
-                                    <p id = "batteryvalue" class = "gaugevalue"></p>
-                                    <canvas id="batterygauge" class = "gauge" ></canvas>
-                                    <label class = "labels"> Battery Level </label>
+                            <div class="box box-gray">
+                            <div class="box-header with-border">
+                                <h3 class="box-title title">Temperature</h3>
 
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                                 </div>
+                            </div>
+                            <div class="box-body no-padding">
+                                <div class = "gauge-section">
+                                <canvas id="temperaturegauge" class="gauge" height="105"></canvas>
+                                <label id = "temperaturevalue" class = "labels"></label>
+                                </div>
+                            </div>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class = "panel panel-info">
-                                <div class="panel-body">
-                                    <p id = "humidityvalue" class = "gaugevalue"></p>
-                                    <canvas id="humiditygauge" class = "gauge" ></canvas>
-                                    <label class = "labels"> Humidity </label>
+                                <div class="box box-gray">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title title">Humidity</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body no-padding">
+                                        <div class = "gauge-section">
+                                            <p id = "humidityvalue" class = "gaugevalue"></p>
+                                            <canvas id="humiditygauge" class = "gauge" ></canvas>
+                                       </div>
+                                    </div>
                                 </div>
-                            </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class = "panel panel-info">
-                                <div class="panel-body">
-                                    <p id = "pressurevalue" class="gaugevalue-withpointer"></p>
-                                    <canvas id="pressuregauge" class="gauge" height="105"></canvas>
-                                    <label class = "labels"> Pressure </label>
+                            <div class="box box-gray">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title title">Pressure</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body no-padding">
+                                        <div class = "gauge-section">
+                                            <canvas id="pressuregauge" class="gauge" height="105"></canvas>
+                                            <label id = "pressurevalue" class = "labels"> Pressure </label>
+                                        </div>
+
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                         </div>
+
 
                 </div>
             </div>
@@ -205,34 +196,56 @@
             <div class = "container-fluid">
                 <div class = "row">
                     <div class = "col-md-4">
-                        <div class="panel panel-info">
-                          <div class="panel-body">
-                              <p id = "temperaturevalue" class="gaugevalue-withpointer"></p>
-                              <canvas id="temperaturegauge" class="gauge" height="105"></canvas>
-                              <label class = "labels"> Temperature </label>
-                          </div>
-                        </div>
-                        <div class="panel panel-info">
-                          <div class="panel-body">
-                              <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span>
-                              <span class = "top-labels"> Ambiant light </span>
-                              <p class = "data-info">Light level : High </p>
-                              <p class="data-info">345.66 Lux</p>
+                          <div class="info-box">
+                            <span class="info-box-icon backgr-dark-blue"><i class="fa fa-chevron-circle-up white" aria-hidden="true"></i></span>
 
+                            <div class="info-box-content">
+                              <span class="info-box-text">DAILY HIGH</span>
+                              <span class="info-box-number">32 Degrees</span>
+
+                            </div>
+                            <!-- /.info-box-content -->
                           </div>
+
+                        <div class="info-box">
+                            <span class="info-box-icon backgr-green"><i class="fa fa-minus-circle white" aria-hidden="true"></i></span>
+
+                            <div class="info-box-content">
+                              <span class="info-box-text">DAILY AVRG</span>
+                              <span class="info-box-number">26 Degrees</span>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                          </div>
+
+                          <div class="info-box">
+                            <span class="info-box-icon backgr-light-blue"><i class="fa fa-chevron-circle-down white" aria-hidden="true"></i></i></span>
+
+                            <div class="info-box-content">
+                              <span class="info-box-text">DAILY LOW</span>
+                              <span class="info-box-number">22 Degrees</span>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                          </div>
+
+
                         </div>
-                    </div>
+                      <!-- /.info-box -->
+
 
                     <div class="col-md-8">
                         <div class="panel panel-info">
                           <div class="panel-body">
-                              <canvas id="temperaturelinechart" width="250" height="135"></canvas>
+                              <canvas id="temperaturelinechart" width="250" height="120"></canvas>
                           </div>
                         </div>
                     </div>
                     </div>
                 </div>
             </div>
+
+
 
 
     <div id="console-event"></div>
