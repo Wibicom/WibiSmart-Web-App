@@ -9,7 +9,9 @@ from userprofile.models import Device
 from userprofile.models import DeviceEntry
 from userprofile.models import UserProfile
 from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.contrib.auth.decorators import login_required
 from models import ReceivedAndroidData
 
 from rest_framework.authtoken.models import Token
@@ -21,8 +23,7 @@ from django.dispatch import receiver
 import json
 import datetime
 
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.contrib.auth.decorators import login_required
+
 
 def login(request):
     c = {}
@@ -169,25 +170,26 @@ def receive_android_data(request):
         if "datetime" in json_data :
             print "_____________________JSON DATA____________________"
             print json_data["datetime"]
-            date = json_data["datetime"]
+            my_datetime = json_data["datetime"]
+            #my_datetime = timezone.make_aware(my_datetime, timezone.get_current_timezone())
 
         if "rssi" in json_data:
             print "___________DATE__ENTRY___CREATION____________"
-            print date
-            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity,
+            print my_datetime
+            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
                             device_id=device.id,accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
                             light=lastentry.light, temperature=lastentry.temperature, rssi = json_data["rssi"])
             d.save()
 
         elif "battery" in json_data:
-            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity,
+            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
                             device_id=device.id,
                             accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=json_data["battery"],
                             light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
             d.save()
 
         elif "light" in json_data:
-            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
+            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
                             accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = lastentry.battery,
                             light = json_data["light"], temperature = lastentry.temperature, rssi = lastentry.rssi)
 
@@ -196,7 +198,7 @@ def receive_android_data(request):
 
         # Get weather data
         elif "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
-            d = DeviceEntry(datetime=date, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
+            d = DeviceEntry(datetime=my_datetime, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
                             accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
                             light=lastentry.light, temperature=json_data["temperature"], rssi = lastentry.rssi)
             d.save()
@@ -204,7 +206,7 @@ def receive_android_data(request):
 
         # Get accelerometer data
         elif "accx" in json_data and "accy" in json_data and "accz" in json_data:
-            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
+            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
                             accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"], battery=lastentry.battery,
                             light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
             d.save()

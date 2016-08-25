@@ -8,15 +8,6 @@ var counter = (function () {
     }
 }());
 
-var counteracc = (function () {
-    var n = 30;
-
-    return function () {
-        n++;
-
-        return n;
-    }
-}());
 
 var counterLabels = (function () {
     var n = 10;
@@ -29,7 +20,7 @@ var counterLabels = (function () {
 }());
 
 var counterLabelsAccelerometer = (function () {
-    var n = 10;
+    var n = 30;
 
     return function () {
         n++;
@@ -72,6 +63,7 @@ var HumidityGauge = (function () {
         };
         var target = document.getElementById('humiditygauge'); // your canvas element
         var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 100; // set max gauge value
         gauge.maxValue = 100; // set max gauge value
         gauge.animationSpeed = 15; // set animation speed (32 is default value)
         gauge.set(5); // set actual value
@@ -294,14 +286,14 @@ function render_progressbar_accelerometer(live_acc, axis){
     var thirdSegment_progress;
     if (live_acc>0) {
         firstSegment_progress = "50%";
-        secondSegment_progress = ((live_acc/4000) * 100).toString() + "%";
-        thirdSegment_progress = (50 - ((live_acc/4000)*100)).toString + "%";
+        secondSegment_progress = (((live_acc/4000) * 100)/2).toString() + "%";
+        thirdSegment_progress = (50 - (((live_acc/4000)*100))/2).toString + "%";
 
 
     } else if (live_acc<0) {
 
-        firstSegment_progress = (50 - ((Math.abs(live_acc)/4000)*100)).toString() + "%";
-        secondSegment_progress = ((Math.abs(live_acc)/4000)*100).toString() + "%";
+        firstSegment_progress = (50 - (((Math.abs(live_acc)/4000)*100)/2)).toString() + "%";
+        secondSegment_progress = (((Math.abs(live_acc)/4000)*100)/2).toString() + "%";
         thirdSegment_progress = "50%";
 
     } else {
@@ -361,6 +353,38 @@ function renderTemperatureGaugeColor(temperature){
     }
 }
 
+function renderLightIndicator(live_light){
+    var light_indicator = "";
+    if (live_light>350){
+        light_indicator = "High";
+    }else if (live_light>150){
+        light_indicator = "Medium";
+    }else{
+        light_indicator = "Low";
+    }
+    return light_indicator;
+}
+
+//This function is used to color the light circle according to the light level detected
+function renderLightCircleColor(){
+    var currentClass = $('#light-circle').attr('class');
+    var newClass = "fa fa-circle "
+    if ($('#light_indicator').html()=="High"){
+        newClass += 'fa-circle-high-light-lvl'
+    } else if ($('#light_indicator').html()== "Medium"){
+         newClass += 'fa-circle-medium-light-lvl'
+    }else if ($('#light_indicator').html()== "Low"){
+        newClass += 'fa-circle-low-light-lvl'
+    } else {
+        console.log("There is a problem with the lightbulb");
+    }
+    if (currentClass!=newClass){
+        $('#light-circle').removeClass(currentClass);
+        $('#light-circle').addClass(newClass);
+    }
+
+}
+
 //this function gets executed every x delay (milliseconds) and collects the data in backend to bring it into dashboard
 function ajax_getdata(){
 
@@ -377,7 +401,14 @@ function ajax_getdata(){
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
             $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");
+
             $('#rssi').html(json.live_rssi);
+            light_indicator = renderLightIndicator(json.live_light);
+            $('#light_indicator').html(light_indicator);
+            $('#light_indicator_bottom').html(light_indicator);
+            renderLightCircleColor();
+
+
             $('#deviceStatus').html(json.live_deviceStatus);
 
             renderIndicatorRssi();
@@ -415,15 +446,15 @@ function ajax_getdata(){
             LabelQueueAccelerometer.getInstance().push(counterLabelsAccelerometer());
             LabelQueueAccelerometer.getInstance().shift();
 
-            //var maximum = Math.max.apply(Math, TemperatureQueue.getInstance());
-            //var minimum = Math.min.apply(Math, TemperatureQueue.getInstance());
+            var maximum = Math.max.apply(Math, TemperatureQueue.getInstance());
+            var minimum = Math.min.apply(Math, TemperatureQueue.getInstance());
             //console.log(TemperatureQueue.getInstance());
             //console.log(maximum);
             //console.log(minimum);
 
             TemperatureChart.getInstance().data.datasets[0].data = TemperatureQueue.getInstance();
-            //TemperatureChart.getInstance().options.scales.yAxes[0].ticks.min = 20;
-            //TemperatureChart.getInstance().options.scales.yAxes[0].ticks.max = 40;
+            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.min = minimum-5;
+            TemperatureChart.getInstance().options.scales.yAxes[0].ticks.max = maximum+5;
             TemperatureChart.getInstance().update();
 
             AccelerometerChart.getInstance().data.datasets[0].data = AccxQueue.getInstance();
@@ -648,21 +679,7 @@ function renderLiveDashboard(){
 
 
 
-//This function is used to color the light circle according to the light level detected
-function renderLightCircleColor(){
-    if ((document.getElementById("light-level").innerHTML)=="High"){
-        console.log("i am here");
-        console.log($('.fa-circle:before'));
-        $('#light-circle').toggleClass('fa-circle-high-light-lvl');
-    } else if (document.getElementById("light-level").innerHTML == "Medium"){
-        $('#light-circle').toggleClass('fa-circle-medium-light-lvl');
-    }else if (document.getElementById("light-level").innerHTML == "Low"){
-        $('#light-circle').toggleClass('fa-circle-low-light-lvl');
-    } else {
-        console.log("There is a problem with the lightbulb");
-    }
 
-}
 
 //This function is used to render a data transfer level (either High, low, medium) to qualify the daily data transfer
 //seen on top of the page under the Data transfer tile
@@ -671,10 +688,8 @@ function renderIndicatorDataTransfer(){
         document.getElementById("indicator_data_transfer").innerHTML = "Low";
     } else if (avrg_per_min_daily < 40) {
         document.getElementById("indicator_data_transfer").innerHTML = "Medium";
-    } else if (avrg_per_min_daily < 60) {
+    } else{
         document.getElementById("indicator_data_transfer").innerHTML = "High";
-    }else {
-        document.getElementById("indicator_data_transfer").innerHTML = "NA";
     }
 }
 
@@ -694,7 +709,6 @@ $(document).ready(function(){
     $('.item').matchHeight();
 
     renderIndicatorDataTransfer();
-    renderLightCircleColor();
 
 
 
@@ -703,7 +717,6 @@ $(document).ready(function(){
     renderLiveDashboard();
     renderIndicatorRssi();
 
-    //renderTemperatureGaugeColor();
 
 
 });

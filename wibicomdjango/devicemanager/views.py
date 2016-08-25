@@ -128,6 +128,20 @@ def adddevice(request): #this is not working
     return redirect('devicemanager')
 
 
+@login_required()
+def connect(request, id):
+    device_to_connect = Device.objects.get(id = id)
+    address = device_to_connect.deviceNb
+    requests.get('http://raspberrypi:8010/gatt/nodes/' + address)  # request connection to that device
+    return redirect ('devicemanager')
+
+@login_required()
+def disconnect(request, id):
+    device_to_connect = Device.objects.get(id = id)
+    address = device_to_connect.deviceNb
+    requests.get('http://raspberrypi:8010/gatt/nodes/' + address +'/disconnect')  # request connection to that device
+    return redirect ('devicemanager')
+
 
 @login_required()
 def devicesettings(request, id):
@@ -204,6 +218,7 @@ def devicesettings(request, id):
     return render(request, 'device_manager/device_settings.html', {"device": device,
                                                                    "listOfDevices": listOfDevices,
                                                                    "settings": settings})
+
 
 
 

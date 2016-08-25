@@ -35,7 +35,7 @@
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-exchange" aria-hidden="true"></i> Data Transfer </span>
               <div id = "indicator_data_transfer" class="count"></div>
-              <span class="count_bottom"><i class="fa fa-sort-asc"></i> {{ avrg_per_min_daily }} entries/min</span>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i> {{ entries_last_minute }} entries/min</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
 
@@ -52,7 +52,7 @@
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-battery-half" aria-hidden="true"></i> Battery Level</span>
               <div class="count" id = "batteryvalue"></div>
-              <span class="count_bottom"><i class="fa fa-sort-asc"></i>High Light Exposure</span>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i><span id= "light_indicator"></span> Light Exposure</span>
             </div>
           </div>
 
@@ -203,7 +203,7 @@
 
                             <div class="info-box-content">
                               <span class="info-box-text">LIGHTING</span>
-                              <span id = "light-level" class="info-box-number">Low</span>
+                              <span id = "light_indicator_bottom" class="info-box-number"></span>
 
                             </div>
                             <!-- /.info-box-content -->
@@ -241,15 +241,6 @@
                             <!-- /.info-box-content -->
                           </div>
 
-
-
-
-
-
-
-
-
-
                         </div>
                       <!-- /.info-box -->
 
@@ -285,7 +276,7 @@
     var accxlist = "{{accxlist}}";
     var accylist = "{{accylist}}";
     var acczlist = "{{acczlist}}";
-    var avrg_per_min_daily = {{ avrg_per_min_daily|safe }};
+    var avrg_per_min_daily = {{ entries_last_minute|safe }};
 
 
     </script>

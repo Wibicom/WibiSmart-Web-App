@@ -130,10 +130,21 @@
                  </span>
 
 
+
+
                  {% include "device_manager/modal_edit_device.html" %} <!--This is the pop up box that appears when editting device-->
 
                 <h4 class = "list-group-item-heading">{{ device }}</h4>
                 <p class="list-group-item-text"> {{ device.deviceNb }} </p>
+                {% if device.deviceStatus == "Disconnected" %}
+                  <form action = '/accounts/loggedin/devicemanager/{{device.id}}/connect/' method = "post"> {% csrf_token %}
+                  <p class="deviceStatus"> {{device.deviceStatus}} <span class = "pull-right"><button type="submit" class = "btn btn-xs btn-default"> Reconnect </button></span></p>
+                  </form>
+                {% else %}
+                  <form action = '/accounts/loggedin/devicemanager/{{device.id}}/disconnect/' method = "post"> {% csrf_token %}
+                  <p class = "deviceStatus"> {{device.deviceStatus}} <span class = "pull-right"><button type="submit" class = "btn btn-xs btn-default"> Disconnect </button></span></p>
+                  </form>
+                {% endif %}
 
               </li>
               {% endfor %}

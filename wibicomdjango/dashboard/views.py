@@ -20,7 +20,7 @@ from userprofile.models import Device
 from userprofile.models import DeviceEntry
 
 #this function calculates the daily data transfer (entries per minute) for a specific device
-def calculate_daily_data_transfer(request,device):
+def calculate_lastmin_data_transfer(request,device):
     now = datetime.datetime.now()
     minute_ago = now - datetime.timedelta(minutes=1)
 
@@ -37,26 +37,16 @@ def calculate_weekly_entries_data(request,device):
 
     #nb of entries this week
     nb_weekly_entries = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[seven_days_earlier, today]).count()
-    nb_weekly_entries = "{:,}".format(nb_weekly_entries)
-    print "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-    print device.id
-    print nb_weekly_entries
-    print "today"
-    print today
-    print "seven_days_earlier"
-    print seven_days_earlier
-    print "fourteendayserlier"
-    print fourteen_days_earlier
-
 
     #nb of entries last week
     nb_entries_previous_week = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[fourteen_days_earlier, seven_days_earlier]).count()
 
     if (nb_entries_previous_week !=0):
-        weekly_entries_delta = (nb_weekly_entries-nb_entries_previous_week)/nb_entries_previous_week
+        weekly_entries_delta = ((nb_weekly_entries-nb_entries_previous_week)/nb_entries_previous_week)*100
     else:
         weekly_entries_delta = "--"
 
+    nb_weekly_entries = "{:,}".format(nb_weekly_entries)
     dict = {'weekly_entries' : nb_weekly_entries, 'weekly_entries_delta': weekly_entries_delta}
 
     return dict
@@ -113,8 +103,7 @@ def onedevice_dashboard(request, id):
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
 
-
-    avrg_per_min_daily = calculate_daily_data_transfer(request,device)
+    entries_last_minute = calculate_lastmin_data_transfer(request,device)
     weekly_entries_data = calculate_weekly_entries_data(request,device)
     daily_temp_data = calculate_daily_temp(request, device)
 
@@ -129,7 +118,7 @@ def onedevice_dashboard(request, id):
                                                                               "accxlist": accxlist,
                                                                               "accylist": accylist,
                                                                               "acczlist": acczlist,
-                                                                              "avrg_per_min_daily": avrg_per_min_daily,
+                                                                              "entries_last_minute": entries_last_minute,
                                                                               "weekly_entries": weekly_entries_data['weekly_entries'],
                                                                               "weekly_entries_delta": weekly_entries_data['weekly_entries_delta'],
                                                                               "daily_temp_avrg" : daily_temp_data['daily_temp_avrg'],
@@ -388,7 +377,9 @@ def onedevice_dashboard_ajax(request, id):
     live_accy = last_entry.accy
     live_accz = last_entry.accz
     live_rssi = last_entry.rssi
+    live_light = last_entry.light
     live_deviceStatus = device.deviceStatus
+
 
 
     response_data = {}
@@ -402,8 +393,10 @@ def onedevice_dashboard_ajax(request, id):
         response_data['live_accx']= live_accx
         response_data['live_accy']= live_accy
         response_data['live_accz']= live_accz
+        response_data['live_light'] = live_light
         response_data['live_rssi'] = live_rssi
         response_data['live_deviceStatus'] = live_deviceStatus
+
     except:
         response_data['result'] = "Failure"
         response_data['message'] = "it did not work"
