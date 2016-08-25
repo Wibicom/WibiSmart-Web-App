@@ -81,6 +81,36 @@ def register_success(request):
     return render_to_response('register_success.html')
 
 
+
+#this function receives if the device is connected or not
+@csrf_exempt
+def receive_device_state(request):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        token = json_data['token']
+
+        # verifying that the token exists in the db and if not, quit the function
+        try:
+            Token.objects.get(key=token)
+        except Token.DoesNotExist:
+            print "***********No valid tokenobj********"
+            return render(request, "wibicomdjango/receive_device_state.html")
+
+        address = json_data['deviceNb']
+        state = json_data['state']
+
+        print "---------------------------------------------"
+        print address
+        print state
+
+        device = Device.objects.get(deviceNb = address)
+        device.deviceStatus = state
+        device.save()
+
+        return HttpResponse("OK")
+    return render(request, "wibicomdjango/receive_device_state.html" )
+
+#this function takes care of receiving all device entries
 @csrf_exempt
 def receive_android_data(request):
 
@@ -129,6 +159,7 @@ def receive_android_data(request):
         lastentry = device_entries.latest('datetime')
 
 
+
         #deviceentry = DeviceEntry()
         #deviceentry.device = device  # put the primary key of the device here
 
@@ -136,33 +167,50 @@ def receive_android_data(request):
 
         # Get general data
         if "datetime" in json_data :
+            print "_____________________JSON DATA____________________"
+            print json_data["datetime"]
             date = json_data["datetime"]
 
+        if "rssi" in json_data:
+            print "___________DATE__ENTRY___CREATION____________"
+            print date
+            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity,
+                            device_id=device.id,accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
+                            light=lastentry.light, temperature=lastentry.temperature, rssi = json_data["rssi"])
+            d.save()
 
-        if "battery" in json_data and "light" in json_data :
+        elif "battery" in json_data:
+            d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity,
+                            device_id=device.id,
+                            accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=json_data["battery"],
+                            light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
+            d.save()
+
+        elif "light" in json_data:
             d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
-                            accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = json_data["battery"],
-                            light = json_data["light"], temperature = lastentry.temperature)
+                            accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = lastentry.battery,
+                            light = json_data["light"], temperature = lastentry.temperature, rssi = lastentry.rssi)
+
             d.save()
 
 
         # Get weather data
-        if "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
+        elif "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
             d = DeviceEntry(datetime=date, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
                             accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
-                            light=lastentry.light, temperature=json_data["temperature"])
+                            light=lastentry.light, temperature=json_data["temperature"], rssi = lastentry.rssi)
             d.save()
-
 
 
         # Get accelerometer data
-        if "accx" in json_data and "accy" in json_data and "accz" in json_data:
+        elif "accx" in json_data and "accy" in json_data and "accz" in json_data:
             d = DeviceEntry(datetime=date, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
                             accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"], battery=lastentry.battery,
-                            light=lastentry.light, temperature=lastentry.temperature)
+                            light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
             d.save()
 
-        
+        else:
+            pass
 
     now = datetime.datetime.now()
     return HttpResponse(now)

@@ -7,14 +7,19 @@
     border-top-color:  #73879C;
 }
 
-#live-acceleration{
 
 
-
+.content{
+    padding-top: 60px;
 }
+
 .backgr-white{
     background-color: white;
 
+}
+
+.alert-white{
+    background-color: white;
 }
 
 .backgr-dark-blue{
@@ -160,3 +165,27 @@
     padding-bottom: 30px;
 }
 
+.fa-circle:before{
+
+}
+
+.fa-circle-high-light-lvl:before{
+   background: -webkit-gradient(linear, left top, left bottom, from(#fcff00), to(#fffbeb));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+   display: initial;
+}
+
+.fa-circle-medium-light-lvl:before{
+   background: -webkit-gradient(linear, left top, left bottom, from(#f0ff00), to(#ff8105));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+   display: initial;
+}
+
+.fa-circle-low-light-lvl:before{
+   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#a9a89b));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+   display: initial;
+}

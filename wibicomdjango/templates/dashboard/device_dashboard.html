@@ -23,34 +23,36 @@
           <div class="container-fluid">
           <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-calendar-o" aria-hidden="true"></i> Date</span>
-              <div class="count" id = "currentDate"></div>
+              <span class="count_top"><i class="fa fa-signal" aria-hidden="true"></i> Device Status</span>
+              <div class="count" id = "deviceStatus"></div>
 
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Device Type </span>
-              <div class="count green">Enviro</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>Environmental monitoring </i> </i> </span>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-compass" aria-hidden="true"></i> Location </span>
-              <div class="count">Near</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>0-5m </i> Approximation </span>
+              <div id="rssi-indicator" class="count"></div>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i><i id = "rssi"></i> Dbm RSSI</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-exchange" aria-hidden="true"></i> Data Transfer </span>
-              <div class="count green">High</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>3453 </i> entries/min </span>
+              <div id = "indicator_data_transfer" class="count"></div>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i> {{ avrg_per_min_daily }} entries/min</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+
               <span class="count_top"><i class="fa fa-pencil" aria-hidden="true"></i> Weekly Entries</span>
-              <div class="count">4,567</div>
-              <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> From last Week</span>
+              <div class="count">{{ weekly_entries }} </div>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i>{{ weekly_entries_delta }} %  From last Week</span>
+
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Autonomy </span>
+              <div class="count live-tile-count">6 hours</div>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i>time until device is off </i> </span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-battery-half" aria-hidden="true"></i> Battery Level</span>
               <div class="count" id = "batteryvalue"></div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>High </i> Light Exposure</span>
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i>High Light Exposure</span>
             </div>
           </div>
 
@@ -197,11 +199,21 @@
                 <div class = "row">
                     <div class = "col-md-4">
                           <div class="info-box">
+                            <span class="info-box-icon backgr-white"><i id = "light-circle" class="fa fa-circle" aria-hidden="true"></i></span>
+
+                            <div class="info-box-content">
+                              <span class="info-box-text">LIGHTING</span>
+                              <span id = "light-level" class="info-box-number">Low</span>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                          </div>
+                          <div class="info-box">
                             <span class="info-box-icon backgr-dark-blue"><i class="fa fa-chevron-circle-up white" aria-hidden="true"></i></span>
 
                             <div class="info-box-content">
                               <span class="info-box-text">DAILY HIGH</span>
-                              <span class="info-box-number">32 Degrees</span>
+                              <span class="info-box-number">{{ daily_temp_max }} °C</span>
 
                             </div>
                             <!-- /.info-box-content -->
@@ -212,7 +224,7 @@
 
                             <div class="info-box-content">
                               <span class="info-box-text">DAILY AVRG</span>
-                              <span class="info-box-number">26 Degrees</span>
+                              <span class="info-box-number">{{ daily_temp_avrg }} °C</span>
 
                             </div>
                             <!-- /.info-box-content -->
@@ -223,11 +235,19 @@
 
                             <div class="info-box-content">
                               <span class="info-box-text">DAILY LOW</span>
-                              <span class="info-box-number">22 Degrees</span>
+                              <span class="info-box-number">{{ daily_temp_min }} °C</span>
 
                             </div>
                             <!-- /.info-box-content -->
                           </div>
+
+
+
+
+
+
+
+
 
 
                         </div>
@@ -249,7 +269,7 @@
 
 
     <div id="console-event"></div>
-
+    </div>
     </section>
     <!-- /.content -->
   </div>
@@ -265,6 +285,8 @@
     var accxlist = "{{accxlist}}";
     var accylist = "{{accylist}}";
     var acczlist = "{{acczlist}}";
+    var avrg_per_min_daily = {{ avrg_per_min_daily|safe }};
+
 
     </script>
 

@@ -1,12 +1,25 @@
 
 .dy-chart{
-    height: 300px;
+    height: 320px;
+    padding-bottom : 0px;
+    padding-top : 30px;
+    padding-left: 20px;
+    padding-right: 50px;
+
 }
 
+.graph-col{
+        height: 380px;
+}
 
+.btn-toolbar{
+    margin-bottom: 10px;
 
-#my-cont{
-    padding : 20px;
+}
+
+.box-green{
+    border-top: 3px solid #5bc0de;
+
 }
 
 #test{
@@ -15,12 +28,29 @@
 }
 
 .graph-label{
-    font-size: 26px;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-left: 10px;
+    font-family:  'Josefin Sans', serif;
+
+}
+
+.btn-default{
+   margin-left: 10px;
+   width: 55px;
+
+}
+
+.dygraph-y2label{
+    position: absolute;
+    bottom: 10px;
+    left: 120px;
+
+}
+
+.pop-up-title{
+    font-size: 16px;
     font-weight: bold;
     font-family:  'Josefin Sans', serif;
-    padding : 10px;
-    margin-left: 50px;
-
-
-
 }

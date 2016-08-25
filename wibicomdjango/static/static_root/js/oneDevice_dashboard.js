@@ -9,7 +9,7 @@ var counter = (function () {
 }());
 
 var counteracc = (function () {
-    var n = 10;
+    var n = 30;
 
     return function () {
         n++;
@@ -39,69 +39,6 @@ var counterLabelsAccelerometer = (function () {
 }());
 
 
-
-function renderPieBattery(live_battery){
-
-    //console.log(live_battery);
-    //console.log(typeof(live_battery));
-	var pieData = [
-	   {
-		  value: parseInt(live_battery),
-		  label: 'Battery Level',
-		  color: '#00FF40'
-	   },
-	   {
-		  value: 100 - parseInt(live_battery),
-		  label: '',
-		  color: '#E6E6E6'
-	   }
-
-	];
-	var options = {
-		percentageInnerCutout: 85  ,
-		animation: false,
-	};
-
-	var context = document.getElementById('pieBattery').getContext('2d');
-	var skillsChart = new Chart(context).Doughnut(pieData, options );
-}
-function renderGaugeBattery(){
-var opts = {
-  lines: 12, // The number of lines to draw
-  angle: 0.3, // The length of each line
-  lineWidth: 0.1, // The line thickness
-
-  limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
-  colorStart: '#006EAB',   // Colors
-  colorStop: '#006EAB',    // just experiment with them
-  strokeColor: '#FFFFFF',   // to see which ones work best for you
-  generateGradient: true
-};
-var target = document.getElementById('foo'); // your canvas element
-var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
-gauge.maxValue = 100; // set max gauge value
-gauge.animationSpeed = 15; // set animation speed (32 is default value)
-gauge.set(41); // set actual value
-
-}
-
-function battery_live_ajaxcall(){
-    $.ajax({
-
-        url: "/accounts/loggedin/" + deviceId + "/renderdata/",
-        type : "GET", // http method
-        datatype: "json",
-        success: function (json) {
-            $('#output').html(json.message); //take the div output and put the json message in it
-            var live_battery = json.message;
-            renderPieBattery(live_battery);
-
-
-        }
-
-    });
-}
-
 function ajaxcallforlineChart(){
     $.ajax({
         url: "/accounts/loggedin/" + deviceId + "/csvoutput/",
@@ -116,38 +53,7 @@ function ajaxcallforlineChart(){
     });
 }
 
-var BatteryGauge = (function () {
-    var instance;
 
-    function createInstance() {
-        var opts = {
-          lines: 12, // The number of lines to draw
-          angle: 0.3, // The length of each line
-          lineWidth: 0.1, // The line thickness
-
-          limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
-          colorStart: '#006EAB',   // Colors
-          colorStop: '#006EAB',    // just experiment with them
-          strokeColor: '#FFFFFF',   // to see which ones work best for you
-          generateGradient: true
-        };
-        var target = document.getElementById('batterygauge'); // your canvas element
-        var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 100; // set max gauge value
-        gauge.animationSpeed = 15; // set animation speed (32 is default value)
-        gauge.set(0); // set actual value
-        return gauge;
-        }
-
-    return {
-        getInstance: function () {
-            if (!instance) {
-                instance = createInstance();
-            }
-            return instance;
-        }
-    };
-})();
 
 var HumidityGauge = (function () {
     var instance;
@@ -168,7 +74,7 @@ var HumidityGauge = (function () {
         var gauge = new Donut(target).setOptions(opts); // create sexy gauge!
         gauge.maxValue = 100; // set max gauge value
         gauge.animationSpeed = 15; // set animation speed (32 is default value)
-        gauge.set(0); // set actual value
+        gauge.set(5); // set actual value
         return gauge;
         }
 
@@ -204,7 +110,7 @@ var PressureGauge = (function () {
         var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
         gauge.maxValue = 1500; // set max gauge value
         gauge.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge.set(0); // set actual value
+        gauge.set(5); // set actual value
         return gauge;
         }
 
@@ -224,12 +130,12 @@ var TemperatureGauge = (function () {
     function createInstance() {
         var opts = {
           lines: 12, // The number of lines to draw
-          angle: 0.005, // The length of each line
+          angle: 0.01, // The length of each line
           lineWidth: 0.20, // The line thickness
           pointer: {
-            length: 1, // The radius of the inner circle
-            strokeWidth: 0.030, // The rotation offset
-            color: '#000000' // Fill color
+            //length: 1, // The radius of the inner circle
+            //strokeWidth: 0.030, // The rotation offset
+            //color: '#000000' // Fill color
           },
            colorStart: '#f39c12',   // Colors
            colorStop: '#f39c12',
@@ -238,9 +144,10 @@ var TemperatureGauge = (function () {
         };
         var target = document.getElementById('temperaturegauge'); // your canvas element
         var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 40; // set max gauge value
+        gauge.maxValue = 35; // set max gauge value
+        gauge.minValue = -30
         gauge.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge.set(0); // set actual value
+        gauge.set(1); // set actual value
         return gauge;
         }
 
@@ -255,25 +162,6 @@ var TemperatureGauge = (function () {
 })();
 
 
-function renderToggle(){
-    $('#toggle-event').change(function() {
-      $('#console-event').html('Toggle: ' + $(this).prop('checked'));
-      var booltoggle = $(this).prop('checked');   //this when first lands on page, is null, then will be on true, false once toggled
-      console.log(booltoggle);
-      if (booltoggle ==false){
-        console.log("no im here")
-        ajaxcallforlineChart();
-      }
-      else{
-        //create gauges
-        console.log("im in else")
-
-        //make an ajax request for data
-        //update gauges
-      }
-    })
-
-}
 
 
 var TemperatureQueue = (function () {
@@ -448,7 +336,33 @@ function render_total_acceleration (accx, accy, accz){
 
 }
 
-function gauge_battery_ajax(){
+function renderIndicatorRssi(){
+
+    if(parseInt((document.getElementById("rssi").innerHTML))> -65){
+        document.getElementById("rssi-indicator").innerHTML = "Near";
+    } else if(parseInt((document.getElementById("rssi").innerHTML))> -80){
+        document.getElementById("rssi-indicator").innerHTML = "Mid Range";
+    } else {
+        document.getElementById("rssi-indicator").innerHTML = "Far";
+    }
+}
+
+function renderTemperatureGaugeColor(temperature){
+    if(temperature<0){
+        TemperatureGauge.getInstance().setOptions({colorStart:'#68e8e4', colorStop: '#68e8e4'})
+    }
+    else if(temperature<10){
+        TemperatureGauge.getInstance().setOptions({colorStart:'#68a0e8', colorStop: '#68a0e8'})
+    }
+    else if(temperature<25){
+        TemperatureGauge.getInstance().setOptions({colorStart:'#fcc754', colorStop: '#fcc754'})
+    }else{
+        TemperatureGauge.getInstance().setOptions({colorStart:'#fc6d54', colorStop: '#fc6d54'})
+    }
+}
+
+//this function gets executed every x delay (milliseconds) and collects the data in backend to bring it into dashboard
+function ajax_getdata(){
 
     $.ajax({
 
@@ -463,6 +377,11 @@ function gauge_battery_ajax(){
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
             $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");
+            $('#rssi').html(json.live_rssi);
+            $('#deviceStatus').html(json.live_deviceStatus);
+
+            renderIndicatorRssi();
+
 
             render_progressbar_accelerometer(parseInt(json.live_accy), 'y');
             render_progressbar_accelerometer(parseInt(json.live_accx), 'x');
@@ -470,10 +389,12 @@ function gauge_battery_ajax(){
 
             render_total_acceleration(parseInt(json.live_accx), parseInt(json.live_accy), parseInt(json.live_accz));
 
-            //BatteryGauge.getInstance().set(json.live_battery);
+
             HumidityGauge.getInstance().set(json.live_humidity);
             PressureGauge.getInstance().set(json.live_pressure);
+            renderTemperatureGaugeColor(json.live_temperature);
             TemperatureGauge.getInstance().set(json.live_temperature);
+
 
             TemperatureQueue.getInstance().push(json.live_temperature);
             TemperatureQueue.getInstance().shift();
@@ -710,58 +631,55 @@ var AccelerometerChart = (function () {
 
 function renderLiveDashboard(){
 
-    //BatteryGauge.getInstance();
+
+    TemperatureQueue.getInstance();
+    LabelQueue.getInstance();
+    TemperatureChart.getInstance();
+    AccelerometerChart.getInstance();
     HumidityGauge.getInstance();
     PressureGauge.getInstance();
     TemperatureGauge.getInstance();
-    TemperatureQueue.getInstance();
-    LabelQueue.getInstance();
-
-    TemperatureChart.getInstance();
-    AccelerometerChart.getInstance();
-    setInterval(gauge_battery_ajax, 2000);
+    ajax_getdata();
+    setInterval(ajax_getdata, 2000);
 
 
 
 }
 
-function dateGenerator(){
-    var date = new Date();
-    var milli = (date.getMilliseconds()*60/999).toFixed(0);
-    myDate = "Jul " + date.getDate() + ", " + date.getFullYear() + " 9:" + date.getMinutes()+ ":" + milli + " AM";
-    //console.log(myDate);
-    //console.log(myDate.toString());
-    return myDate.toString();
+
+
+//This function is used to color the light circle according to the light level detected
+function renderLightCircleColor(){
+    if ((document.getElementById("light-level").innerHTML)=="High"){
+        console.log("i am here");
+        console.log($('.fa-circle:before'));
+        $('#light-circle').toggleClass('fa-circle-high-light-lvl');
+    } else if (document.getElementById("light-level").innerHTML == "Medium"){
+        $('#light-circle').toggleClass('fa-circle-medium-light-lvl');
+    }else if (document.getElementById("light-level").innerHTML == "Low"){
+        $('#light-circle').toggleClass('fa-circle-low-light-lvl');
+    } else {
+        console.log("There is a problem with the lightbulb");
+    }
+
 }
 
-/*
-function postRequestSensorDataSender(){
-    var formData = {
-        "token" : "c69fa188bfd67ff4ba491623dd7b4263e9957397",
-        "deviceNb" : "B0:B4:48:E4:BC:01",
-        "deviceType": "ENVIRO",
-        "datetime": dateGenerator()  ,
-        "pressure": ((Math.random() * (1500 - 1000) + 1000).toFixed(1)).toString(),
-        "humidity": ((Math.random() * (100)).toFixed(0)).toString(),
-        "temperature": ((Math.random() * (30 - (-30)) + (-30)).toFixed(1)).toString(),
-        "battery": ((Math.random() * (100)).toFixed(0)).toString(),
-        "light": "0",
-        "accx": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString(),
-        "accy": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString(),
-        "accz": ((Math.random() * (4000 - (-4000)) -4000).toFixed(1)).toString()
-        }
+//This function is used to render a data transfer level (either High, low, medium) to qualify the daily data transfer
+//seen on top of the page under the Data transfer tile
+function renderIndicatorDataTransfer(){
+    if (avrg_per_min_daily  < 20) {
+        document.getElementById("indicator_data_transfer").innerHTML = "Low";
+    } else if (avrg_per_min_daily < 40) {
+        document.getElementById("indicator_data_transfer").innerHTML = "Medium";
+    } else if (avrg_per_min_daily < 60) {
+        document.getElementById("indicator_data_transfer").innerHTML = "High";
+    }else {
+        document.getElementById("indicator_data_transfer").innerHTML = "NA";
+    }
+}
 
-    formData= JSON.stringify(formData);
-    console.log(formData),
 
-    $.ajax({
-        url: "/receiveandroiddata/",
-        type : "POST", // http method
-        data: formData,
 
-    });
-
-}*/
 
 
 $(document).ready(function(){
@@ -769,20 +687,23 @@ $(document).ready(function(){
     $('.side-label').removeClass("active");
     $('#dashboards').addClass( "active" );
 
+    $('#' + deviceId).addClass("active");
+    $('#live-' +deviceId).addClass("active"); //this is a li item
+    $('#fafa-live-' +deviceId).addClass("text-aqua"); //this is a fafa icon turning blue
 
     $('.item').matchHeight();
 
+    renderIndicatorDataTransfer();
+    renderLightCircleColor();
 
-    var m = new Date()
-    var date = m.getUTCDate() +"/"+ (m.getUTCMonth()+1) +"/"+ m.getUTCFullYear();
-    document.getElementById("currentDate").innerHTML = date;
+
+
+
 
     renderLiveDashboard();
+    renderIndicatorRssi();
 
-
-
-
-
+    //renderTemperatureGaugeColor();
 
 
 });

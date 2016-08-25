@@ -41,7 +41,6 @@ def render_devicemanager_page(request):
 
 @login_required()
 def scan(request):
-
     r = requests.get("http://raspberrypi:8010/gap/nodes")
     r = json.loads(r.content)
 
@@ -55,11 +54,12 @@ def scan(request):
         print "----------"
         print mylist[i]
         if key in mylist[i]:  # just checking name, because a bluetooth device will always have an address
-            device = {"name": mylist[i]['name'].encode("utf-8"), "address": mylist[i]['address'].encode("utf-8")}
+            device = {"name": mylist[i]['name'].encode("utf-8"), "address": mylist[i]['address'].encode("utf-8"), "rssi": mylist[i]['rssi']}
             devices_found.append(device)
 
         else:
-            pass
+            device = {"name": "bluetoothdevice-" + str(i), "address": mylist[i]['address'].encode("utf-8"), "rssi": mylist[i]['rssi']}
+            devices_found.append(device)
 
     devices_found = json.dumps(devices_found)
     print "****************devices_found_in_scan_view***************"
@@ -78,9 +78,15 @@ def deletedevice(request):
     listOfDevices = Device.objects.filter(user_id=userid)
 
     idtodelete = request.POST['deviceId']
+    device = Device.objects.get(id=idtodelete)
 
-    Device.objects.get(id=idtodelete).delete()  # the unicode of devicelist, returns the deviceNb for each device
+    url = 'http://raspberrypi:8010/gatt/nodes/' + device.deviceNb + '/disconnect'
+    print url
+    requests.get('http://raspberrypi:8010/gatt/nodes/' + device.deviceNb +'/disconnect')
 
+
+      # the unicode of devicelist, returns the deviceNb for each device
+    device.delete()
     return render(request, 'device_manager/device_manager.html', {"full_name": full_name,
                                                                   "listOfDevices": listOfDevices
                                                                   })
@@ -88,8 +94,10 @@ def deletedevice(request):
 @login_required()
 @csrf_exempt #will have to change this in the future for security reasons
 def adddevice(request): #this is not working
-    
     userid = request.user.pk
+    listOfDevices = Device.objects.filter(user_id=userid)
+
+    #take care of the new device added
     if request.method == 'POST' :
         myString = request.POST['device']
         myArray = myString.split(',')
@@ -99,7 +107,7 @@ def adddevice(request): #this is not working
     try:
         device = Device.objects.get(deviceNb=address)
     except Device.DoesNotExist:
-        device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name)
+        device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name, deviceStatus="connected")
         now = datetime.datetime.now()
         d = DeviceEntry(datetime=now, pressure=0, humidity=0, device_id=device.id ,accx=0, accy=0, accz=0, battery=0, light=0, temperature=0)
         d.save()
@@ -168,12 +176,16 @@ def devicesettings(request, id):
                 slider_value = int(float(requestdict['light-rangeslider']) * 10)
                 slider_value = str(slider_value)
                 url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/1'
+                print "-----------------LIGHT URL-------------------"
+                print url_checkbox
                 url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa23/value/' + slider_value
                 r = requests.put(url_checkbox)
                 b = requests.put(url_slider)
+            else:
+                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/0'
+                r = requests.put(url_checkbox)
         else:
-            url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/0'
-            r = requests.put(url_checkbox)
+            print "shit happened"
 
 
     response = requests.get('http://raspberrypi:8010/gatt/nodes/' + address + '/settings')

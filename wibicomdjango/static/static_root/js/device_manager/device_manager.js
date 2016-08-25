@@ -25,6 +25,7 @@ function scan(){
                     for (i = 0; i < jsonreceived.length; i++ ){
                         var name = jsonreceived[i].name;
                         var address = jsonreceived[i].address;
+                        var rssi = jsonreceived[i].rssi;
 
                         var url = "http://127.0.0.1:8000/accounts/loggedin/devicemanager/adddevice/"  //will have to change this, not ideal should pass relative path + not secure, need to pass in csrf token
                         var listitem = '<li class="list-group-item">'
@@ -34,7 +35,7 @@ function scan(){
                                             + '<i class="fa fa-plus-circle" aria-hidden="true"></i></button>'
                                             + '</form>'
                                         + '</span>'
-                                        + '<p><span class = "bold">' + name + '</span>' +  ': ' + address + '</p></li>';
+                                        + '<p><span class = "bold">' + name + '</span>' +  ': ' + address + '<br>RSSI:'+ rssi + '</p></li>';
                         $('#listdevicesfound').append(listitem);
                     }
 

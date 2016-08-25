@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^receiveandroiddata/$', 'wibicomdjango.views.receive_android_data'),
+    url(r'^receivedevicestate/$', 'wibicomdjango.views.receive_device_state'),
 
     url(r'^api-token-auth/', views.obtain_auth_token),
 

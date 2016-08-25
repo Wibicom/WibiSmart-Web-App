@@ -1,3 +1,6 @@
+from django.db.models import Avg
+from django.db.models import Max
+from django.db.models import Min
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -16,12 +19,67 @@ from datetime import timedelta
 from userprofile.models import Device
 from userprofile.models import DeviceEntry
 
-# Create your views here.
+#this function calculates the daily data transfer (entries per minute) for a specific device
+def calculate_daily_data_transfer(request,device):
+    now = datetime.datetime.now()
+    minute_ago = now - datetime.timedelta(minutes=1)
+
+    entries_last_minute = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[minute_ago,now]).count()
+
+    return entries_last_minute
+
+#this function calculates the nb of weekly entries and calculates the delta compared to last week, populates the data
+#transfer top tile in live dashboard page
+def calculate_weekly_entries_data(request,device):
+    today = datetime.datetime.now()
+    seven_days_earlier = today - timedelta(days=7)
+    fourteen_days_earlier = today - timedelta(days = 14)
+
+    #nb of entries this week
+    nb_weekly_entries = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[seven_days_earlier, today]).count()
+    nb_weekly_entries = "{:,}".format(nb_weekly_entries)
+    print "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+    print device.id
+    print nb_weekly_entries
+    print "today"
+    print today
+    print "seven_days_earlier"
+    print seven_days_earlier
+    print "fourteendayserlier"
+    print fourteen_days_earlier
+
+
+    #nb of entries last week
+    nb_entries_previous_week = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[fourteen_days_earlier, seven_days_earlier]).count()
+
+    if (nb_entries_previous_week !=0):
+        weekly_entries_delta = (nb_weekly_entries-nb_entries_previous_week)/nb_entries_previous_week
+    else:
+        weekly_entries_delta = "--"
+
+    dict = {'weekly_entries' : nb_weekly_entries, 'weekly_entries_delta': weekly_entries_delta}
+
+    return dict
+
+def calculate_daily_temp(request, device):
+    today = datetime.datetime.now().date()
+    daily_temp_avrg = DeviceEntry.objects.filter(datetime__date= today, device_id=device).aggregate(Avg('temperature'))
+    daily_temp_max = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Max('temperature'))
+    daily_temp_min = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Min('temperature'))
+
+    daily_temp_avrg = round(daily_temp_avrg['temperature__avg'], 2)
+    daily_temp_max = round(daily_temp_max['temperature__max'], 2)
+    daily_temp_min = round(daily_temp_min['temperature__min'], 2)
+
+
+    dict = {'daily_temp_avrg': daily_temp_avrg, 'daily_temp_max': daily_temp_max, 'daily_temp_min': daily_temp_min}
+    return dict
+
+
+
+#Generates the live dashboard
 @login_required()
 def onedevice_dashboard(request, id):
-    #this generates the dashboard
-    print "im in here"
-
     full_name = request.user.username
     device = Device.objects.get(id = id)
     device_entries = DeviceEntry.objects.filter(device_id = device).order_by('datetime')
@@ -46,34 +104,37 @@ def onedevice_dashboard(request, id):
         acczlist.append(entry.accz)
 
 
-
     temperaturelist= temperaturelist[::-1] #reverse the list so that starts with oldest data
     accxlist = accxlist[::-1]
     accylist = accylist[::-1]
     acczlist = acczlist[::-1]
 
-    print (len(device_entries)-1)
-    last_entry = device_entries.latest('datetime')
-    print " #&@&@&@&@&@&"
-    print last_entry
-
-    live_battery = last_entry.battery
 
     userid = request.user.pk
     listOfDevices = Device.objects.filter(user_id=userid)
 
+
+    avrg_per_min_daily = calculate_daily_data_transfer(request,device)
+    weekly_entries_data = calculate_weekly_entries_data(request,device)
+    daily_temp_data = calculate_daily_temp(request, device)
+
+    print "WEEKLY ENTRIES"
+    print weekly_entries_data
+
     return TemplateResponse(request, 'dashboard/device_dashboard.html', {"full_name": full_name,
-                                                                              "deviceNb": device.deviceNb,
-                                                                              "deviceName" : device.deviceName,
-                                                                              "deviceType" : device.deviceType,
                                                                               "deviceId": device.pk,
                                                                               "device_entries": device_entries,
                                                                               "listOfDevices": listOfDevices,
-                                                                              "live_battery" : live_battery,
                                                                               "temperaturelist": temperaturelist,
                                                                               "accxlist": accxlist,
                                                                               "accylist": accylist,
                                                                               "acczlist": acczlist,
+                                                                              "avrg_per_min_daily": avrg_per_min_daily,
+                                                                              "weekly_entries": weekly_entries_data['weekly_entries'],
+                                                                              "weekly_entries_delta": weekly_entries_data['weekly_entries_delta'],
+                                                                              "daily_temp_avrg" : daily_temp_data['daily_temp_avrg'],
+                                                                              "daily_temp_min" : daily_temp_data['daily_temp_min'],
+                                                                              "daily_temp_max": daily_temp_data[ 'daily_temp_max'],
                                                                               })
 
 
@@ -115,13 +176,7 @@ def csv_output_energy(request, id):
         for i in range(0, len(datetimes)):  # datetimes and battery_values have the same size
             row = []
             # getting the dates
-            date = json.dumps(datetimes[i])
-            date = json.loads(date)
-            date = date['datetime']
-            date = date.encode("utf-8")
-            old_format = '%Y-%m-%d %H:%M:%S.%f'
-            new_format = '%Y/%m/%d %H:%M:%S'
-            date = dt.strptime(date, old_format).strftime(new_format)
+            date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
             row.append(date)
 
             batt = json.dumps(battery_values[i])
@@ -163,17 +218,11 @@ def csv_output_meteo(request, id):
         pressure_values = device_entries.values('pressure')
 
         writer = csv.writer(response)
-        writer.writerow(['Date', 'Humidity', 'Temperature', 'Pressure'])
+        writer.writerow(['Date', 'Humidity', 'Temperature'])
         for i in range(0, len(datetimes)):  # datetimes and battery_values have the same size
             row = []
             # getting the dates
-            date = json.dumps(datetimes[i])
-            date = json.loads(date)
-            date = date['datetime']
-            date = date.encode("utf-8")
-            old_format = '%Y-%m-%d %H:%M:%S.%f'
-            new_format = '%Y/%m/%d %H:%M:%S'
-            date = dt.strptime(date, old_format).strftime(new_format)
+            date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
             row.append(date)
 
             humidity = json.dumps(humidity_values[i])
@@ -186,10 +235,6 @@ def csv_output_meteo(request, id):
             temperature = temperature['temperature']
             row.append(temperature)
 
-            pressure = json.dumps(pressure_values[i])
-            pressure = json.loads(pressure)
-            pressure = pressure['pressure']
-            row.append(pressure)
 
             writer.writerow(row)
 
@@ -226,13 +271,7 @@ def csv_output_accelerometer(request, id):
         for i in range(0, len(datetimes)):  # datetimes and battery_values have the same size
             row = []
             # getting the dates
-            date = json.dumps(datetimes[i])
-            date = json.loads(date)
-            date = date['datetime']
-            date = date.encode("utf-8")
-            old_format = '%Y-%m-%d %H:%M:%S.%f'
-            new_format = '%Y/%m/%d %H:%M:%S'
-            date = dt.strptime(date, old_format).strftime(new_format)
+            date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
             row.append(date)
 
             accx = json.dumps(accx_values[i])
@@ -284,13 +323,7 @@ def csv_output_pressure(request, id):
         for i in range(0, len(datetimes)):  # datetimes and battery_values have the same size
             row = []
             # getting the dates
-            date = json.dumps(datetimes[i])
-            date = json.loads(date)
-            date = date['datetime']
-            date = date.encode("utf-8")
-            old_format = '%Y-%m-%d %H:%M:%S.%f'
-            new_format = '%Y/%m/%d %H:%M:%S'
-            date = dt.strptime(date, old_format).strftime(new_format)
+            date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
             row.append(date)
 
             pressure = json.dumps(pressure_values[i])
@@ -305,20 +338,33 @@ def csv_output_pressure(request, id):
     else :
         return "you did not receive a get in the csv_output_pressure request"
 
+#this renders the historical dashboard page, it receives the device id in parameters
 @login_required()
 def onedevice_dashboard_historical(request, id):
-    full_name = request.user.username
+    user = request.user
+    full_name = user.username
+    userid = user.pk
+
     device = Device.objects.get(id=id)
-    device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
-    userid = request.user.pk
+    device_entries = DeviceEntry.objects.filter(device_id=device.id).order_by('datetime')
+    inception = device_entries.earliest('datetime').datetime.strftime('%Y/%m/%d')
     listOfDevices = Device.objects.filter(user_id=userid)
 
+    total_entries = "{:,}".format(len(device_entries)) #this is used to format numbers by comma separating values by the 1000
+
+    today = datetime.datetime.now()
+    seven_days_earlier = today - timedelta(days=7)
+    weekly_entries = DeviceEntry.objects.filter(device_id=device.id, datetime__range=[seven_days_earlier, today]).count()
+
     return render(request, 'dashboard/device_historical_dashboard.html', {"full_name": full_name,
-                                                                             "deviceNb": device.deviceNb,
-                                                                             "deviceName": device.deviceName,
+                                                                            "device": device,
                                                                              "deviceType": device.deviceType,
                                                                              "deviceId": device.pk,
-                                                                             "listOfDevices": listOfDevices
+                                                                             "listOfDevices": listOfDevices,
+                                                                             "inception": inception,
+                                                                             "total_entries": total_entries,
+                                                                             "weekly_entries": weekly_entries
+
                                                                              })
 
 
@@ -332,10 +378,7 @@ def onedevice_dashboard_ajax(request, id):
     device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
 
 
-    #last_entry = device_entries[len(device_entries) - 1]
     last_entry = device_entries.latest('datetime')
-    print " ^^^^^^^^^^ THE LAST ENTRY IS ^^^^^^^^^^ "
-    print last_entry
 
     live_battery = last_entry.battery
     live_humidity = last_entry.humidity
@@ -344,6 +387,8 @@ def onedevice_dashboard_ajax(request, id):
     live_accx = last_entry.accx
     live_accy = last_entry.accy
     live_accz = last_entry.accz
+    live_rssi = last_entry.rssi
+    live_deviceStatus = device.deviceStatus
 
 
     response_data = {}
@@ -357,6 +402,8 @@ def onedevice_dashboard_ajax(request, id):
         response_data['live_accx']= live_accx
         response_data['live_accy']= live_accy
         response_data['live_accz']= live_accz
+        response_data['live_rssi'] = live_rssi
+        response_data['live_deviceStatus'] = live_deviceStatus
     except:
         response_data['result'] = "Failure"
         response_data['message'] = "it did not work"

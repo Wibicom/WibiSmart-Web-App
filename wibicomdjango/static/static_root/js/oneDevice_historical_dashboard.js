@@ -1,13 +1,14 @@
 function get_energy_chart_options(){
     dict = {
+     strokeWidth: 2,
      legend: 'always',
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
-     rangeSelectorPlotStrokeColor: '#6b8bff',
-     rangeSelectorPlotFillColor: '#6bffb5',
+     //rangeSelectorPlotStrokeColor: '#6b8bff',
+     //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
-     colors :['#fad400', '#7aff38'],
+     colors :['#2ecc71', '#0e4b9a'],
      ylabel: 'Battery level (%)',
      y2label : 'Light level',
      series : {
@@ -20,7 +21,7 @@ function get_energy_chart_options(){
       },
 
      highlightSeriesOpts: {
-          strokeWidth: 3,
+          strokeWidth: 4,
           strokeBorderWidth: 1,
           highlightCircleSize: 8
      }
@@ -32,13 +33,14 @@ function get_energy_chart_options(){
 
 function get_meteo_chart_options(){
     dict = {
+    strokeWidth: 2,
      legend: 'always',
      showRangeSelector: true,
      rangeSelectorHeight: 30,
-     rangeSelectorPlotStrokeColor: '#6b8bff',
-     rangeSelectorPlotFillColor: '#6bffb5',
+     //rangeSelectorPlotStrokeColor: '#6b8bff',
+     //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
-     colors :['#fad400', '#7aff38', 'black' ],
+     colors :['#2ecc71', '#0e4b9a'],
      ylabel: 'Temperature (Celsius)',
      y2label : 'Humidity',
      series : {
@@ -51,7 +53,7 @@ function get_meteo_chart_options(){
       },
 
      highlightSeriesOpts: {
-          strokeWidth: 3,
+          strokeWidth: 4,
           strokeBorderWidth: 1,
           highlightCircleSize: 8
      }
@@ -64,18 +66,19 @@ function get_meteo_chart_options(){
 
 function get_accelerometer_chart_options(){
     dict = {
+     strokeWidth: 2,
      legend: 'always',
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
-     rangeSelectorPlotStrokeColor: '#6b8bff',
-     rangeSelectorPlotFillColor: '#6bffb5',
+     //rangeSelectorPlotStrokeColor: '#6b8bff',
+     //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
      colors :['#fad400', '#7aff38', 'black'],
      ylabel: 'Acceleration (milliG)',
 
      highlightSeriesOpts: {
-          strokeWidth: 3,
+          strokeWidth: 4,
           strokeBorderWidth: 1,
           highlightCircleSize: 8
      }
@@ -87,18 +90,19 @@ function get_accelerometer_chart_options(){
 
 function get_pressure_chart_options(){
     dict = {
+     strokeWidth: 2,
      legend: 'always',
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
-     rangeSelectorPlotStrokeColor: '#6b8bff',
-     rangeSelectorPlotFillColor: '#6bffb5',
+     //rangeSelectorPlotStrokeColor: '#6b8bff',
+     //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
      colors :['#fad400'],
      ylabel: 'Pressure (mbar)',
 
      highlightSeriesOpts: {
-          strokeWidth: 3,
+          strokeWidth: 4,
           strokeBorderWidth: 1,
           highlightCircleSize: 8
      }
@@ -121,7 +125,7 @@ function energy_chart_controller(){
         datatype : "text/csv",
         success: function(response){
             g2 = new Dygraph(
-            document.getElementById("battery_historical_linechart"), response, get_meteo_chart_options())}
+            document.getElementById("battery_historical_linechart"), response, get_energy_chart_options())}
         })
 
     })
@@ -246,6 +250,10 @@ $(document).ready(function(){
 
     $('.side-label').removeClass("active");
     $('#dashboards').addClass( "active" );
+
+    $('#' + deviceId).addClass("active");
+    $('#historical-' +deviceId).addClass("active"); //this is a li item
+    $('#fafa-historical-' +deviceId).addClass("text-aqua"); //this is a fafa icon turning blue
 
     initialize_energy_chart();
     initialize_meteo_chart();
