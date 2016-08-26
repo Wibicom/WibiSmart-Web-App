@@ -3,7 +3,6 @@ from django.db.models import Max
 from django.db.models import Min
 from django.shortcuts import render
 from django.http import HttpResponse
-
 from django.contrib.auth.decorators import login_required
 #from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
@@ -12,6 +11,7 @@ from django.template.response import TemplateResponse
 
 import csv
 import datetime
+import requests
 
 import json
 from datetime import datetime as dt
@@ -57,6 +57,8 @@ def calculate_daily_temp(request, device):
     daily_temp_max = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Max('temperature'))
     daily_temp_min = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Min('temperature'))
 
+    print "*******************"
+    print type(daily_temp_avrg['temperature__avg'])
     daily_temp_avrg = round(float(daily_temp_avrg['temperature__avg']), 2)
     daily_temp_max = round(float(daily_temp_max['temperature__max']), 2)
     daily_temp_min = round(float(daily_temp_min['temperature__min']), 2)
@@ -64,6 +66,123 @@ def calculate_daily_temp(request, device):
 
     dict = {'daily_temp_avrg': daily_temp_avrg, 'daily_temp_max': daily_temp_max, 'daily_temp_min': daily_temp_min}
     return dict
+
+#@login_required()
+def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, batteryLevel):
+    print "*********MYPARAMETERS****************"
+    print isConnected
+    print periodConnected
+    print periodWeather
+    print periodAdc
+    print periodAccel
+    print batteryLevel
+    sleepCurrent = 1.8  # uA
+
+    # Advertising data
+    advertLess1_5_Current = 4410
+    advertLess1_5_Time = 4.53
+    advertMore1_5_Current = 3630
+    advertMore1_5_Time = 6.11
+
+    # Connection Data
+    connLess1_5_Current = 3666
+    connLess1_5_Time = 2.46
+    connMore1_5_Current = 2860
+    connMore1_5_Time = 4.31
+
+    # Battery data
+    battMeasure_Current = 1772
+    battMeasure_Time = 3.34
+
+    # Weather
+    weatherSleep_Current = 0.2
+    weatherMeasure_Current = 3198
+    weatherMeasure_Time = 2.93
+    weatherLess1_5_tx_Current = 4299
+    weatherLess1_5_tx_Time = 2.90
+    weatherMore1_5_tx_Current = 4006
+    weatherMore1_5_tx_Time = 3.31
+
+    # Adc
+    adcMeasure_Current = 1624
+    adcMeasure_Time = 6.81
+    adcLess1_5_tx_Current = 3764
+    adcLess1_5_tx_Time = 2.69
+    adcMore1_5_tx_Current = 3600
+    adcMore1_5_tx_Time = 2.44
+
+    # Accelerometer
+    accelSleep_Current = 1
+    accelMeasureBMA_Current = 3065
+    accelMeasureBMA_Time = 1.18
+    accelMeasureI2C_Current = 3130
+    accelMeasureI2C_Time = 2.59
+    accelLess1_5_tx_Current = 3708
+    accelLess1_5_tx_Time = 2.35
+    accelMore1_5_tx_Current = 3528
+    accelMore1_5_tx_Time = 3.14
+
+    avgCurrent = 0
+    default_periodConnected = 30000  # 30s
+
+    # if one of the period is 0, it means the sensor is off.
+
+    periodBattery = 150000  # set on 15s
+
+    avgBatteryCurrent = (
+    battMeasure_Current * battMeasure_Time)  # + sleepCurrent*(periodConnected -  weatherMeasure_Time)/ periodConnected
+    avgWeatherCurrent = (
+    weatherMeasure_Time * weatherMeasure_Current)  # + sleepCurrent*(periodConnected -  weatherMeasure_Time)/ periodConnected
+    avgAdcCurrent = (
+    adcMeasure_Current * adcMeasure_Time)  # + sleepCurrent*(periodConnected -  adcMeasure_Time)  )/periodConnected
+    avgAccelCurrent = (
+    accelMeasureBMA_Current * accelMeasureBMA_Time + accelMeasureI2C_Current + accelMeasureI2C_Time)  # + sleepCurrent*(periodConnected - accelMeasureBMA_Time - accelMeasureI2C_Time))/periodConnected
+
+    # check if sleepMode
+    if periodConnected == 0:
+        periodConnected = default_periodConnected
+        periodAccel = 0
+        periodAdc = 0
+        periodWeather = 0
+
+    if isConnected == 0:  # ie advertising, no sensor is on, except the battery
+        if periodConnected < 1500:
+            avgCurrent = (
+                         advertLess1_5_Current * advertLess1_5_Time + battMeasure_Current * battMeasure_Time + sleepCurrent * (
+                         periodConnected - advertLess1_5_Time - battMeasure_Time)) / periodConnected
+        else:
+            avgCurrent = (
+                         advertMore1_5_Current * advertMore1_5_Time + battMeasure_Current * battMeasure_Time + sleepCurrent * (
+                         periodConnected - advertMore1_5_Time - battMeasure_Time)) / periodConnected
+    # else : connected state
+    else:
+        if periodConnected < 1500:
+            avgCurrent = connLess1_5_Current * connLess1_5_Time + sleepCurrent * (
+            periodConnected - connLess1_5_Time - periodBattery - periodWeather - periodAdc - periodAccel)
+            print "****AVG CURRENT 1"
+            print avgCurrent
+        else:
+            avgCurrent = connMore1_5_Current * connMore1_5_Time + sleepCurrent * (
+            periodConnected - connMore1_5_Time - periodBattery - periodWeather - periodAdc - periodAccel)
+
+        avgCurrent += avgBatteryCurrent * periodBattery + avgWeatherCurrent * periodWeather + avgAdcCurrent * periodAdc + avgAccelCurrent * periodAccel
+        avgCurrent = avgCurrent / periodConnected
+        print "**********************************avgCurrent*******************************************************"
+        print avgCurrent
+
+
+        # evaluate the remaining capacity of the battery
+    batteryLevelVolts = 2 + batteryLevel / 100.0
+
+    print "*********************batteryLevelVolts*****************************************************"
+    print batteryLevelVolts
+    battCapacity = -32 * pow(batteryLevelVolts,4) + 301.87 * pow(batteryLevelVolts,3) - 1041.5 * pow(batteryLevelVolts,2) + 1562.8 * batteryLevelVolts - 862  # in mAh
+    print "***************************BAtt capacity*************************************************"
+    print battCapacity
+
+    lifeExpectancy = battCapacity / (avgCurrent / 1000)
+
+    return lifeExpectancy  # in Hours
 
 
 
@@ -83,7 +202,7 @@ def onedevice_dashboard(request, id):
     accylist = []
     acczlist = []
 
-    print last_ten_entries
+    #print last_ten_entries
     for entry in last_ten_entries:
         temperaturelist.append(entry.temperature)
 
@@ -110,6 +229,22 @@ def onedevice_dashboard(request, id):
     print "WEEKLY ENTRIES"
     print weekly_entries_data
 
+
+    isConnected = 1 #device.deviceStatus #change this later to pass a boolean
+    periodConnected = 100
+
+    device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
+    last_entry = device_entries.latest('datetime')
+
+    print 'http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings'
+    response = requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings')
+    periodWeather = 0 #int(json.loads(response.content)['weatherPeriod'])*100
+    periodAdc = 0 #int(json.loads(response.content)['lightPeriod'])*100
+    periodAccel =0 #int(json.loads(response.content)['accelerometerPeriod'])*100
+    batteryLevel = last_entry.battery
+
+    autonomy = calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, batteryLevel)
+
     return TemplateResponse(request, 'dashboard/device_dashboard.html', {"full_name": full_name,
                                                                               "deviceId": device.pk,
                                                                               "device_entries": device_entries,
@@ -124,6 +259,7 @@ def onedevice_dashboard(request, id):
                                                                               "daily_temp_avrg" : daily_temp_data['daily_temp_avrg'],
                                                                               "daily_temp_min" : daily_temp_data['daily_temp_min'],
                                                                               "daily_temp_max": daily_temp_data[ 'daily_temp_max'],
+                                                                              "autonomy": autonomy
                                                                               })
 
 

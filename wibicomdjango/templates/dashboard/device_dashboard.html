@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Autonomy </span>
-              <div class="count live-tile-count">6 hours</div>
+              <div class="count live-tile-count">{{ autonomy }} hours</div>
               <span class="count_bottom"><i class="fa fa-sort-asc"></i>time until device is off </i> </span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -281,10 +281,10 @@
 
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
-    <script src = "http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
-    <script src = "http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined-dev.js"></script>
+    <script src="{% static 'js/Chart.bundle.min.js' %}"></script>
+    <script src = "{% static 'js/gauge.min.js' %}"></script>
+    <script src="{% static 'js/dygraph-combined.js' %}"></script>
+    <script src = "{% static 'js/dygraph-combined-dev.js' %}"></script>
     <script src = "{% static 'js/bootstrap-toggle.min.js' %}"></script>
     <script src = "{% static 'js/jquery.matchHeight-min.js' %}"></script>
     <script src = "{% static 'js/leftside_device_list.js' %}"></script>

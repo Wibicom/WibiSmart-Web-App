@@ -130,15 +130,15 @@ def receive_android_data(request):
         userid = tokenobj.user_id   #finding the user that is sending the request
         deviceNb = json_data["deviceNb"]
         deviceType = json_data["deviceType"]
-        print userid
-        print deviceNb
-        print deviceType
+        #print userid
+        #print deviceNb
+        #print deviceType
         Device.objects.get_or_create(deviceNb=deviceNb, deviceType=deviceType)
         device = Device.objects.get(deviceNb = deviceNb, deviceType = deviceType)
         #check the user of the device to see if the device belongs to the user
-        print type(device)
+        #print type(device)
         try:
-            print device.user_id
+            #print device.user_id
             if device.user_id is None:
                 # le device vient detre creer
                 print "***************Im in user_id is None***************"
@@ -167,15 +167,15 @@ def receive_android_data(request):
 
         # Get general data
         if "datetime" in json_data :
-            print "_____________________JSON DATA____________________"
-            print json_data["datetime"]
+            #print "_____________________JSON DATA____________________"
+            #print json_data["datetime"]
             my_datetime = json_data["datetime"]
             my_datetime = datetime.datetime.strptime(my_datetime, "%Y-%m-%d %H:%M:%S.%f")
             my_datetime = timezone.make_aware(my_datetime, timezone.get_current_timezone())
 
         if "rssi" in json_data:
-            print "___________DATE__ENTRY___CREATION____________"
-            print my_datetime
+            #print "___________DATE__ENTRY___CREATION____________"
+            #print my_datetime
             d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
                             device_id=device.id,accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
                             light=lastentry.light, temperature=lastentry.temperature, rssi = json_data["rssi"])
