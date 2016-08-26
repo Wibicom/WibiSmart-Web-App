@@ -57,9 +57,9 @@ def calculate_daily_temp(request, device):
     daily_temp_max = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Max('temperature'))
     daily_temp_min = DeviceEntry.objects.filter(datetime__date=today, device_id=device).aggregate(Min('temperature'))
 
-    daily_temp_avrg = round(daily_temp_avrg['temperature__avg'], 2)
-    daily_temp_max = round(daily_temp_max['temperature__max'], 2)
-    daily_temp_min = round(daily_temp_min['temperature__min'], 2)
+    daily_temp_avrg = round(float(daily_temp_avrg['temperature__avg']), 2)
+    daily_temp_max = round(float(daily_temp_max['temperature__max']), 2)
+    daily_temp_min = round(float(daily_temp_min['temperature__min']), 2)
 
 
     dict = {'daily_temp_avrg': daily_temp_avrg, 'daily_temp_max': daily_temp_max, 'daily_temp_min': daily_temp_min}

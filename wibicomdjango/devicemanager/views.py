@@ -114,7 +114,7 @@ def adddevice(request): #this is not working
 
 
         print "great! The device has been created and belongs to you now"
-        requests.get('http://raspberrypi:8010/gatt/nodes/' + address) # request connection to that device
+        requests.get('http://192.168.1.100:8010/gatt/nodes/' + address) # request connection to that device
         print "Sending HTTP GET to " + "http://192.168.1.100:8010/gatt/nodes/" + address
         return redirect('devicemanager')
     else: # if the device exists in database
