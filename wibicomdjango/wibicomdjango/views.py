@@ -165,13 +165,13 @@ def receive_android_data(request):
         #deviceentry.device = device  # put the primary key of the device here
 
 
-
         # Get general data
         if "datetime" in json_data :
             print "_____________________JSON DATA____________________"
             print json_data["datetime"]
             my_datetime = json_data["datetime"]
-            #my_datetime = timezone.make_aware(my_datetime, timezone.get_current_timezone())
+            my_datetime = datetime.datetime.strptime(my_datetime, "%Y-%m-%d %H:%M:%S.%f")
+            my_datetime = timezone.make_aware(my_datetime, timezone.get_current_timezone())
 
         if "rssi" in json_data:
             print "___________DATE__ENTRY___CREATION____________"

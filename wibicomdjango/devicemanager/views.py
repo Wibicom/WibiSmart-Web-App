@@ -41,7 +41,7 @@ def render_devicemanager_page(request):
 
 @login_required()
 def scan(request):
-    r = requests.get("http://raspberrypi:8010/gap/nodes")
+    r = requests.get("http://192.168.1.100:8010/gap/nodes")
     r = json.loads(r.content)
 
     mylist = (r.values()[0])
@@ -80,9 +80,9 @@ def deletedevice(request):
     idtodelete = request.POST['deviceId']
     device = Device.objects.get(id=idtodelete)
 
-    url = 'http://raspberrypi:8010/gatt/nodes/' + device.deviceNb + '/disconnect'
-    print url
-    requests.get('http://raspberrypi:8010/gatt/nodes/' + device.deviceNb +'/disconnect')
+    #url = 'http://raspberrypi:8010/gatt/nodes/' + device.deviceNb + '/disconnect'
+    #print url
+    #requests.get('http://raspberrypi:8010/gatt/nodes/' + device.deviceNb +'/disconnect')
 
 
       # the unicode of devicelist, returns the deviceNb for each device
@@ -115,7 +115,7 @@ def adddevice(request): #this is not working
 
         print "great! The device has been created and belongs to you now"
         requests.get('http://raspberrypi:8010/gatt/nodes/' + address) # request connection to that device
-        print "Sending HTTP GET to " + "http://raspberrypi:8001/gatt/nodes/" + address
+        print "Sending HTTP GET to " + "http://192.168.1.100:8010/gatt/nodes/" + address
         return redirect('devicemanager')
     else: # if the device exists in database
         print device.user_id
@@ -132,14 +132,14 @@ def adddevice(request): #this is not working
 def connect(request, id):
     device_to_connect = Device.objects.get(id = id)
     address = device_to_connect.deviceNb
-    requests.get('http://raspberrypi:8010/gatt/nodes/' + address)  # request connection to that device
+    requests.get('http://192.168.1.100:8010/gatt/nodes/' + address)  # request connection to that device
     return redirect ('devicemanager')
 
 @login_required()
 def disconnect(request, id):
     device_to_connect = Device.objects.get(id = id)
     address = device_to_connect.deviceNb
-    requests.get('http://raspberrypi:8010/gatt/nodes/' + address +'/disconnect')  # request connection to that device
+    requests.get('http://192.168.1.100:8010/gatt/nodes/' + address +'/disconnect')  # request connection to that device
     return redirect ('devicemanager')
 
 
@@ -158,8 +158,8 @@ def devicesettings(request, id):
                 print requestdict['accelerometer-rangeslider']
                 slider_value = int(float(requestdict['accelerometer-rangeslider'])*10)
                 slider_value = str(slider_value)
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa82/value/1'
-                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa83/value/' + slider_value
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa82/value/1'
+                url_slider = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa83/value/' + slider_value
                 print "url checkbox"
                 print url_checkbox
 
@@ -170,39 +170,39 @@ def devicesettings(request, id):
                 b = requests.put(url_slider)
             else:
                 print "The box is checked off"
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa82/value/0'
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa82/value/0'
                 r = requests.put(url_checkbox)
 
         elif (str(request.POST['formdata']) == "weather"):
             if 'checkbox-weather' in requestdict:
                 slider_value = int(float(requestdict['weather-rangeslider']) * 10)
                 slider_value = str(slider_value)
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa42/value/1'
-                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa44/value/' + slider_value
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa42/value/1'
+                url_slider = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa44/value/' + slider_value
                 r = requests.put(url_checkbox)
                 b = requests.put(url_slider)
             else:
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa42/value/0'
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa42/value/0'
                 r = requests.put(url_checkbox)
 
         elif (str(request.POST['formdata']) == "light"):
             if 'checkbox-light' in requestdict :
                 slider_value = int(float(requestdict['light-rangeslider']) * 10)
                 slider_value = str(slider_value)
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/1'
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa22/value/1'
                 print "-----------------LIGHT URL-------------------"
                 print url_checkbox
-                url_slider = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa23/value/' + slider_value
+                url_slider = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa23/value/' + slider_value
                 r = requests.put(url_checkbox)
                 b = requests.put(url_slider)
             else:
-                url_checkbox = 'http://raspberrypi:8010/gatt/nodes/' + address + '/characteristics/aa22/value/0'
+                url_checkbox = 'http://192.168.1.100:8010/gatt/nodes/' + address + '/characteristics/aa22/value/0'
                 r = requests.put(url_checkbox)
         else:
             print "shit happened"
 
 
-    response = requests.get('http://raspberrypi:8010/gatt/nodes/' + address + '/settings')
+    response = requests.get('http://192.168.1.100:8010/gatt/nodes/' + address + '/settings')
     weatherOn = json.loads(response.content)['weatherConf']
     weatherPeriod = json.loads(response.content)['weatherPeriod']
     accelerometerOn = json.loads(response.content)['accelerometerConf']  # 0 off 1 on

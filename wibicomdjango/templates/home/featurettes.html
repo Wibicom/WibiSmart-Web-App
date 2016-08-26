@@ -1,12 +1,13 @@
-      <hr class="featurette-divider">
+{% load staticfiles %}
+<hr class="featurette-divider">
 
       <div class="row featurette">
         <div class="col-md-7">
-          <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          <h2 class="featurette-heading">Enviro <span class="text-muted">A device that captures the environment.</span></h2>
+          <p class="lead">Powered by sunlight, and equiped with highly efficient sensors, the Enviro is capable of providing access to a large range of environmental data, such as pressure, temperature, humidity, acceleration, and many others.</p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive center-block" src="{% static 'img/Enviro-whitebg2.jpg' %}" alt="Generic placeholder image">
         </div>
       </div>
 
@@ -14,11 +15,11 @@
 
       <div class="row featurette">
         <div class="col-md-7 col-md-push-5">
-          <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          <h2 class="featurette-heading">Move <span class="text-muted">The reinvented beacon.</span></h2>
+          <p class="lead">A device that allows you to communicate with your users efficiently. Build with a solid accelerometer sensor, the Move is also powered by light, and can be used for a wide range of applications, ranging from wearables to industrial uses.</p>
         </div>
         <div class="col-md-5 col-md-pull-7">
-          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive center-block" src="{% static 'img/move-2bucks.jpg' %}" alt="Generic placeholder image">
         </div>
       </div>
 
