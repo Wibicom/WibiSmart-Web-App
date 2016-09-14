@@ -177,13 +177,20 @@
 }
 
 .fa-circle-medium-light-lvl:before{
-   background: -webkit-gradient(linear, left top, left bottom, from(#f0ff00), to(#ff8105));
+   background: -webkit-gradient(linear, left top, left bottom, from(#f0ff00), to(#f0b105));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
    display: initial;
 }
 
 .fa-circle-low-light-lvl:before{
+   background: -webkit-gradient(linear, left top, left bottom, from(#f0b105), to(#ff6000));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+   display: initial;
+}
+
+.fa-circle-dark-light-lvl:before{
    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#a9a89b));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

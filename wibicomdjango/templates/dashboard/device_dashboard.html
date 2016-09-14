@@ -33,17 +33,18 @@
               <span class="count_bottom"><i class="fa fa-sort-asc"></i><i id = "rssi"></i> dBm RSSI</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-exchange" aria-hidden="true"></i> Data Transfer </span>
-              <div id = "indicator_data_transfer" class="count"></div>
-              <span class="count_bottom"><i class="fa fa-sort-asc"></i> {{ entries_last_minute }} entries/min</span>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-sun-o" aria-hidden="true"></i> Lighting</span>
+              <div  class="count"><span id="light_indicator_bottom" class="count"></span>     <span class="count"><i id = "light-circle" class="fa fa-circle" aria-hidden="true"></i></span></div>
+              
+              <span class="count_bottom"><i class="fa fa-sort-asc"></i><span id= "live_light"></span></span>
+            </div> 
+            <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
 
               <span class="count_top"><i class="fa fa-pencil" aria-hidden="true"></i> Weekly Entries</span>
               <div class="count">{{ weekly_entries }} </div>
               <span class="count_bottom"><i class="fa fa-sort-asc"></i>{{ weekly_entries_delta }} %  From last Week</span>
 
-            </div>
+            </div>-->
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Autonomy </span>
               <div class="count live-tile-count">{{ autonomy }} hours</div>
@@ -53,6 +54,7 @@
               <span class="count_top"><i class="fa fa-battery-half" aria-hidden="true"></i> Battery Level</span>
               <div class="count" id = "batteryvalue"></div>
               <span class="count_bottom"><i class="fa fa-sort-asc"></i><span id= "light_indicator"></span> Light Exposure</span>
+              
             </div>
           </div>
 
@@ -199,13 +201,13 @@
                 <div class = "row">
                     <div class = "col-md-4">
                           <div class="info-box">
-                            <span class="info-box-icon backgr-white"><i id = "light-circle" class="fa fa-circle" aria-hidden="true"></i></span>
+                            <!--<span class="info-box-icon backgr-white"><i id = "light-circle" class="fa fa-circle" aria-hidden="true"></i></span>
 
                             <div class="info-box-content">
                               <span class="info-box-text">LIGHTING</span>
                               <span id = "light_indicator_bottom" class="info-box-number"></span>
 
-                            </div>
+                            </div>-->
                             <!-- /.info-box-content -->
                           </div>
                           <div class="info-box">
@@ -276,7 +278,7 @@
     var accxlist = "{{accxlist}}";
     var accylist = "{{accylist}}";
     var acczlist = "{{acczlist}}";
-    var avrg_per_min_daily = {{ entries_last_minute|safe }};
+    //var avrg_per_min_daily = {{ entries_last_minute|safe }};
 
 
     </script>

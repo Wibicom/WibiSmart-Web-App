@@ -359,8 +359,10 @@ function renderLightIndicator(live_light){
         light_indicator = "High";
     }else if (live_light>150){
         light_indicator = "Medium";
-    }else{
+    }else if (live_light > 10){
         light_indicator = "Low";
+    }else{
+        light_indicator = "Dark";
     }
     return light_indicator;
 }
@@ -375,7 +377,9 @@ function renderLightCircleColor(){
          newClass += 'fa-circle-medium-light-lvl'
     }else if ($('#light_indicator').html()== "Low"){
         newClass += 'fa-circle-low-light-lvl'
-    } else {
+    }else if ($('#light_indicator').html()== "Dark"){
+        newClass += 'fa-circle-dark-light-lvl'
+    } else{
         console.log("There is a problem with the lightbulb");
     }
     if (currentClass!=newClass){
@@ -406,6 +410,7 @@ function ajax_getdata(){
             light_indicator = renderLightIndicator(json.live_light);
             $('#light_indicator').html(light_indicator);
             $('#light_indicator_bottom').html(light_indicator);
+            $('#live_light').html(json.live_light + " mV");
             renderLightCircleColor();
 
 
@@ -708,7 +713,7 @@ $(document).ready(function(){
 
     $('.item').matchHeight();
 
-    renderIndicatorDataTransfer();
+    //renderIndicatorDataTransfer();
 
 
 
