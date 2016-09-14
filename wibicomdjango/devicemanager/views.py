@@ -82,7 +82,7 @@ def deletedevice(request):
 
     #url = 'http://raspberrypi:8010/gatt/nodes/' + device.deviceNb + '/disconnect'
     #print url
-    #requests.get('http://raspberrypi:8010/gatt/nodes/' + device.deviceNb +'/disconnect')
+    requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb +'/disconnect')
 
 
       # the unicode of devicelist, returns the deviceNb for each device
@@ -108,9 +108,11 @@ def adddevice(request): #this is not working
         device = Device.objects.get(deviceNb=address)
     except Device.DoesNotExist:
         device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name, deviceStatus="connected")
-        now = datetime.datetime.now()
-        d = DeviceEntry(datetime=now, pressure=0, humidity=0, device_id=device.id ,accx=0, accy=0, accz=0, battery=0, light=0, temperature=0)
-        d.save()
+
+        ### We don't want this ###
+       # now = datetime.datetime.now()
+       # d = DeviceEntry(datetime=now, pressure=0, humidity=0, device_id=device.id ,accx=0, accy=0, accz=0, battery=0, light=0, temperature=0)
+       # d.save()
 
 
         print "great! The device has been created and belongs to you now"

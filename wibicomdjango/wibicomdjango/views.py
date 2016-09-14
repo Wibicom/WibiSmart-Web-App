@@ -157,13 +157,7 @@ def receive_android_data(request):
             return render(request, "userprofile/receive_android_data.html")
 
         device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
-        lastentry = device_entries.latest('datetime')
-
-
-
-        #deviceentry = DeviceEntry()
-        #deviceentry.device = device  # put the primary key of the device here
-
+        #lastentry = device_entries.latest('datetime')
 
         # Get general data
         if "datetime" in json_data :
@@ -176,43 +170,83 @@ def receive_android_data(request):
         if "rssi" in json_data:
             #print "___________DATE__ENTRY___CREATION____________"
             #print my_datetime
-            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
-                            device_id=device.id,accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
-                            light=lastentry.light, temperature=lastentry.temperature, rssi = json_data["rssi"])
+            d = DeviceEntry(datetime=my_datetime, device_id=device.id, rssi = json_data["rssi"])
             d.save()
 
         elif "battery" in json_data:
-            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
-                            device_id=device.id,
-                            accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=json_data["battery"],
-                            light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
+            d = DeviceEntry(datetime=my_datetime, device_id=device.id, battery=json_data["battery"],)
             d.save()
 
         elif "light" in json_data:
-            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
-                            accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = lastentry.battery,
-                            light = json_data["light"], temperature = lastentry.temperature, rssi = lastentry.rssi)
-
+            d = DeviceEntry(datetime=my_datetime, device_id = device.id, light = json_data["light"])
             d.save()
-
 
         # Get weather data
         elif "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
-            d = DeviceEntry(datetime=my_datetime, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
-                            accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
-                            light=lastentry.light, temperature=json_data["temperature"], rssi = lastentry.rssi)
+            d = DeviceEntry(datetime=my_datetime, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id, temperature=json_data["temperature"])
             d.save()
 
 
         # Get accelerometer data
         elif "accx" in json_data and "accy" in json_data and "accz" in json_data:
-            d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
-                            accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"], battery=lastentry.battery,
-                            light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
+            d = DeviceEntry(datetime=my_datetime, device_id=device.id, accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"])
             d.save()
 
         else:
             pass
+
+        #deviceentry = DeviceEntry()
+        #deviceentry.device = device  # put the primary key of the device here
+
+
+        # # Get general data
+        # if "datetime" in json_data :
+        #     #print "_____________________JSON DATA____________________"
+        #     #print json_data["datetime"]
+        #     my_datetime = json_data["datetime"]
+        #     my_datetime = datetime.datetime.strptime(my_datetime, "%Y-%m-%d %H:%M:%S.%f")
+        #     my_datetime = timezone.make_aware(my_datetime, timezone.get_current_timezone())
+
+        # if "rssi" in json_data:
+        #     #print "___________DATE__ENTRY___CREATION____________"
+        #     #print my_datetime
+        #     d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
+        #                     device_id=device.id,accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
+        #                     light=lastentry.light, temperature=lastentry.temperature, rssi = json_data["rssi"])
+        #     d.save()
+
+        # elif "battery" in json_data:
+        #     d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity,
+        #                     device_id=device.id,
+        #                     accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=json_data["battery"],
+        #                     light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
+        #     d.save()
+
+        # elif "light" in json_data:
+        #     d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id = device.id,
+        #                     accx = lastentry.accx, accy = lastentry.accy, accz = lastentry.accz, battery = lastentry.battery,
+        #                     light = json_data["light"], temperature = lastentry.temperature, rssi = lastentry.rssi)
+
+        #     d.save()
+
+
+        # # Get weather data
+        # elif "pressure" in json_data and "humidity" in json_data and "temperature" in json_data :
+        #     d = DeviceEntry(datetime=my_datetime, pressure=json_data["pressure"], humidity=json_data["humidity"], device_id=device.id,
+        #                     accx=lastentry.accx, accy=lastentry.accy, accz=lastentry.accz, battery=lastentry.battery,
+        #                     light=lastentry.light, temperature=json_data["temperature"], rssi = lastentry.rssi)
+        #     d.save()
+
+
+        # # Get accelerometer data
+        # elif "accx" in json_data and "accy" in json_data and "accz" in json_data:
+        #     d = DeviceEntry(datetime=my_datetime, pressure=lastentry.pressure, humidity=lastentry.humidity, device_id=device.id,
+        #                     accx=json_data["accx"], accy=json_data["accy"], accz=json_data["accz"], battery=lastentry.battery,
+        #                     light=lastentry.light, temperature=lastentry.temperature, rssi = lastentry.rssi)
+        #     d.save()
+
+        # else:
+        #     pass
 
     now = datetime.datetime.now()
     return HttpResponse(now)

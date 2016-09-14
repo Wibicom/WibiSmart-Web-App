@@ -396,7 +396,7 @@ function ajax_getdata(){
         success: function (json) {
             $('#batteryvalue').html(json.live_battery + "%"); //take the div output and put the json message in it
             $('#humidityvalue').html(json.live_humidity + "%");
-            $('#pressurevalue').html(json.live_pressure + " mb");
+            $('#pressurevalue').html(json.live_pressure + " mbar");
             $('#temperaturevalue').html(json.live_temperature + " °Celsius");
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");

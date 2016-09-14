@@ -158,9 +158,9 @@ function meteo_data_calculator(response){
     }
     for (var i = 0 ; i < response_array.length; i++){
         if(i%2 == 0){
-            temperature_array.push(response_array[i]);
-        }else{
             humidity_array.push(response_array[i]);
+        }else{
+            temperature_array.push(response_array[i]);
         }
 
     }

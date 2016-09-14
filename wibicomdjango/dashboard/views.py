@@ -19,6 +19,8 @@ from datetime import timedelta
 from userprofile.models import Device
 from userprofile.models import DeviceEntry
 
+from django.db.models import Q
+
 #this function calculates the daily data transfer (entries per minute) for a specific device
 def calculate_lastmin_data_transfer(request,device):
     now = datetime.datetime.now()
@@ -76,113 +78,118 @@ def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, peri
     print periodAdc
     print periodAccel
     print batteryLevel
-    sleepCurrent = 1.8  # uA
 
-    # Advertising data
-    advertLess1_5_Current = 4410
-    advertLess1_5_Time = 4.53
-    advertMore1_5_Current = 3630
-    advertMore1_5_Time = 6.11
 
-    # Connection Data
-    connLess1_5_Current = 3666
-    connLess1_5_Time = 2.46
+    if batteryLevel == None:
+        return "-"
+
+    sleepCurrent = 1.8 #uA
+    sleepTime = 15000
+
+    #Advertising data
+    advertLess1_5_Current 	= 4410
+    advertLess1_5_Time 		= 4.53
+    advertMore1_5_Current	= 3630
+    advertMore1_5_Time		= 6.11
+
+    #Connection Data
+    connLess1_5_Current	= 3666
+    connLess1_5_Time 	= 2.46
     connMore1_5_Current = 2860
-    connMore1_5_Time = 4.31
+    connMore1_5_Time 	= 4.31
 
-    # Battery data
-    battMeasure_Current = 1772
-    battMeasure_Time = 3.34
+    #Battery data
+    battMeasure_Current	= 1450
+    battMeasure_Time	= 2.5
 
-    # Weather
-    weatherSleep_Current = 0.2
-    weatherMeasure_Current = 3198
-    weatherMeasure_Time = 2.93
-    weatherLess1_5_tx_Current = 4299
-    weatherLess1_5_tx_Time = 2.90
-    weatherMore1_5_tx_Current = 4006
-    weatherMore1_5_tx_Time = 3.31
+    #Weather
+    weatherSleep_Current		= 0.2
+    weatherMeasure_Current		= 3198
+    weatherMeasure_Time			= 2.93
+    weatherLess1_5_tx_Current	= 4299
+    weatherLess1_5_tx_Time		= 2.90
+    weatherMore1_5_tx_Current	= 4006
+    weatherMore1_5_tx_Time		= 3.31
 
-    # Adc
-    adcMeasure_Current = 1624
-    adcMeasure_Time = 6.81
-    adcLess1_5_tx_Current = 3764
-    adcLess1_5_tx_Time = 2.69
-    adcMore1_5_tx_Current = 3600
-    adcMore1_5_tx_Time = 2.44
+    #Adc 
+    adcMeasure_Current		= 1624
+    adcMeasure_Time			= 6.81
+    adcLess1_5_tx_Current	= 3764
+    adcLess1_5_tx_Time		= 2.69
+    adcMore1_5_tx_Current	= 3600
+    adcMore1_5_tx_Time		= 2.44
 
-    # Accelerometer
-    accelSleep_Current = 1
-    accelMeasureBMA_Current = 3065
-    accelMeasureBMA_Time = 1.18
-    accelMeasureI2C_Current = 3130
-    accelMeasureI2C_Time = 2.59
-    accelLess1_5_tx_Current = 3708
-    accelLess1_5_tx_Time = 2.35
-    accelMore1_5_tx_Current = 3528
-    accelMore1_5_tx_Time = 3.14
+    #Accelerometer
+    accelSleep_Current			= 1.0
+    accelMeasureBMA_Current		= 3065
+    accelMeasureBMA_Time		= 1.18
+    accelMeasureI2C_Current		= 3130
+    accelMeasureI2C_Time		= 2.59
+    accelLess1_5_tx_Current		= 3708
+    accelLess1_5_tx_Time		= 2.35
+    accelMore1_5_tx_Current		= 3528
+    accelMore1_5_tx_Time		= 3.14
+
+    default_periodConnected = 30000.0  #30s
+
+    #if one of the period is 0, it means the sensor is off.
+    isOnAdc = (periodAdc != 0)
+    isOnWeather = (periodWeather != 0)
+    isOnAccel = (periodAccel != 0)
 
     avgCurrent = 0
-    default_periodConnected = 30000  # 30s
+    periodBattery = 15000 #set on 15s
 
-    # if one of the period is 0, it means the sensor is off.
-
-    periodBattery = 150000  # set on 15s
-
-    avgBatteryCurrent = (
-    battMeasure_Current * battMeasure_Time)  # + sleepCurrent*(periodConnected -  weatherMeasure_Time)/ periodConnected
-    avgWeatherCurrent = (
-    weatherMeasure_Time * weatherMeasure_Current)  # + sleepCurrent*(periodConnected -  weatherMeasure_Time)/ periodConnected
-    avgAdcCurrent = (
-    adcMeasure_Current * adcMeasure_Time)  # + sleepCurrent*(periodConnected -  adcMeasure_Time)  )/periodConnected
-    avgAccelCurrent = (
-    accelMeasureBMA_Current * accelMeasureBMA_Time + accelMeasureI2C_Current + accelMeasureI2C_Time)  # + sleepCurrent*(periodConnected - accelMeasureBMA_Time - accelMeasureI2C_Time))/periodConnected
-
-    # check if sleepMode
-    if periodConnected == 0:
+    #check if sleepMode
+    if periodConnected == 0 :
         periodConnected = default_periodConnected
-        periodAccel = 0
-        periodAdc = 0
-        periodWeather = 0
-
-    if isConnected == 0:  # ie advertising, no sensor is on, except the battery
-        if periodConnected < 1500:
-            avgCurrent = (
-                         advertLess1_5_Current * advertLess1_5_Time + battMeasure_Current * battMeasure_Time + sleepCurrent * (
-                         periodConnected - advertLess1_5_Time - battMeasure_Time)) / periodConnected
-        else:
-            avgCurrent = (
-                         advertMore1_5_Current * advertMore1_5_Time + battMeasure_Current * battMeasure_Time + sleepCurrent * (
-                         periodConnected - advertMore1_5_Time - battMeasure_Time)) / periodConnected
-    # else : connected state
-    else:
-        if periodConnected < 1500:
-            avgCurrent = connLess1_5_Current * connLess1_5_Time + sleepCurrent * (
-            periodConnected - connLess1_5_Time - periodBattery - periodWeather - periodAdc - periodAccel)
-            print "****AVG CURRENT 1"
-            print avgCurrent
-        else:
-            avgCurrent = connMore1_5_Current * connMore1_5_Time + sleepCurrent * (
-            periodConnected - connMore1_5_Time - periodBattery - periodWeather - periodAdc - periodAccel)
-
-        avgCurrent += avgBatteryCurrent * periodBattery + avgWeatherCurrent * periodWeather + avgAdcCurrent * periodAdc + avgAccelCurrent * periodAccel
-        avgCurrent = avgCurrent / periodConnected
-        print "**********************************avgCurrent*******************************************************"
-        print avgCurrent
+        
+    avgBatteryCurrent	= (battMeasure_Current*battMeasure_Time  + sleepCurrent*(periodConnected -  weatherMeasure_Time))/ periodBattery
+    #Check if advertising or connected
+    if isConnected == 0 :		#ie advertising, no sensor is on, except the battery
+        if periodConnected < 1500 :		
+            avgCurrent = (advertLess1_5_Current * advertLess1_5_Time + sleepCurrent * (periodConnected -  advertLess1_5_Time) ) / periodConnected
+        else :
+            avgCurrent = (advertMore1_5_Current * advertMore1_5_Time + sleepCurrent * (periodConnected -  advertMore1_5_Time) ) / periodConnected
+        
+        avgCurrent += avgBatteryCurrent
 
 
-        # evaluate the remaining capacity of the battery
-    batteryLevelVolts = 2 + batteryLevel / 100.0
+    #CONNECTED STATE
+    else:	
+        #sensors average current 
+        if isOnWeather and periodWeather != 0:
+            avgWeatherCurrent 	= (weatherMeasure_Time*weatherMeasure_Current + sleepCurrent*(periodWeather -  weatherMeasure_Time))/ periodWeather	 
+        else :
+            avgWeatherCurrent = 0
+            
+        if isOnAdc and periodAdc != 0:
+            avgAdcCurrent 		= (adcMeasure_Current*adcMeasure_Time + sleepCurrent*(periodAdc -  adcMeasure_Time)  )/periodAdc
+        else :
+            avgAdcCurrent = 0
+            
+        if isOnAccel and periodAdc != 0:
+            avgAccelCurrent	= (accelMeasureBMA_Current*accelMeasureBMA_Time + accelMeasureI2C_Current+accelMeasureI2C_Time + sleepCurrent*(periodAccel - accelMeasureBMA_Time - accelMeasureI2C_Time))/periodAccel
+        else :
+            avgAccelCurrent = 0
+        
+        #Connected average current 
+        if periodConnected < 1500 :	
+            avgCurrent = connLess1_5_Current*connLess1_5_Time + sleepCurrent*(periodConnected - connLess1_5_Time )#AS
+        else: 
+            avgCurrent = connMore1_5_Current*connMore1_5_Time + sleepCurrent*(periodConnected - connMore1_5_Time )#AS
+        avgCurrent 	= avgCurrent/periodConnected
+        
+        #Add battery consumption
+        avgCurrent	+=  avgBatteryCurrent +avgWeatherCurrent + avgAdcCurrent + avgAccelCurrent	#A
+        
+    #evaluate the remaining capacity of the battery
+    batteryLevelVolts = 2+ batteryLevel/100.0
+    battCapacity = -32*pow(batteryLevelVolts, 4) + 301.87* batteryLevelVolts**3 -1041.5*pow(batteryLevelVolts, 2)+1562.8*batteryLevelVolts-862 #in mAh
+    lifeExpectancy = battCapacity / (avgCurrent/1000.0)
 
-    print "*********************batteryLevelVolts*****************************************************"
-    print batteryLevelVolts
-    battCapacity = -32 * pow(batteryLevelVolts,4) + 301.87 * pow(batteryLevelVolts,3) - 1041.5 * pow(batteryLevelVolts,2) + 1562.8 * batteryLevelVolts - 862  # in mAh
-    print "***************************BAtt capacity*************************************************"
-    print battCapacity
 
-    lifeExpectancy = battCapacity / (avgCurrent / 1000)
-
-    return lifeExpectancy  # in Hours
+    return '%.1f'%(lifeExpectancy)	#in Hours
 
 
 
@@ -193,7 +200,7 @@ def onedevice_dashboard(request, id):
     device = Device.objects.get(id = id)
     device_entries = DeviceEntry.objects.filter(device_id = device).order_by('datetime')
     #find the last 10 entries
-    last_ten_entries = device_entries.reverse()[:10] #i would have liked a function such as latest() that returns last 10 objects but doesn't seem to exist
+    last_entries = device_entries.reverse() #i would have liked a function such as latest() that returns last 10 objects but doesn't seem to exist
     #loop over ten entries, a chaque temperature last_ten_entries[i].temperature je append ca dans une liste [3,4,2]
     last_thirty_entries = device_entries.reverse()[:30]
 
@@ -203,14 +210,24 @@ def onedevice_dashboard(request, id):
     acczlist = []
 
     #print last_ten_entries
-    for entry in last_ten_entries:
-        temperaturelist.append(entry.temperature)
-
-    for entry in last_thirty_entries:
+    temperatureListLenght = 0
+    for entry in last_entries:
+        if entry.temperature != None:
+            temperaturelist.append(entry.temperature)
+            temperatureListLenght = temperatureListLenght + 1
+            if temperatureListLenght >= 10:
+                break
+    
+    accListLength = 0
+    for entry in last_entries:
         #this list starts with the latest data and ends with oldest data, we want contrary
-        accxlist.append(entry.accx)
-        accylist.append(entry.accy)
-        acczlist.append(entry.accz)
+        if entry.accx != None:
+            accxlist.append(entry.accx)
+            accylist.append(entry.accy)
+            acczlist.append(entry.accz)
+            accListLength = accListLength + 1
+            if accListLength >= 30:
+                break
 
 
     temperaturelist= temperaturelist[::-1] #reverse the list so that starts with oldest data
@@ -233,15 +250,12 @@ def onedevice_dashboard(request, id):
     isConnected = 1 #device.deviceStatus #change this later to pass a boolean
     periodConnected = 100
 
-    device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
-    last_entry = device_entries.latest('datetime')
-
     print 'http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings'
     response = requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings')
-    periodWeather = 0 #int(json.loads(response.content)['weatherPeriod'])*100
-    periodAdc = 0 #int(json.loads(response.content)['lightPeriod'])*100
-    periodAccel =0 #int(json.loads(response.content)['accelerometerPeriod'])*100
-    batteryLevel = last_entry.battery
+    periodWeather = int(json.loads(response.content)['weatherPeriod'])*100
+    periodAdc = int(json.loads(response.content)['lightPeriod'])*100
+    periodAccel = int(json.loads(response.content)['accelerometerPeriod'])*100
+    batteryLevel = DeviceEntry.objects.filter(device_id=device).exclude(battery=None).latest('datetime').battery
 
     autonomy = calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, batteryLevel)
 
@@ -292,9 +306,9 @@ def csv_output_energy(request, id):
 
         device_entries = device_entries.order_by('datetime')
 
-        datetimes = device_entries.values('datetime')
-        battery_values = device_entries.values('battery')
-        light_values = device_entries.values('light')
+        datetimes = device_entries.values('datetime').exclude(light=None)#, battery=None)
+        battery_values = device_entries.values('battery').exclude(battery=None)
+        light_values = device_entries.values('light').exclude(light=None)
 
         writer = csv.writer(response)
         writer.writerow(['Date', 'Battery level', 'Light'])
@@ -304,10 +318,10 @@ def csv_output_energy(request, id):
             date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
             row.append(date)
 
-            batt = json.dumps(battery_values[i])
-            batt = json.loads(batt)
-            batt = batt['battery']
-            row.append(batt)
+            # batt = json.dumps(battery_values[i])
+            # batt = json.loads(batt)
+            # batt = batt['battery']
+            # row.append(batt)
 
             light = json.dumps(light_values[i])
             light = json.loads(light)
@@ -337,10 +351,10 @@ def csv_output_meteo(request, id):
 
         device_entries = device_entries.order_by('datetime')
 
-        datetimes = device_entries.values('datetime')
-        humidity_values = device_entries.values('humidity')
-        temperature_values = device_entries.values('temperature')
-        pressure_values = device_entries.values('pressure')
+        datetimes = device_entries.values('datetime').exclude(humidity=None)
+        humidity_values = device_entries.values('humidity').exclude(humidity=None)
+        temperature_values = device_entries.values('temperature').exclude(temperature=None)
+        pressure_values = device_entries.values('pressure').exclude(pressure=None)
 
         writer = csv.writer(response)
         writer.writerow(['Date', 'Humidity', 'Temperature'])
@@ -386,10 +400,10 @@ def csv_output_accelerometer(request, id):
 
         device_entries = device_entries.order_by('datetime')
 
-        datetimes = device_entries.values('datetime')
-        accx_values = device_entries.values('accx')
-        accy_values = device_entries.values('accy')
-        accz_values = device_entries.values('accz')
+        datetimes = device_entries.values('datetime').exclude(accx=None)
+        accx_values = device_entries.values('accx').exclude(accx=None)
+        accy_values = device_entries.values('accy').exclude(accy=None)
+        accz_values = device_entries.values('accz').exclude(accz=None)
 
         writer = csv.writer(response)
         writer.writerow(['Date', 'X axis', 'Y Axis', 'Z Axis'])
@@ -440,8 +454,8 @@ def csv_output_pressure(request, id):
 
         device_entries = device_entries.order_by('datetime')
 
-        datetimes = device_entries.values('datetime')
-        pressure_values = device_entries.values('pressure')
+        datetimes = device_entries.values('datetime').exclude(pressure=None)
+        pressure_values = device_entries.values('pressure').exclude(pressure=None)
 
         writer = csv.writer(response)
         writer.writerow(['Date', 'Pressure'])
@@ -500,20 +514,32 @@ def onedevice_dashboard_ajax(request, id):
     #print "im in ajax"
     #rendering data ajax call
     device = Device.objects.get(id = id)
-    device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
+    if DeviceEntry.objects.filter(device_id=device).exclude(humidity=None).exists():
+        latest_entry_weather = DeviceEntry.objects.filter(device_id=device).exclude(humidity=None).latest('datetime') # if humidity is there, it also implies temperature & pressure are there too
+    
+        live_humidity = latest_entry_weather.humidity
+        live_pressure = latest_entry_weather.pressure
+        live_temperature = latest_entry_weather.temperature
+    
+    if DeviceEntry.objects.filter(device_id=device).exclude(accx=None).exists():
+        latest_entry_acc = DeviceEntry.objects.filter(device_id=device).exclude(accx=None).latest('datetime') # if accx is there, it also implies accy & accz are there too
+    
+        live_accx = latest_entry_acc.accx
+        live_accy = latest_entry_acc.accy
+        live_accz = latest_entry_acc.accz
 
 
-    last_entry = device_entries.latest('datetime')
+    if DeviceEntry.objects.filter(device_id=device).exclude(battery=None).exists():
+        live_battery = DeviceEntry.objects.filter(device_id=device).exclude(battery=None).latest('datetime').battery
+ 
 
-    live_battery = last_entry.battery
-    live_humidity = last_entry.humidity
-    live_pressure = last_entry.pressure
-    live_temperature = last_entry.temperature
-    live_accx = last_entry.accx
-    live_accy = last_entry.accy
-    live_accz = last_entry.accz
-    live_rssi = last_entry.rssi
-    live_light = last_entry.light
+    if DeviceEntry.objects.filter(device_id=device).exclude(rssi=None).exists():
+        live_rssi = DeviceEntry.objects.filter(device_id=device).exclude(rssi=None).latest('datetime').rssi
+
+    if DeviceEntry.objects.filter(device_id=device).exclude(light=None).exists():
+        live_light = DeviceEntry.objects.filter(device_id=device).exclude(light=None).latest('datetime').light
+        print live_light
+        
     live_deviceStatus = device.deviceStatus
 
 
@@ -526,12 +552,13 @@ def onedevice_dashboard_ajax(request, id):
         response_data['live_humidity'] = live_humidity
         response_data['live_pressure'] = live_pressure
         response_data['live_temperature'] = live_temperature
-        response_data['live_accx']= live_accx
-        response_data['live_accy']= live_accy
-        response_data['live_accz']= live_accz
         response_data['live_light'] = live_light
         response_data['live_rssi'] = live_rssi
         response_data['live_deviceStatus'] = live_deviceStatus
+        response_data['live_accx']= live_accx
+        response_data['live_accy']= live_accy
+        response_data['live_accz']= live_accz
+       
 
     except:
         response_data['result'] = "Failure"
