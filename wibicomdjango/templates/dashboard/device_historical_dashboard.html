@@ -65,98 +65,7 @@
             </div>
 
 
-            <div class = "container-fluid">
-                <div class = "row">
-                    <div class="col-md-12">
-                        <div class="box box-green">
-                            <div class="box-header with-border no-padding">
-                                <p class = "graph-label">Energy Consumption</p>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                                </div>
-                            </div>
-                            <div class="box-body no-padding">
-                                <div class = "row">
-                                    <div class = "col-md-11 graph-col">
-                                        <div class = "dy-chart" id="battery_historical_linechart"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class = "col-md-5 col-md-offset-4">
-                                        <div class="center btn-toolbar" role="toolbar" aria-label="...">
-  <!--ATTENTION ne pas changer la position de la 4e classe, ca va affecter les controleur dans le javascript -->
-                                                   <button id ="day-energy" type="button" class="btn btn-default energy-button day">1D</button>
-                                                   <button id = "week-energy" type="button" class="btn btn-default energy-button week">1W</button>
-                                                   <button id = "month-energy" type="button" class="btn btn-default energy-button month">1M</button>
-                                                   <button id = "year-energy" type="button" class="btn btn-default energy-button year">1Y</button>
-                                                   <button id = "max-energy" type="button" class="btn btn-default energy-button max">Max</button>
-                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class = "container-fluid">
-                <div class = "row">
-                    <div class="col-md-12">
-                        <div class="box box-green">
-                            <div class="box-header with-border no-padding">
-                                <p class = "graph-label">Pressure Evolution</p>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                                </div>
-                            </div>
-                            <div class="box-body no-padding">
-                                <div class = "row">
-
-                                    <div class="col-md-2">
-                                      <div class="pad box-pane-right box-pane-whiteblue" style="min-height: 380px">
-                                        <div class="description-block margin-bottom">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-up big-fa-fa" aria-hidden="true"></i></div>
-                                          <h5 class="description-header" id="pressure-high"></h5>
-                                          <span class="description-text">HIGH</span>
-                                        </div>
-                                        <!-- /.description-block -->
-                                        <div class="description-block margin-bottom">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-minus-circle big-fa-fa" aria-hidden="true"></i></div>
-                                          <h5 class="description-header" id="pressure-avg"></h5>
-                                          <span class="description-text">AVERAGE</span>
-                                        </div>
-                                        <!-- /.description-block -->
-                                        <div class="description-block">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-down big-fa-fa" aria-hidden="true"></i></div>
-                                          <h5 class="description-header" id="pressure-low"></h5>
-                                          <span class="description-text">LOW</span>
-                                        </div>
-                                        <!-- /.description-block -->
-                                      </div>
-                                    </div>
-
-                                    <div class = "col-md-9 graph-col">
-                                        <div class = "dy-chart" id="pressure_historical_linechart"></div>
-                                        <div class="btn-toolbar toolbar-downright" role="toolbar" aria-label="...">
-     <!--ATTENTION ne pas changer la position de la 4e classe, ca va affecter les controleur dans le javascript -->
-                                           <button id ="day-pressure" type="button" class="btn btn-default pressure-button day">1D</button>
-                                           <button id = "week-pressure" type="button" class="btn btn-default pressure-button week">1W</button>
-                                           <button id = "month-pressure" type="button" class="btn btn-default pressure-button month">1M</button>
-                                           <button id = "year-pressure" type="button" class="btn btn-default pressure-button year">1Y</button>
-                                           <button id = "max-pressure" type="button" class="btn btn-default pressure-button max">Max</button>
-                                        </div>
-                                    </div>
-                                  </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class = "container-fluid">
+<div class = "container-fluid">
                 <div class = "row">
                     <div class="col-md-12">
                         <div class="box box-green">
@@ -217,6 +126,65 @@
 
                  </div>
 
+            
+            <div class = "container-fluid">
+                <div class = "row">
+                    <div class="col-md-12">
+                        <div class="box box-green">
+                            <div class="box-header with-border no-padding">
+                                <p class = "graph-label">Pressure Evolution</p>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                            <div class="box-body no-padding">
+                                <div class = "row">
+
+                                    <div class="col-md-2">
+                                      <div class="pad box-pane-right box-pane-whiteblue" style="min-height: 380px">
+                                        <div class="description-block margin-bottom">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-up big-fa-fa" aria-hidden="true"></i></div>
+                                          <h5 class="description-header" id="pressure-high"></h5>
+                                          <span class="description-text">HIGH</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                        <div class="description-block margin-bottom">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-minus-circle big-fa-fa" aria-hidden="true"></i></div>
+                                          <h5 class="description-header" id="pressure-avg"></h5>
+                                          <span class="description-text">AVERAGE</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                        <div class="description-block">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-down big-fa-fa" aria-hidden="true"></i></div>
+                                          <h5 class="description-header" id="pressure-low"></h5>
+                                          <span class="description-text">LOW</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                      </div>
+                                    </div>
+
+                                    <div class = "col-md-9 graph-col">
+                                        <div class = "dy-chart" id="pressure_historical_linechart"></div>
+                                        <div class="btn-toolbar toolbar-downright" role="toolbar" aria-label="...">
+     <!--ATTENTION ne pas changer la position de la 4e classe, ca va affecter les controleur dans le javascript -->
+                                           <button id ="day-pressure" type="button" class="btn btn-default pressure-button day">1D</button>
+                                           <button id = "week-pressure" type="button" class="btn btn-default pressure-button week">1W</button>
+                                           <button id = "month-pressure" type="button" class="btn btn-default pressure-button month">1M</button>
+                                           <button id = "year-pressure" type="button" class="btn btn-default pressure-button year">1Y</button>
+                                           <button id = "max-pressure" type="button" class="btn btn-default pressure-button max">Max</button>
+                                        </div>
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
 
 
             <div class = "container-fluid">
@@ -257,6 +225,42 @@
             </div>
 
     </div>
+
+    <div class = "container-fluid">
+                <div class = "row">
+                    <div class="col-md-12">
+                        <div class="box box-green">
+                            <div class="box-header with-border no-padding">
+                                <p class = "graph-label">Energy Consumption</p>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                            <div class="box-body no-padding">
+                                <div class = "row">
+                                    <div class = "col-md-11 graph-col">
+                                        <div class = "dy-chart" id="battery_historical_linechart"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class = "col-md-5 col-md-offset-4">
+                                        <div class="center btn-toolbar" role="toolbar" aria-label="...">
+  <!--ATTENTION ne pas changer la position de la 4e classe, ca va affecter les controleur dans le javascript -->
+                                                   <button id ="day-energy" type="button" class="btn btn-default energy-button day">1D</button>
+                                                   <button id = "week-energy" type="button" class="btn btn-default energy-button week">1W</button>
+                                                   <button id = "month-energy" type="button" class="btn btn-default energy-button month">1M</button>
+                                                   <button id = "year-energy" type="button" class="btn btn-default energy-button year">1Y</button>
+                                                   <button id = "max-energy" type="button" class="btn btn-default energy-button max">Max</button>
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
 

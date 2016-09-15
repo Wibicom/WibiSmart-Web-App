@@ -59,74 +59,7 @@
           </div>
 
 
-            <div class = "container-fluid">
-                <div class = "row">
-                    <div class="col-md-12">
-                    <div class="box box-gray">
-                            <div class="box-header with-border">
-                                <h3 class="box-title title">Accelerometer data</h3>
-
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                                </div>
-                            </div>
-                            <div class="box-body no-padding">
-                                 <div id = "column-wrap">
-                                    <div class="col-md-9 item">
-                                        <div id = "accelerometer-chart">
-                                            <canvas id="acccelerometerlinechart" height="120" ></canvas>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3" id="live-acceleration">
-                                        <p class = "title">Live Acceleration</p> <!--when time comes, add a span under div id (segments) for screen reader enabling-->
-                                        <div>
-                                          <p class = "data-info" id="accxvalue"></p>
-                                          <div class="progress">
-                                              <div id = "firstSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_x" class="progress-bar progress-bar-orange" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar"  style="width: 100%"></div>
-                                          </div>
-                                        </div>
-
-                                        <div>
-                                          <p class = "data-info" id="accyvalue"></p>
-                                          <div class = "data_progress_y"></div>
-                                          <div class="progress">
-                                              <div id = "firstSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_y" class="progress-bar progress-bar-green" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar"  style="width: 100%"></div>
-                                          </div>
-                                        </div>
-
-                                        <div>
-                                          <p class = "data-info" id="acczvalue"></p>
-                                          <div class="progress">
-                                              <div id = "firstSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar" style="width: 0%"></div>
-                                              <div id = "secondSegment_progress_z" class="progress-bar progress-bar-blue" role="progressbar" style="width: 0%"></div>
-                                              <div id = "thirdSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar"  style="width: 100%"></div>
-                                          </div>
-                                        </div>
-
-                                        <div>
-                                            <p class = "data-info">Total Acceleration: </p>
-                                            <p class="data-info" id="totalaccelerationvalue"></p>
-
-
-                                        </div>
-                                    </div>
-                                 </div>
-                            </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
+          
 
             <div class="container-fluid">
                 <div class = "row">
@@ -199,60 +132,116 @@
 
             <div class = "container-fluid">
                 <div class = "row">
-                    <div class = "col-md-4">
-                          <div class="info-box">
-                            <!--<span class="info-box-icon backgr-white"><i id = "light-circle" class="fa fa-circle" aria-hidden="true"></i></span>
+                    <div class="box box-gray">
+                            <div class="box-header with-border">
+                                <h3 class="box-title title">Temperature data (Celsius)</h3>
 
-                            <div class="info-box-content">
-                              <span class="info-box-text">LIGHTING</span>
-                              <span id = "light_indicator_bottom" class="info-box-number"></span>
-
-                            </div>-->
-                            <!-- /.info-box-content -->
-                          </div>
-                          <div class="info-box">
-                            <span class="info-box-icon backgr-dark-blue"><i class="fa fa-chevron-circle-up white" aria-hidden="true"></i></span>
-
-                            <div class="info-box-content">
-                              <span class="info-box-text">DAILY HIGH</span>
-                              <span class="info-box-number">{{ daily_temp_max }} °C</span>
-
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
                             </div>
-                            <!-- /.info-box-content -->
-                          </div>
-
-                        <div class="info-box">
-                            <span class="info-box-icon backgr-green"><i class="fa fa-minus-circle white" aria-hidden="true"></i></span>
-
-                            <div class="info-box-content">
-                              <span class="info-box-text">DAILY AVRG</span>
-                              <span class="info-box-number">{{ daily_temp_avrg }} °C</span>
-
+                            <div class="box-body no-padding">
+                                 <div id = "column-wrap">
+                                    <div class="col-md-9">
+                                        <div >
+                                            <canvas id="temperaturelinechart" height="120"></canvas>
+                                        </div>
+                                        
+                                    </div>
+                                     <div class="col-md-2">
+                                      <div class="pad box-pane-right box-pane-meteo" style="min-height: 380px">
+                                        <div class="description-block margin-bottom">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-up big-fa-fa" aria-hidden="true"></i></div>
+                                          <h5 class="description-header" id = "temperature-high" >{{ daily_temp_max }} °C</h5>
+                                          <span class="description-text">DAILY HIGH</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                        <div class="description-block margin-bottom">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-minus-circle big-fa-fa" aria-hidden="true"></i></div>
+                                          <h5 class="description-header" id = "temperature-avg">{{ daily_temp_avrg }} °C</h5>
+                                          <span class="description-text">DAILY AVERAGE</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                        <div class="description-block">
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-down big-fa-fa" aria-hidden="true"></i></div>
+                                           <h5 class="description-header" id = "temperature-low">{{ daily_temp_min }} °C</h5>
+                                          <span class="description-text">DAILY LOW</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                      </div>
+                                    </div>
+                                 </div>
                             </div>
-                            <!-- /.info-box-content -->
-                          </div>
+                    </div>
 
-                          <div class="info-box">
-                            <span class="info-box-icon backgr-light-blue"><i class="fa fa-chevron-circle-down white" aria-hidden="true"></i></i></span>
 
-                            <div class="info-box-content">
-                              <span class="info-box-text">DAILY LOW</span>
-                              <span class="info-box-number">{{ daily_temp_min }} °C</span>
 
+                    
+                    </div>
+                </div>
+            </div>
+
+              <div class = "container-fluid">
+                <div class = "row">
+                    <div class="col-md-12">
+                    <div class="box box-gray">
+                            <div class="box-header with-border">
+                                <h3 class="box-title title">Accelerometer data</h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                </div>
                             </div>
-                            <!-- /.info-box-content -->
-                          </div>
+                            <div class="box-body no-padding">
+                                 <div id = "column-wrap">
+                                    <div class="col-md-9 item">
+                                        <div id = "accelerometer-chart">
+                                            <canvas id="acccelerometerlinechart" height="120" ></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" id="live-acceleration">
+                                        <p class = "title">Live Acceleration</p> <!--when time comes, add a span under div id (segments) for screen reader enabling-->
+                                        <div>
+                                          <p class = "data-info" id="accxvalue"></p>
+                                          <div class="progress">
+                                              <div id = "firstSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_x" class="progress-bar progress-bar-orange" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_x" class="progress-bar progress-bar-orange gray-zone" role="progressbar"  style="width: 100%"></div>
+                                          </div>
+                                        </div>
 
-                        </div>
-                      <!-- /.info-box -->
+                                        <div>
+                                          <p class = "data-info" id="accyvalue"></p>
+                                          <div class = "data_progress_y"></div>
+                                          <div class="progress">
+                                              <div id = "firstSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_y" class="progress-bar progress-bar-green" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_y" class="progress-bar progress-bar-green gray-zone" role="progressbar"  style="width: 100%"></div>
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                          <p class = "data-info" id="acczvalue"></p>
+                                          <div class="progress">
+                                              <div id = "firstSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar" style="width: 0%"></div>
+                                              <div id = "secondSegment_progress_z" class="progress-bar progress-bar-blue" role="progressbar" style="width: 0%"></div>
+                                              <div id = "thirdSegment_progress_z" class="progress-bar progress-bar-blue gray-zone" role="progressbar"  style="width: 100%"></div>
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                            <p class = "data-info">Total Acceleration: </p>
+                                            <p class="data-info" id="totalaccelerationvalue"></p>
 
 
-                    <div class="col-md-8">
-                        <div class="panel panel-info">
-                          <div class="panel-body">
-                              <canvas id="temperaturelinechart" width="250" height="120"></canvas>
-                          </div>
-                        </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                            </div>
                     </div>
                     </div>
                 </div>
