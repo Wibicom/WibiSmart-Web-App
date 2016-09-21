@@ -215,7 +215,7 @@ def onedevice_dashboard(request, id):
         if entry.temperature != None:
             temperaturelist.append(entry.temperature)
             temperatureListLenght = temperatureListLenght + 1
-            if temperatureListLenght >= 10:
+            if temperatureListLenght >= 30:
                 break
     
     accListLength = 0

@@ -44,7 +44,7 @@
 }
 
 .progress-bar-green{
-    background-color: #2ecc71;
+    background-color: #5BC0DE;
 }
 
 .progress-bar-blue{
@@ -195,4 +195,14 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
    display: initial;
+}
+
+.box-pane-meteo{
+    background-color: white;
+    color: #5bc0de;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    float: right;
+    padding-bottom: 0px;
 }

@@ -86,8 +86,8 @@ var PressureGauge = (function () {
     function createInstance() {
         var opts = {
           lines: 12, // The number of lines to draw
-          angle: 0.1, // The length of each line
-          lineWidth: 0.10, // The line thickness
+          angle: 0.01, // The length of each line
+          lineWidth: 0.20, // The line thickness
           pointer: {
             length: 1, // The radius of the inner circle
             strokeWidth: 0.030, // The rotation offset
@@ -248,7 +248,7 @@ var LabelQueue = (function () {
     var instance;
 
     function createInstance() {
-        var queue = [1,2,3,4,5,6,7,8,9,10];
+        var queue = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
         return queue;
     }
 
@@ -477,7 +477,7 @@ var canvas = document.getElementById('temperaturelinechart'),
 
 ctx = canvas.getContext('2d'),
     startingData = {
-      labels: [1, 2, 3, 4, 5, 6, 7,8,9,10],
+      labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
       datasets: [
 
           {
@@ -520,10 +520,10 @@ var TemperatureChart = (function () {
                     labels: LabelQueue.getInstance(),
                     datasets: [{
                         label: "Temperature Evolution",
-                        backgroundColor: "rgba(46, 204, 113, 0.2)",
-                        borderColor: "rgba(46, 204, 113, 1)",
-                        pointBorderColor: "rgba(46, 204, 113, 1)",
-                        pointStrokeColor: "#fff",
+                        backgroundColor: "rgba(91, 192, 222, 0.2)",
+                        borderColor: "#5BC0DE",//"rgba(46, 204, 113, 1)",
+                        pointBorderColor: "#5BC0DE",//"rgba(46, 204, 113, 1)",
+                        pointStrokeColor: "#5BC0DE",
                         data: JSON.parse(temperaturelist),
 
                     }]
@@ -531,7 +531,7 @@ var TemperatureChart = (function () {
                 options: {
                   animation: false,
                   title: {
-                    display: true,
+                    display: false,
                     text: "Temperature data (Celsius)",
                     fontSize: 24,
                     fontFamily: 'Josefin Sans',
@@ -539,8 +539,14 @@ var TemperatureChart = (function () {
                   },
                   legend: {
                     display: false,
+                    
                   },
                   scales: {
+                      xAxes: [{
+                        gridLines: {
+                            display:false
+                        }
+                     }],
                         yAxes: [{
                           ticks: {
                             min: 20,
