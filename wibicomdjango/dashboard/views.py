@@ -17,6 +17,7 @@ import json
 from datetime import datetime as dt
 from datetime import timedelta
 from userprofile.models import Device
+from userprofile.models import DeviceSettings
 from userprofile.models import DeviceEntry
 
 from django.db.models import Q
@@ -72,15 +73,7 @@ def calculate_daily_temp(request, device):
 
 batteryLevel = 1.0
 #@login_required()
-def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, batteryLevel):
-	print "*********MYPARAMETERS****************"
-	print isConnected
-	print periodConnected
-	print periodWeather
-	print periodAdc
-	print periodAccel
-	print batteryLevel
-
+def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, weatherOn, adcOn, accelOn, batteryLevel):
 	
 	if batteryLevel == None:
 		return "-"
@@ -141,11 +134,6 @@ def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, peri
 
 	default_periodConnected = 30000.0  #30s
 
-	#if one of the period is 0, it means the sensor is off.
-	isOnAdc = (periodAdc != 0)
-	isOnWeather = (periodWeather != 0)
-	isOnAccel = (periodAccel != 0)
-
 	avgCurrent = 0
 	periodBattery = 15000 #set on 15s
 
@@ -167,17 +155,17 @@ def calculate_battery_autonomy(isConnected, periodConnected, periodWeather, peri
 	#CONNECTED STATE
 	else:
 		#sensors average current
-		if isOnWeather and periodWeather != 0:
+		if weatherOn :
 			avgWeatherCurrent 	= (weatherMeasure_Time*weatherMeasure_Current + sleepCurrent*(periodWeather -  weatherMeasure_Time))/ periodWeather
 		else :
 			avgWeatherCurrent = 0
 
-		if isOnAdc and periodAdc != 0:
+		if adcOn :
 			avgAdcCurrent 		= (adcMeasure_Current*adcMeasure_Time + sleepCurrent*(periodAdc -  adcMeasure_Time)  )/periodAdc
 		else :
 			avgAdcCurrent = 0
 
-		if isOnAccel and periodAdc != 0:
+		if accelOn:
 			avgAccelCurrent	= (accelMeasureBMA_Current*accelMeasureBMA_Time + accelMeasureI2C_Current+accelMeasureI2C_Time + sleepCurrent*(periodAccel - accelMeasureBMA_Time - accelMeasureI2C_Time))/periodAccel
 		else :
 			avgAccelCurrent = 0
@@ -267,13 +255,22 @@ def onedevice_dashboard(request, id):
 	periodConnected = 100
 
 	print 'http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings'
-	response = requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings')
-	periodWeather = int(json.loads(response.content)['weatherPeriod'])*100
-	periodAdc = int(json.loads(response.content)['lightPeriod'])*100
-	periodAccel = int(json.loads(response.content)['accelerometerPeriod'])*100
+	# response = requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings')
+	# periodWeather = int(json.loads(response.content)['weatherPeriod'])*100
+	# periodAdc = int(json.loads(response.content)['lightPeriod'])*100
+	# periodAccel = int(json.loads(response.content)['accelerometerPeriod'])*100
 	batteryLevel = DeviceEntry.objects.filter(device_id=device).exclude(battery=None).latest('datetime').battery
 
-	autonomy = calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, batteryLevel)
+	periodWeather = DeviceSettings.objects.get(device=device).weatherPeriod
+	periodAdc = DeviceSettings.objects.get(device=device).lightPeriod
+	periodAccel = DeviceSettings.objects.get(device=device).accelerometerPeriod
+
+	weatherOn = DeviceSettings.objects.get(device=device).weatherOn
+	adcOn = DeviceSettings.objects.get(device=device).lightOn
+	accelOn = DeviceSettings.objects.get(device=device).accelerometerOn
+
+
+	autonomy = calculate_battery_autonomy(isConnected, periodConnected, periodWeather, periodAdc, periodAccel, weatherOn, adcOn, accelOn, batteryLevel)
 
 	return TemplateResponse(request, 'dashboard/device_dashboard.html', {"full_name": full_name,
 																			  "deviceId": device.pk,
@@ -319,29 +316,33 @@ def csv_output_energy(request, id):
 														datetime__range=[start_date, datetime.datetime.now()])
 
 		device_entries = device_entries.order_by('datetime')
+		device_entries = DeviceEntry.objects.filter(accx=None, temperature=None, rssi=None)
+		values = device_entries.values()
 
-		datetimes = device_entries.values('datetime').exclude(light=None)#, battery=None)
-		battery_values = device_entries.values('battery').exclude(battery=None)
-		light_values = device_entries.values('light').exclude(light=None)
 
 		writer = csv.writer(response)
 		writer.writerow(['Date', 'Battery level', 'Light'])
-		for i in range(0, len(datetimes)):  # datetimes and battery_values have the same size
+
+		lastBat = 0
+		lastLight = 0
+
+		for i in range(0, len(values)):
 			row = []
-			# getting the dates
-			date = datetimes[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
+
+			date = values[i]['datetime'].strftime('%Y/%m/%d %H:%M:%S')
+
+			if values[i]['light'] != None :
+				lastLight = values[i]['light']
+			
+
+			if values[i]['battery'] != None :
+				lastBat = values[i]['battery']
+			
+
 			row.append(date)
-
-			# batt = json.dumps(battery_values[i])
-			# batt = json.loads(batt)
-			# batt = batt['battery']
-			# row.append(batt)
-
-			light = json.dumps(light_values[i])
-			light = json.loads(light)
-			light = light['light']
-			row.append(light)
-
+			row.append(lastBat)
+			row.append(lastLight)
+			
 			writer.writerow(row)
 
 		return response
@@ -545,6 +546,17 @@ def onedevice_dashboard_ajax(request, id):
 
 	if DeviceEntry.objects.filter(device_id=device).exclude(battery=None).exists():
 		live_battery = DeviceEntry.objects.filter(device_id=device).exclude(battery=None).latest('datetime').battery
+
+		periodWeather = DeviceSettings.objects.get(device=device).weatherPeriod
+		periodAdc = DeviceSettings.objects.get(device=device).lightPeriod
+		periodAccel = DeviceSettings.objects.get(device=device).accelerometerPeriod
+		weatherOn = DeviceSettings.objects.get(device=device).weatherOn
+		adcOn = DeviceSettings.objects.get(device=device).lightOn
+		accelOn = DeviceSettings.objects.get(device=device).accelerometerOn
+
+		live_autonomy = calculate_battery_autonomy(1, 100, periodWeather*100, periodAdc*100, periodAccel*100, weatherOn, adcOn, accelOn, live_battery)
+		
+
  
 
 	if DeviceEntry.objects.filter(device_id=device).exclude(rssi=None).exists():
@@ -563,6 +575,7 @@ def onedevice_dashboard_ajax(request, id):
 		response_data['result'] = "Success"
 		response_data['message'] = "great!"
 		response_data['live_battery'] = live_battery
+		response_data['live_autonomy'] = live_autonomy
 		response_data['live_humidity'] = live_humidity
 		response_data['live_pressure'] = live_pressure
 		response_data['live_temperature'] = live_temperature
@@ -572,6 +585,7 @@ def onedevice_dashboard_ajax(request, id):
 		response_data['live_accx']= live_accx
 		response_data['live_accy']= live_accy
 		response_data['live_accz']= live_accz
+
 
 
 	except:

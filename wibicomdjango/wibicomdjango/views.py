@@ -120,14 +120,14 @@ def receive_android_data(request):
         token = json_data['token']
 
         #verifying that the token exists in the db and if not, quit the function
-        try:
-            Token.objects.get(key=token)
-        except Token.DoesNotExist:
-            print "***********No valid tokenobj********"
-            return render(request, "userprofile/receive_android_data.html")
+        # try:
+        #     Token.objects.get(key=token)
+        # except Token.DoesNotExist:
+        #     print "***********No valid tokenobj********"
+        #     return render(request, "userprofile/receive_android_data.html")
 
-        tokenobj= Token.objects.get(key=token)
-        userid = tokenobj.user_id   #finding the user that is sending the request
+        #tokenobj= Token.objects.get(key=token)
+        #userid = tokenobj.user_id   #finding the user that is sending the request
         deviceNb = json_data["deviceNb"]
         deviceType = json_data["deviceType"]
         #print userid
@@ -137,24 +137,24 @@ def receive_android_data(request):
         device = Device.objects.get(deviceNb = deviceNb, deviceType = deviceType)
         #check the user of the device to see if the device belongs to the user
         #print type(device)
-        try:
-            #print device.user_id
-            if device.user_id is None:
-                # le device vient detre creer
-                print "***************Im in user_id is None***************"
-                print userid
-                device.user_id = userid #user id , and not profile id
-                device.save()
+        # try:
+        #     #print device.user_id
+        #     if device.user_id is None:
+        #         # le device vient detre creer
+        #         print "***************Im in user_id is None***************"
+        #         print userid
+        #         device.user_id = userid #user id , and not profile id
+        #         device.save()
 
-            elif device.user_id == userid :
-                # le device appartient bel et bien au user
-                pass
-            else:
-                #le device est creer mais nappartient pas au user
-                raise ValueError("The device exists but doesnt belong the the user sending the token")
-        except ValueError as err:
-            print(err)
-            return render(request, "userprofile/receive_android_data.html")
+        #     elif device.user_id == userid :
+        #         # le device appartient bel et bien au user
+        #         pass
+        #     else:
+        #         #le device est creer mais nappartient pas au user
+        #         raise ValueError("The device exists but doesnt belong the the user sending the token")
+        # except ValueError as err:
+        #     print(err)
+        #     return render(request, "userprofile/receive_android_data.html")
 
         device_entries = DeviceEntry.objects.filter(device_id=device).order_by('datetime')
         #lastentry = device_entries.latest('datetime')

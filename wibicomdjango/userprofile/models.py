@@ -25,6 +25,8 @@ class Device(models.Model):
     deviceName = models.CharField(max_length= 100, null = True)
     deviceStatus = models.CharField(max_length = 100, choices = STATUS_OPTIONS, null=True)
 
+
+
     def __str__(self):
         return self.deviceName
 
@@ -47,3 +49,12 @@ class DeviceEntry(models.Model):
 
     def __unicode__(self):
         return str(self.datetime) + " " + str(self.pressure) + " " + str(self.humidity)
+
+class DeviceSettings(models.Model):
+    device = models.ForeignKey(Device, null=True)
+    weatherOn = models.NullBooleanField(null=True)
+    accelerometerOn = models.NullBooleanField(null=True)
+    lightOn = models.NullBooleanField(null=True)
+    weatherPeriod = models.IntegerField(null=True)
+    accelerometerPeriod = models.IntegerField(null=True)
+    lightPeriod = models.IntegerField(null=True)

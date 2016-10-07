@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from userprofile.models import Device
 from userprofile.models import DeviceEntry
+from userprofile.models import DeviceSettings
 import json
 import requests
 import datetime
@@ -109,6 +110,7 @@ def adddevice(request): #this is not working
     except Device.DoesNotExist:
         device = Device.objects.create(deviceNb = address, deviceType = "ENVIRO", user_id = userid, deviceName = name, deviceStatus="connected")
 
+       
         ### We don't want this ###
        # now = datetime.datetime.now()
        # d = DeviceEntry(datetime=now, pressure=0, humidity=0, device_id=device.id ,accx=0, accy=0, accz=0, battery=0, light=0, temperature=0)
@@ -118,6 +120,18 @@ def adddevice(request): #this is not working
         print "great! The device has been created and belongs to you now"
         requests.get('http://192.168.1.200:8010/gatt/nodes/' + address) # request connection to that device
         print "Sending HTTP GET to " + "http://192.168.1.200:8010/gatt/nodes/" + address
+
+         # Get device settings
+        response = requests.get('http://192.168.1.200:8010/gatt/nodes/' + device.deviceNb + '/settings')
+        periodWeather = int(json.loads(response.content)['weatherPeriod'])*100
+        periodAdc = int(json.loads(response.content)['lightPeriod'])*100
+        periodAccel = int(json.loads(response.content)['accelerometerPeriod'])*100
+        weatherOn = bool(json.loads(response.content)['weatherConf'])
+        accelOn = bool(json.loads(response.content)['accelerometerConf'])
+        adcOn = bool(json.loads(response.content)['lightConf'])
+        deviceSettings = DeviceSettings(device=device, weatherOn=weatherOn, accelerometerOn=accelOn, lightOn=adcOn, weatherPeriod=periodWeather, accelerometerPeriod=periodAccel, lightPeriod=periodAdc)
+        deviceSettings.save()
+        
         return redirect('devicemanager')
     else: # if the device exists in database
         print device.user_id
@@ -125,6 +139,8 @@ def adddevice(request): #this is not working
             print "You already own that device"
         else:
             print "That device belongs to someone else"
+
+
 
 
     return redirect('devicemanager')
@@ -216,6 +232,18 @@ def devicesettings(request, id):
                      'accelerometerPeriod': float(accelerometerPeriod) / 10, 'lightOn': (int(lightOn) == 1), 'lightPeriod': float(lightPeriod) / 10}
 
     settings = json.dumps(settings_dict)
+
+     # Set device settings
+    deviceSettings = DeviceSettings.objects.get(device=device)
+    #deviceSettings.set(device=device, weatherOn=settings_dict['weatherOn'], accelerometerOn=settings_dict['accelerometerOn'], lightOn=settings_dict['lightOn'], weatherPeriod=int(weatherPeriod), accelerometerPeriod=int(accelerometerPeriod),lightPeriod=int(lightPeriod))
+
+    deviceSettings.weatherOn=settings_dict['weatherOn']
+    deviceSettings.accelerometerOn=settings_dict['accelerometerOn']
+    deviceSettings.lightOn=settings_dict['lightOn']
+    deviceSettings.weatherPeriod=int(weatherPeriod)
+    deviceSettings.accelerometerPeriod=int(accelerometerPeriod)
+    deviceSettings.lightPeriod=int(lightPeriod)
+    deviceSettings.save()
 
     return render(request, 'device_manager/device_settings.html', {"device": device,
                                                                    "listOfDevices": listOfDevices,

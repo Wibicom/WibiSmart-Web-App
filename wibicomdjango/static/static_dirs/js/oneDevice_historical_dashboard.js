@@ -4,6 +4,7 @@ function get_energy_chart_options(){
     dict = {
      strokeWidth: 2,
      legend: 'always',
+     axisLabelWidth : 70,
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
@@ -12,7 +13,7 @@ function get_energy_chart_options(){
      fillGraph : true,
      colors :['#2ecc71', '#0e4b9a'],
      ylabel: 'Battery level (%)',
-     y2label : 'Light level',
+     y2label : 'Light level (mV)',
      series : {
         Battery : {
          axis : 'y'
@@ -37,14 +38,15 @@ function get_meteo_chart_options(){
     dict = {
     strokeWidth: 2,
      legend: 'always',
+     axisLabelWidth : 70,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
      //rangeSelectorPlotStrokeColor: '#6b8bff',
      //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
      colors :['#2ecc71', '#0e4b9a'],
-     ylabel: 'Temperature (Celsius)',
-     y2label : 'Humidity',
+     ylabel: 'Temperature (°C)',
+     y2label : 'Humidity (%)',
      series : {
         Temperature : {
          axis : 'y'
@@ -70,6 +72,7 @@ function get_accelerometer_chart_options(){
     dict = {
      strokeWidth: 2,
      legend: 'always',
+     axisLabelWidth : 70,
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
@@ -77,7 +80,7 @@ function get_accelerometer_chart_options(){
      //rangeSelectorPlotFillColor: '#6bffb5',
      fillGraph : true,
      colors :['#5bc0de', '#0e4b9a', '#2ecc71'],
-     ylabel: 'Acceleration (milliG)',
+     ylabel: 'Acceleration (mg)',
 
      highlightSeriesOpts: {
           strokeWidth: 4,
@@ -94,6 +97,7 @@ function get_pressure_chart_options(){
     dict = {
      strokeWidth: 2,
      legend: 'always',
+     axisLabelWidth : 70,
      //errorBars: true,
      showRangeSelector: true,
      rangeSelectorHeight: 30,
@@ -244,9 +248,9 @@ function pressure_data_calculator(response){
     var min = (Math.min.apply(Math, array_data)).toFixed(2);
     var max = (Math.max.apply(Math, array_data)).toFixed(2);
 
-    document.getElementById("pressure-high").innerHTML = max + " Mbar";
-    document.getElementById("pressure-low").innerHTML = min + " Mbar";
-    document.getElementById("pressure-avg").innerHTML = avg + " Mbar";
+    document.getElementById("pressure-high").innerHTML = max + " mbar";
+    document.getElementById("pressure-low").innerHTML = min + " mbar";
+    document.getElementById("pressure-avg").innerHTML = avg + " mbar";
 
 }
 

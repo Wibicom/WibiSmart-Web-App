@@ -47,7 +47,7 @@
             </div>-->
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-tablet" aria-hidden="true"></i> Autonomy </span>
-              <div class="count live-tile-count">{{ autonomy }} hours</div>
+              <div class="count live-tile-count" id= "live_autonomy">{{ autonomy }} hours</div>
               <span class="count_bottom"><i class="fa fa-sort-asc"></i>time until device is off </i> </span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -137,7 +137,7 @@
                 <div class = "row">
                     <div class="box box-gray">
                             <div class="box-header with-border">
-                                <h3 class="box-title title">Temperature data (Celsius)</h3>
+                                <h3 class="box-title title">Temperature data (°C)</h3>
 
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -156,19 +156,19 @@
                                      <div class="col-md-2">
                                       <div class="pad box-pane-right box-pane-meteo" style="min-height: 380px">
                                         <div class="description-block margin-bottom">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-up big-fa-fa" aria-hidden="true"></i></div>
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-up fa-3x" aria-hidden="true"></i></div>
                                           <h5 class="description-header" id = "temperature-high" >{{ daily_temp_max }} °C</h5>
                                           <span class="description-text">DAILY HIGH</span>
                                         </div>
                                         <!-- /.description-block -->
                                         <div class="description-block margin-bottom">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-minus-circle big-fa-fa" aria-hidden="true"></i></div>
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-minus-circle fa-3x" aria-hidden="true"></i></div>
                                           <h5 class="description-header" id = "temperature-avg">{{ daily_temp_avrg }} °C</h5>
                                           <span class="description-text">DAILY AVERAGE</span>
                                         </div>
                                         <!-- /.description-block -->
                                         <div class="description-block">
-                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-down big-fa-fa" aria-hidden="true"></i></div>
+                                          <div class="sparkbar pad" data-color="#fff"><i class="fa fa-chevron-circle-down fa-3x" aria-hidden="true"></i></div>
                                            <h5 class="description-header" id = "temperature-low">{{ daily_temp_min }} °C</h5>
                                           <span class="description-text">DAILY LOW</span>
                                         </div>
@@ -190,7 +190,7 @@
                     <div class="col-md-12">
                     <div class="box box-gray">
                             <div class="box-header with-border">
-                                <h3 class="box-title title">Accelerometer data</h3>
+                                <h3 class="box-title title">Accelerometer data (mg)</h3>
 
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>

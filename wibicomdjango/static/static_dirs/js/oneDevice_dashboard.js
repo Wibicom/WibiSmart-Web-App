@@ -93,8 +93,8 @@ var PressureGauge = (function () {
             strokeWidth: 0.030, // The rotation offset
             color: '#000000' // Fill color
           },
-          colorStart: '#5bc0de',   // Colors
-          colorStop: '#5bc0de',    // just experiment with them
+          colorStart: '#01579B',   // Colors
+          colorStop: '#01579B',    // just experiment with them
           strokeColor: '#E0E0E0',   // to see which ones work best for you
           generateGradient: true
         };
@@ -399,9 +399,10 @@ function ajax_getdata(){
         datatype: "json",
         success: function (json) {
             $('#batteryvalue').html(json.live_battery + "%"); //take the div output and put the json message in it
+            $('#live_autonomy').html(json.live_autonomy + " hours");
             $('#humidityvalue').html(json.live_humidity + "%");
             $('#pressurevalue').html(json.live_pressure + " mbar");
-            $('#temperaturevalue').html(json.live_temperature + " °Celsius");
+            $('#temperaturevalue').html(json.live_temperature + " °C");
             $('#accxvalue').html("X Axis: " + json.live_accx + " mg");
             $('#accyvalue').html("Y Axis: " + json.live_accy + " mg");
             $('#acczvalue').html("Z Axis : " + json.live_accz + " mg");

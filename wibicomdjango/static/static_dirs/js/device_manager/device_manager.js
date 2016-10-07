@@ -27,7 +27,7 @@ function scan(){
                         var address = jsonreceived[i].address;
                         var rssi = jsonreceived[i].rssi;
 
-                        var url = "http://127.0.0.1:8000/accounts/loggedin/devicemanager/adddevice/"  //will have to change this, not ideal should pass relative path + not secure, need to pass in csrf token
+                        var url = "http://192.168.1.103:8000/accounts/loggedin/devicemanager/adddevice/"  //will have to change this, not ideal should pass relative path + not secure, need to pass in csrf token
                         var listitem = '<li class="list-group-item">'
                                         + '<span class="pull-right">'
                                             + '<form action = ' + url + ' method = "post">'
